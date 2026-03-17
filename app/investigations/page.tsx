@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { ArrowLeft, SearchCode, Sparkles } from "lucide-react";
 import { ensureBootstrapped } from "@/lib/opentrust/bootstrap";
-import { getSavedInvestigations } from "@/lib/opentrust/investigations";
+import { formatRelativeTime } from "@/lib/opentrust/format";
+import { getSavedInvestigations, previewSavedInvestigation } from "@/lib/opentrust/investigations";
 
 export const dynamic = "force-dynamic";
 
@@ -47,22 +48,49 @@ export default function InvestigationsPage() {
             </div>
           </header>
           <div className="list-stack">
-            {investigations.map((investigation) => (
-              <article key={investigation.id} className="entity-row entity-row--block">
-                <div className="entity-row__meta">
-                  <StatusPill label="saved" tone="accent" />
-                  <span className="muted">{investigation.id}</span>
-                </div>
-                <div className="entity-row__content">
-                  <strong>{investigation.title}</strong>
-                  <p>{investigation.description ?? "No description."}</p>
-                </div>
-                <details>
-                  <summary>SQL</summary>
-                  <pre>{investigation.sql_text}</pre>
-                </details>
-              </article>
-            ))}
+            {investigations.map((investigation) => {
+              const previewRows = previewSavedInvestigation(investigation.sql_text, 5);
+              const columns = Object.keys(previewRows[0] ?? {});
+              return (
+                <article key={investigation.id} className="entity-row entity-row--block">
+                  <div className="entity-row__meta">
+                    <StatusPill label="saved" tone="accent" />
+                    <span className="muted">updated {formatRelativeTime(investigation.updated_at)}</span>
+                  </div>
+                  <div className="entity-row__content">
+                    <strong>{investigation.title}</strong>
+                    <p>{investigation.description ?? "No description."}</p>
+                  </div>
+                  <details>
+                    <summary>Preview results</summary>
+                    {previewRows.length > 0 ? (
+                      <div className="preview-table-wrap">
+                        <table className="preview-table">
+                          <thead>
+                            <tr>
+                              {columns.map((column) => <th key={column}>{column}</th>)}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {previewRows.map((row, index) => (
+                              <tr key={index}>
+                                {columns.map((column) => <td key={column}>{String(row[column] ?? "")}</td>)}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <div className="search-empty">No rows returned by this investigation preview.</div>
+                    )}
+                  </details>
+                  <details>
+                    <summary>SQL</summary>
+                    <pre>{investigation.sql_text}</pre>
+                  </details>
+                </article>
+              );
+            })}
           </div>
         </section>
       </div>

@@ -270,7 +270,7 @@ export default async function HomePage({
 
         <section className="dash-footer-note card">
           <div className="meta-row">
-            <StatusPill label="field-manual mode" tone="accent" />
+            <StatusPill label="dashboard mode" tone="accent" />
             <span className="muted">claw-dash inspired layout</span>
           </div>
           <h3>OpenTrust now behaves more like a cockpit than a docs surface.</h3>

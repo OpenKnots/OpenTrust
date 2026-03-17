@@ -1,11 +1,11 @@
-# OpenTrust — Field Manual Blueprint
+# OpenTrust — Design Blueprint
 
 ## Product stance
 
 OpenTrust should feel calm, legible, and capable.
 
 It is **not** a noisy observability console.
-It is a **field manual** for understanding what happened inside OpenClaw and why.
+It should feel like a **clear operational dashboard** for understanding what happened inside OpenClaw and why.
 
 ## UX principles
 
@@ -51,7 +51,7 @@ The operator should always understand:
 ## Current UX surfaces
 
 Implemented today:
-- Home / briefing
+- Home / briefing dashboard
 - Trace atlas
 - Imported OpenClaw sessions
 - Workflow ledger cards
@@ -61,10 +61,10 @@ Implemented today:
 - Trace detail pages with tools, events, and artifacts
 
 Still recommended:
-- dedicated artifact explorer
-- dedicated workflow detail pages
-- saved investigations
-- semantic retrieval views
+- editable investigation presets
+- stronger artifact filtering/grouping
+- richer workflow analytics
+- deeper lineage visualizations
 
 ## Language style
 
@@ -79,3 +79,8 @@ Use human labels like:
 - artifact
 
 Reveal lower-level terms only as users drill deeper.
+
+## Note on naming
+
+"Field manual" was a design inspiration, not the literal product identity.
+The user-facing product should present as a dashboard / observability surface rather than a manual.

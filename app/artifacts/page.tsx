@@ -1,11 +1,20 @@
 import Link from "next/link";
 import { ArrowLeft, Layers3, Sparkles } from "lucide-react";
 import { getRecentArtifacts } from "@/lib/opentrust/artifacts";
+import { formatRelativeTime } from "@/lib/opentrust/format";
 
 export const dynamic = "force-dynamic";
 
-export default function ArtifactsPage() {
-  const artifacts = getRecentArtifacts(200);
+export default async function ArtifactsPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ kind?: string; sort?: string }>;
+}) {
+  const params = (await searchParams) ?? {};
+  const kind = typeof params.kind === "string" ? params.kind : undefined;
+  const sort = params.sort === "kind" ? "kind" : "newest";
+  const artifacts = getRecentArtifacts(200, { kind, sort });
+  const kinds = ["url", "doc", "repo", "note"];
 
   return (
     <main className="dashboard-shell">
@@ -13,9 +22,9 @@ export default function ArtifactsPage() {
       <div className="dashboard-container">
         <section className="status-strip card">
           <StatusStripItem label="artifacts" value={String(artifacts.length)} tone="accent" />
-          <StatusStripItem label="mode" value="registry" tone="neutral" />
-          <StatusStripItem label="source" value="real data" tone="success" />
-          <StatusStripItem label="view" value="explorer" tone="neutral" />
+          <StatusStripItem label="filter" value={kind ?? "all"} tone="neutral" />
+          <StatusStripItem label="sort" value={sort} tone="success" />
+          <StatusStripItem label="source" value="real data" tone="neutral" />
         </section>
 
         <section className="detail-hero card">
@@ -43,20 +52,28 @@ export default function ArtifactsPage() {
                 <p>Newest indexed artifacts across traces and workflows.</p>
               </div>
             </div>
+            <div className="filter-row">
+              <Link href="/artifacts" className={`filter-chip ${!kind ? "filter-chip--active" : ""}`}>All</Link>
+              {kinds.map((value) => (
+                <Link key={value} href={`/artifacts?kind=${value}&sort=${sort}`} className={`filter-chip ${kind === value ? "filter-chip--active" : ""}`}>{value}</Link>
+              ))}
+              <Link href={`/artifacts?${kind ? `kind=${kind}&` : ""}sort=newest`} className={`filter-chip ${sort === "newest" ? "filter-chip--active" : ""}`}>Newest</Link>
+              <Link href={`/artifacts?${kind ? `kind=${kind}&` : ""}sort=kind`} className={`filter-chip ${sort === "kind" ? "filter-chip--active" : ""}`}>By kind</Link>
+            </div>
           </header>
           <div className="bento-grid">
             {artifacts.length > 0 ? artifacts.map((artifact) => (
               <article key={artifact.id} className="dash-panel card panel-span-4 compact-panel">
                 <div className="entity-row__meta">
                   <StatusPill label={artifact.kind} tone="neutral" />
-                  <span className="muted">{artifact.created_at}</span>
+                  <span className="muted">{formatRelativeTime(artifact.created_at)}</span>
                 </div>
                 <div className="entity-row__content">
                   <strong>{artifact.title ?? artifact.id}</strong>
                   <p>{artifact.uri}</p>
                 </div>
               </article>
-            )) : <div className="search-empty">No artifacts have been indexed yet.</div>}
+            )) : <div className="search-empty">No artifacts match the current filter.</div>}
           </div>
         </section>
       </div>

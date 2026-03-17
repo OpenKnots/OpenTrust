@@ -51,7 +51,7 @@ function syncSoulFromIdentity() {
 }
 
 function syncSystemBundleCapability() {
-  syncCapability("bundle", "OpenTrust Field Manual", {
+  syncCapability("bundle", "OpenTrust Dashboard Core", {
     source: "system",
     description: "Starter bundle for local-first OpenClaw investigations.",
   });

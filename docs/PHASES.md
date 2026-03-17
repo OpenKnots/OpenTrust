@@ -4,7 +4,7 @@
 
 Shipped:
 - private OpenKnots repo
-- Next.js field-manual shell
+- Next.js dashboard shell
 - local-first product framing
 - initial SQLite schema blueprint
 - capability model for skills, plugins, souls, and bundles
@@ -56,7 +56,7 @@ Shipped:
 - workflow detail pages
 - artifact explorer page
 - saved investigations page
-- workflow and artifact navigation from the field manual
+- workflow and artifact navigation from the main dashboard
 
 ## Phase 7 — Lineage and incremental ingestion ✅
 
@@ -84,3 +84,4 @@ Remaining work from here is optional expansion rather than completion work, for 
 - editing/saving custom investigations from the UI
 - stronger semantic embedding models
 - exports, backups, and audit/report tooling
+ling

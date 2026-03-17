@@ -12,7 +12,7 @@ It is designed to answer questions like:
 ## Current status
 
 OpenTrust now includes:
-- polished field-manual UI shell
+- polished dashboard-first UI shell
 - local SQLite runtime
 - explicit bootstrap / ingest / query architecture
 - real-data-only local evidence model

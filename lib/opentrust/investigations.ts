@@ -1,4 +1,5 @@
 import { execute, queryJson } from "@/lib/opentrust/db";
+import { runReadOnlySql } from "@/lib/opentrust/sql-runner";
 
 export interface SavedInvestigationRow {
   id: string;
@@ -68,4 +69,9 @@ export function getSavedInvestigations() {
     FROM saved_investigations
     ORDER BY updated_at DESC;
   `);
+}
+
+export function previewSavedInvestigation(sql: string, limit = 8) {
+  const trimmed = sql.trim().replace(/;\s*$/, "");
+  return runReadOnlySql(`SELECT * FROM (${trimmed}) LIMIT ${limit};`);
 }

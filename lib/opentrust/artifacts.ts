@@ -9,14 +9,16 @@ export interface ArtifactRow {
   created_at: string;
 }
 
-export function getRecentArtifacts(limit = 12): ArtifactRow[] {
+export function getRecentArtifacts(limit = 12, options?: { kind?: string; sort?: "newest" | "kind" }) {
   ensureBootstrapped();
+  const orderBy = options?.sort === "kind" ? "kind ASC, created_at DESC" : "created_at DESC";
   return queryJson<ArtifactRow>(`
     SELECT id, kind, uri, title, created_at
     FROM artifacts
-    ORDER BY created_at DESC
+    ${options?.kind ? "WHERE kind = :kind" : ""}
+    ORDER BY ${orderBy}
     LIMIT :limit;
-  `, { limit });
+  `, options?.kind ? { limit, kind: options.kind } : { limit });
 }
 
 export function getArtifactsForTrace(traceId: string): ArtifactRow[] {
