@@ -1,5 +1,8 @@
 import { DatabaseZap, FileStack, Layers3, Route, SearchCode, ShieldCheck, Sparkles, Telescope, Workflow } from "lucide-react";
 import { capabilityCards, manualSections, queryExamples, traceCards } from "@/lib/mock-data";
+import { getOverview } from "@/lib/opentrust/overview";
+
+export const dynamic = "force-dynamic";
 
 const sectionIcons = {
   briefing: Sparkles,
@@ -10,6 +13,8 @@ const sectionIcons = {
 } as const;
 
 export default function HomePage() {
+  const overview = getOverview();
+
   return (
     <main className="shell">
       <aside className="rail">
@@ -54,6 +59,22 @@ export default function HomePage() {
           </div>
         </section>
 
+        <section className="stack">
+          <SectionHeader
+            icon={<DatabaseZap size={18} />}
+            title="Local runtime status"
+            summary="Phase 2 now boots a real local SQLite store, migrates schema, seeds first traces, and syncs visible capabilities from the current OpenClaw environment."
+          />
+          <div className="grid grid--three">
+            <Metric label="Sessions indexed" value={String(overview.counts.sessions)} />
+            <Metric label="Traces available" value={String(overview.counts.traces)} />
+            <Metric label="Capabilities synced" value={String(overview.counts.capabilities)} />
+            <Metric label="Workflows tracked" value={String(overview.counts.workflows)} />
+            <Metric label="Artifacts tracked" value={String(overview.counts.artifacts)} />
+            <Metric label="Database file" value={overview.localDatabasePath} />
+          </div>
+        </section>
+
         <section id="traces" className="stack">
           <SectionHeader
             icon={<Telescope size={18} />}
@@ -71,6 +92,23 @@ export default function HomePage() {
                     <li key={bullet}>{bullet}</li>
                   ))}
                 </ul>
+              </article>
+            ))}
+          </div>
+          <div className="grid grid--two">
+            {overview.recentTraces.map((trace) => (
+              <article key={trace.id} className="card card--soft">
+                <div className="meta-row">
+                  <span className="pill pill--outline">{trace.status}</span>
+                  <span className="muted">{trace.session_label ?? trace.id}</span>
+                </div>
+                <h3>{trace.title ?? trace.id}</h3>
+                <p>{trace.summary ?? "No summary yet."}</p>
+                <details>
+                  <summary>Trace metadata</summary>
+                  <p>Updated: {trace.updated_at}</p>
+                  <p>Trace ID: {trace.id}</p>
+                </details>
               </article>
             ))}
           </div>
@@ -95,6 +133,18 @@ export default function HomePage() {
                   <summary>Why this matters</summary>
                   <p>{card.evidence}</p>
                 </details>
+              </article>
+            ))}
+          </div>
+          <div className="grid grid--two">
+            {overview.capabilityBreakdown.map((entry) => (
+              <article key={entry.kind} className="card card--soft">
+                <div className="meta-row">
+                  <span className="pill pill--outline">{entry.kind}</span>
+                  <span className="muted">live registry count</span>
+                </div>
+                <h3>{entry.count}</h3>
+                <p>Capabilities of type {entry.kind} are currently indexed into the local registry.</p>
               </article>
             ))}
           </div>
@@ -138,6 +188,18 @@ export default function HomePage() {
               title="UI stance"
               body="Beginner-friendly first screen. Advanced panes unfold with details, lineage, SQL, and payload views only when the operator asks for more."
             />
+          </div>
+          <div className="grid grid--two">
+            {overview.recentWorkflows.map((workflow) => (
+              <article key={workflow.id} className="card card--soft">
+                <div className="meta-row">
+                  <span className="pill pill--outline">{workflow.status}</span>
+                  <span className="muted">workflow run</span>
+                </div>
+                <h3>{workflow.name}</h3>
+                <p>{workflow.summary ?? "No summary yet."}</p>
+              </article>
+            ))}
           </div>
         </section>
       </div>

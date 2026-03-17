@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "check": "pnpm run typecheck"
+    "check": "pnpm run typecheck",
+    "db:init": "node scripts/init-db.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.511.0",
