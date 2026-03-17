@@ -1,6 +1,6 @@
+import { getArtifactsForTrace, type ArtifactRow } from "@/lib/opentrust/artifacts";
 import { ensureBootstrapped } from "@/lib/opentrust/bootstrap";
 import { queryJson, queryOne } from "@/lib/opentrust/db";
-import { getArtifactsForTrace, type ArtifactRow } from "@/lib/opentrust/artifacts";
 
 export interface TraceEventRow {
   id: string;
@@ -14,6 +14,8 @@ export interface TraceToolRow {
   tool_name: string;
   status: string;
   started_at: string;
+  finished_at: string | null;
+  result_json: string | null;
   error_text: string | null;
 }
 
@@ -33,37 +35,46 @@ export interface TraceDetail {
 export function getTraceDetail(traceId: string): TraceDetail | null {
   ensureBootstrapped();
 
-  const trace = queryOne<Omit<TraceDetail, "events" | "tools">>(`
-    SELECT
-      traces.id,
-      traces.title,
-      traces.status,
-      traces.summary,
-      traces.updated_at,
-      sessions.label AS session_label,
-      traces.metadata_json
-    FROM traces
-    LEFT JOIN sessions ON sessions.id = traces.session_id
-    WHERE traces.id = :traceId
-    LIMIT 1;
-  `, { traceId });
+  const trace = queryOne<Omit<TraceDetail, "events" | "tools" | "artifacts">>(
+    `
+      SELECT
+        traces.id,
+        traces.title,
+        traces.status,
+        traces.summary,
+        traces.updated_at,
+        sessions.label AS session_label,
+        traces.metadata_json
+      FROM traces
+      LEFT JOIN sessions ON sessions.id = traces.session_id
+      WHERE traces.id = :traceId
+      LIMIT 1;
+    `,
+    { traceId },
+  );
 
   if (!trace) return null;
 
-  const events = queryJson<TraceEventRow>(`
-    SELECT id, kind, created_at, text_preview
-    FROM events
-    WHERE trace_id = :traceId
-    ORDER BY sequence_no ASC
-    LIMIT 80;
-  `, { traceId });
+  const events = queryJson<TraceEventRow>(
+    `
+      SELECT id, kind, created_at, text_preview
+      FROM events
+      WHERE trace_id = :traceId
+      ORDER BY sequence_no ASC
+      LIMIT 80;
+    `,
+    { traceId },
+  );
 
-  const tools = queryJson<TraceToolRow>(`
-    SELECT id, tool_name, status, started_at, error_text
-    FROM tool_calls
-    WHERE trace_id = :traceId
-    ORDER BY started_at ASC;
-  `, { traceId });
+  const tools = queryJson<TraceToolRow>(
+    `
+      SELECT id, tool_name, status, started_at, finished_at, result_json, error_text
+      FROM tool_calls
+      WHERE trace_id = :traceId
+      ORDER BY started_at ASC;
+    `,
+    { traceId },
+  );
 
   const artifacts = getArtifactsForTrace(traceId);
 

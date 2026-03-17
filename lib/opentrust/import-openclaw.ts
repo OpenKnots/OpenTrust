@@ -1,8 +1,9 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
-import { escapeSqlString, runSql } from "@/lib/opentrust/db";
+import { escapeSqlString, execute, runSql } from "@/lib/opentrust/db";
 import { recordIngestionState } from "@/lib/opentrust/ingestion-state";
 import { upsertArtifactsForTrace } from "@/lib/opentrust/artifact-extract";
+import { makeToolCallDraft, maybeBuildToolResultUpdate } from "@/lib/opentrust/tool-results";
 
 type SessionIndexEntry = {
   sessionId?: string;
@@ -141,8 +142,9 @@ function upsertSessionAndTrace(sessionKey: string, entry: SessionIndexEntry, rec
   for (const record of records) {
     if (record.type !== "message") continue;
     const role = record.message?.role ?? "unknown";
-    for (const item of record.message?.content ?? []) {
-      if (!item || typeof item !== "object") continue;
+    const contentItems = (record.message?.content ?? []).filter((item): item is Record<string, unknown> => !!item && typeof item === "object");
+
+    for (const item of contentItems) {
       sequenceNo += 1;
       const contentType = typeof item.type === "string" ? item.type : "unknown";
       const preview = extractTextSnippet(item).slice(0, 1200);
@@ -163,20 +165,45 @@ function upsertSessionAndTrace(sessionKey: string, entry: SessionIndexEntry, rec
       `);
 
       if (contentType === "toolCall") {
-        const toolName = typeof item.name === "string" ? item.name : "unknown";
-        const toolId = typeof item.id === "string" ? item.id : `${traceId}:tool:${sequenceNo}`;
-        runSql(`
-          INSERT OR REPLACE INTO tool_calls (id, trace_id, session_id, tool_name, arguments_json, status, started_at)
-          VALUES (
-            ${escapeSqlString(toolId)},
-            ${escapeSqlString(traceId)},
-            ${escapeSqlString(sessionKey)},
-            ${escapeSqlString(toolName)},
-            ${sqlJson(item.arguments ?? {})},
-            'observed',
-            ${escapeSqlString(record.timestamp ?? startedAt)}
-          );
-        `);
+        const toolDraft = makeToolCallDraft(item, `${traceId}:tool:${sequenceNo}`, record.timestamp ?? startedAt);
+        execute(
+          `
+            INSERT OR REPLACE INTO tool_calls (id, trace_id, session_id, tool_name, arguments_json, status, started_at)
+            VALUES (:id, :traceId, :sessionId, :toolName, :argumentsJson, :status, :startedAt)
+          `,
+          {
+            id: toolDraft.id,
+            traceId,
+            sessionId: sessionKey,
+            toolName: toolDraft.toolName,
+            argumentsJson: toolDraft.argumentsJson,
+            status: toolDraft.status,
+            startedAt: toolDraft.startedAt,
+          },
+        );
+      }
+    }
+
+    if (role === "tool") {
+      const toolResult = maybeBuildToolResultUpdate(contentItems, record.timestamp ?? startedAt);
+      if (toolResult) {
+        execute(
+          `
+            UPDATE tool_calls
+            SET result_json = :resultJson,
+                status = :status,
+                finished_at = :finishedAt,
+                error_text = :errorText
+            WHERE id = :id
+          `,
+          {
+            id: toolResult.id,
+            resultJson: toolResult.resultJson,
+            status: toolResult.status,
+            finishedAt: toolResult.finishedAt,
+            errorText: toolResult.errorText,
+          },
+        );
       }
     }
   }

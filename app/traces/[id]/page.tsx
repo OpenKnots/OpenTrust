@@ -46,7 +46,12 @@ export default async function TraceDetailPage({ params }: { params: Promise<{ id
                   <span className="muted">{tool.started_at}</span>
                 </div>
                 <h3>{tool.tool_name}</h3>
-                <p>{tool.error_text ?? "No error recorded."}</p>
+                <p>{tool.error_text ?? (tool.finished_at ? "Tool completed successfully." : "Tool call observed; awaiting paired result.")}</p>
+                <details>
+                  <summary>Tool result details</summary>
+                  <p>Finished: {tool.finished_at ?? "not yet paired"}</p>
+                  <pre>{tool.result_json ?? "No result payload captured."}</pre>
+                </details>
               </article>
             )) : <div className="search-empty">No tool calls captured for this trace.</div>}
           </div>
