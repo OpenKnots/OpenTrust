@@ -48,6 +48,10 @@ code {
   padding: 24px;
 }
 
+.shell--detail {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .rail,
 .card {
   border: 1px solid var(--line);
@@ -287,6 +291,9 @@ code {
 }
 
 .search-form__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid var(--line-strong);
   border-radius: 16px;
   background: rgba(141, 208, 255, 0.1);
@@ -299,6 +306,11 @@ code {
   display: grid;
   gap: 12px;
   margin-top: 18px;
+}
+
+.detail-actions {
+  display: flex;
+  gap: 12px;
 }
 
 .search-result,

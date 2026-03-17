@@ -1,7 +1,6 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { ensureMigrated, escapeSqlString, queryOne, runSql } from "@/lib/opentrust/db";
-import { importRecentOpenClawSessions } from "@/lib/opentrust/import-openclaw";
 
 function sqlJson(value: unknown) {
   return escapeSqlString(JSON.stringify(value));
@@ -16,7 +15,7 @@ function syncCapability(kind: "skill" | "plugin" | "soul" | "bundle", name: stri
   runSql(`
     INSERT INTO capabilities (id, kind, name, metadata_json)
     VALUES (${escapeSqlString(id)}, ${escapeSqlString(kind)}, ${escapeSqlString(name)}, ${sqlJson(metadata)})
-    ON CONFLICT(kind, name, version) DO UPDATE SET metadata_json=excluded.metadata_json;
+    ON CONFLICT(id) DO UPDATE SET metadata_json=excluded.metadata_json;
   `);
 }
 
@@ -137,5 +136,4 @@ export function ensureBootstrapped() {
   syncSoulFromIdentity();
   seedBundleCapability();
   seedDemoTraceIfEmpty();
-  importRecentOpenClawSessions();
 }

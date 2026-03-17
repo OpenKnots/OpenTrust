@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { DatabaseZap, FileStack, Layers3, Route, SearchCode, ShieldCheck, Sparkles, Telescope, Workflow } from "lucide-react";
 import { capabilityCards, manualSections, queryExamples, traceCards } from "@/lib/mock-data";
 import { getOverview } from "@/lib/opentrust/overview";
@@ -112,7 +113,7 @@ export default async function HomePage({
                   <span className="pill pill--outline">{trace.status}</span>
                   <span className="muted">{trace.session_label ?? trace.id}</span>
                 </div>
-                <h3>{trace.title ?? trace.id}</h3>
+                <h3><Link href={`/traces/${encodeURIComponent(trace.id)}`}>{trace.title ?? trace.id}</Link></h3>
                 <p>{trace.summary ?? "No summary yet."}</p>
                 <details>
                   <summary>Trace metadata</summary>
@@ -128,23 +129,27 @@ export default async function HomePage({
               title="Imported OpenClaw sessions"
               summary="Recent real session traces imported from local OpenClaw JSONL transcripts, keeping the operator flow grounded in actual runtime evidence."
             />
-            <div className="grid grid--two">
-              {importedSessionTraces.map((trace) => (
-                <article key={trace.id} className="card card--soft">
-                  <div className="meta-row">
-                    <span className="pill pill--outline">{trace.status}</span>
-                    <span className="muted">{trace.session_label ?? trace.id}</span>
-                  </div>
-                  <h3>{trace.title ?? trace.id}</h3>
-                  <p>{trace.summary ?? "No summary yet."}</p>
-                  <details>
-                    <summary>Imported trace details</summary>
-                    <p>Updated: {trace.updated_at}</p>
-                    <p>Trace ID: {trace.id}</p>
-                  </details>
-                </article>
-              ))}
-            </div>
+            {importedSessionTraces.length > 0 ? (
+              <div className="grid grid--two">
+                {importedSessionTraces.map((trace) => (
+                  <article key={trace.id} className="card card--soft">
+                    <div className="meta-row">
+                      <span className="pill pill--outline">{trace.status}</span>
+                      <span className="muted">{trace.session_label ?? trace.id}</span>
+                    </div>
+                    <h3><Link href={`/traces/${encodeURIComponent(trace.id)}`}>{trace.title ?? trace.id}</Link></h3>
+                    <p>{trace.summary ?? "No summary yet."}</p>
+                    <details>
+                      <summary>Imported trace details</summary>
+                      <p>Updated: {trace.updated_at}</p>
+                      <p>Trace ID: {trace.id}</p>
+                    </details>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <div className="search-empty">No imported OpenClaw session traces yet. Run <code>pnpm run ingest:openclaw</code> to refresh the local evidence store.</div>
+            )}
           </div>
         </section>
 
@@ -219,7 +224,7 @@ export default async function HomePage({
                         <span className="muted">{result.source_id}</span>
                       </div>
                       <h3>{result.title}</h3>
-                      <p dangerouslySetInnerHTML={{ __html: result.snippet.replaceAll('‹mark›', '<mark>').replaceAll('‹/mark›', '</mark>') }} />
+                      <p>{renderHighlightedSnippet(result.snippet)}</p>
                     </article>
                   ))}
                 </div>
@@ -312,4 +317,14 @@ function BlueprintCard({ icon, title, body }: { icon: React.ReactNode; title: st
       <p>{body}</p>
     </article>
   );
+}
+
+function renderHighlightedSnippet(snippet: string) {
+  const parts = snippet.split(/(\[\[mark\]\].*?\[\[\/mark\]\])/g);
+  return parts.filter(Boolean).map((part, index) => {
+    if (part.startsWith("[[mark]]") && part.endsWith("[[/mark]]")) {
+      return <mark key={index}>{part.slice(8, -9)}</mark>;
+    }
+    return <span key={index}>{part}</span>;
+  });
 }

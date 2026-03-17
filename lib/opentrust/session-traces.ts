@@ -1,6 +1,5 @@
 import { ensureBootstrapped } from "@/lib/opentrust/bootstrap";
 import { queryJson } from "@/lib/opentrust/db";
-import { importRecentOpenClawSessions } from "@/lib/opentrust/import-openclaw";
 
 export interface ImportedTraceRow {
   id: string;
@@ -13,7 +12,6 @@ export interface ImportedTraceRow {
 
 export function getImportedSessionTraces(limit = 8): ImportedTraceRow[] {
   ensureBootstrapped();
-  importRecentOpenClawSessions();
 
   return queryJson<ImportedTraceRow>(`
     SELECT

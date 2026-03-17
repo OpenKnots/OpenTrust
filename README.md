@@ -39,6 +39,8 @@ This repository starts with:
 
 ```bash
 pnpm install
+pnpm run db:init
+pnpm run ingest:openclaw
 pnpm dev
 ```
 

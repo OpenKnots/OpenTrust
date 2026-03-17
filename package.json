@@ -9,7 +9,8 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "check": "pnpm run typecheck",
-    "db:init": "node scripts/init-db.mjs"
+    "db:init": "tsx scripts/init-db.ts",
+    "ingest:openclaw": "tsx scripts/ingest-openclaw.ts"
   },
   "dependencies": {
     "lucide-react": "^0.511.0",
@@ -21,6 +22,7 @@
     "@types/node": "^22.14.0",
     "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
+    "tsx": "^4.20.6",
     "typescript": "^5.8.3"
   }
 }

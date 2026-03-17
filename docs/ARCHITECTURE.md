@@ -10,6 +10,7 @@ Build a local-first traceability and intelligence layer for OpenClaw that makes 
 - SQLite as the system of record
 - append-only event capture
 - stable IDs for sessions, traces, workflows, capabilities, and artifacts
+- dedicated runtime access layer instead of shelling out to the sqlite CLI on every query
 
 ### 2. Retrieval layers
 - FTS5 for exact / lexical search

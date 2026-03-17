@@ -28,10 +28,21 @@ This turns OpenTrust from a static shell into a local-first runtime that can now
 - capability lineage
 - hybrid search later in Phase 3
 
+## Runtime split
+
+OpenTrust should keep these responsibilities separate:
+- **bootstrap** — migrate schema and sync static capability metadata
+- **ingest** — pull in session/workflow evidence on demand or in background jobs
+- **query** — render UI and investigations from already-ingested local data
+
+Current commands:
+- `pnpm run db:init`
+- `pnpm run ingest:openclaw`
+
 ## Next ingestion steps
 
-- ingest actual OpenClaw session history
-- map workflow events into `workflow_runs` + `workflow_steps`
-- index tool calls from real traces
+- map workflow and cron events into `workflow_runs` + `workflow_steps`
+- index tool calls from real traces more deeply
 - normalize artifacts from repo/file/message outputs
 - create chunking + embedding jobs for sqlite-vec
+- add incremental cursors and ingestion state tracking
