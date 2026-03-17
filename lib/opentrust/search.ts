@@ -9,11 +9,19 @@ export interface InvestigationResult {
   mode?: "fts" | "semantic-fallback";
 }
 
+function fts5Escape(raw: string): string {
+  const tokens = raw.match(/\S+/g);
+  if (!tokens) return '""';
+  return tokens.map((t) => `"${t.replace(/"/g, '""')}"`).join(" ");
+}
+
 export function searchInvestigations(query: string): InvestigationResult[] {
   ensureBootstrapped();
 
   const q = query.trim();
   if (!q) return [];
+
+  const ftsQuery = fts5Escape(q);
 
   const ftsResults = queryJson<InvestigationResult>(`
     SELECT
@@ -24,7 +32,7 @@ export function searchInvestigations(query: string): InvestigationResult[] {
     FROM search_chunks
     WHERE search_chunks MATCH :query
     LIMIT 12;
-  `, { query: q });
+  `, { query: ftsQuery });
 
   if (ftsResults.length > 0) {
     return ftsResults;
