@@ -1,7 +1,9 @@
-import Link from "next/link";
-import { ArrowLeft, Bot, Layers3, Route } from "lucide-react";
 import { notFound } from "next/navigation";
 import { getTraceDetail } from "@/lib/opentrust/trace-details";
+import { PageHeader } from "@/components/ui/page-header";
+import { Pill } from "@/components/ui/pill";
+import { MetricInline } from "@/components/ui/metric";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export const dynamic = "force-dynamic";
 
@@ -12,142 +14,117 @@ export default async function TraceDetailPage({ params }: { params: Promise<{ id
   if (!trace) notFound();
 
   return (
-    <main className="dashboard-shell">
-      <div className="dashboard-bg" />
-      <div className="dashboard-container">
-        <section className="status-strip card">
-          <StatusStripItem label="trace" value={trace.status} tone={trace.status === "attention" ? "danger" : trace.status === "streaming" ? "accent" : "success"} />
-          <StatusStripItem label="session" value={trace.session_label ?? "unknown"} tone="neutral" />
-          <StatusStripItem label="tools" value={String(trace.tools.length)} tone="accent" />
-          <StatusStripItem label="artifacts" value={String(trace.artifacts.length)} tone="neutral" />
-        </section>
+    <>
+      <PageHeader
+        title={trace.title ?? trace.id}
+        subtitle={trace.summary ?? "No summary available for this trace."}
+        breadcrumbs={[
+          { label: "Overview", href: "/" },
+          { label: "Traces", href: "/" },
+          { label: trace.title ?? trace.id },
+        ]}
+      />
 
-        <section className="detail-hero card">
-          <div className="hero__badge">Trace detail / evidence drill-down</div>
-          <div className="detail-hero__top">
-            <div>
-              <h1>{trace.title ?? trace.id}</h1>
-              <p>{trace.summary ?? "No summary available for this trace yet."}</p>
-            </div>
-            <div className="detail-actions">
-              <Link href="/" className="action-link"><ArrowLeft size={16} /><span>Back to dashboard</span></Link>
-              <Link href="/artifacts" className="action-link"><Layers3 size={16} /><span>Artifacts</span></Link>
-            </div>
-          </div>
-          <div className="hero-band__stats detail-hero__stats">
-            <Metric label="Updated" value={trace.updated_at} tone="neutral" />
-            <Metric label="Session" value={trace.session_label ?? "unknown"} tone="neutral" />
-            <Metric label="Tool calls" value={String(trace.tools.length)} tone="accent" />
-            <Metric label="Trace ID" value={trace.id} tone="neutral" />
-          </div>
-        </section>
-
-        <section className="bento-grid">
-          <section className="dash-panel card panel-span-6">
-            <header className="dash-panel__header">
-              <div className="section-header__title">
-                <span className="section-header__icon"><Bot size={18} /></span>
-                <div>
-                  <h2>Observed tool calls</h2>
-                  <p>Direct evidence of tool usage connected to this trace.</p>
-                </div>
-              </div>
-            </header>
-            <div className="list-stack">
-              {trace.tools.length > 0 ? trace.tools.map((tool) => (
-                <article key={tool.id} className="entity-row entity-row--block">
-                  <div className="entity-row__meta">
-                    <StatusPill label={tool.status} tone={tool.status === "error" ? "danger" : tool.finished_at ? "success" : "accent"} />
-                    <span className="muted">{tool.started_at}</span>
-                  </div>
-                  <div className="entity-row__content">
-                    <strong>{tool.tool_name}</strong>
-                    <p>{tool.error_text ?? (tool.finished_at ? "Tool completed successfully." : "Tool call observed; awaiting paired result.")}</p>
-                  </div>
-                  <details>
-                    <summary>Tool result details</summary>
-                    <p>Finished: {tool.finished_at ?? "not yet paired"}</p>
-                    <pre>{tool.result_json ?? "No result payload captured."}</pre>
-                  </details>
-                </article>
-              )) : <div className="search-empty">No tool calls captured for this trace.</div>}
-            </div>
-          </section>
-
-          <section className="dash-panel card panel-span-6">
-            <header className="dash-panel__header">
-              <div className="section-header__title">
-                <span className="section-header__icon"><Layers3 size={18} /></span>
-                <div>
-                  <h2>Referenced artifacts</h2>
-                  <p>Files, repos, docs, and URLs inferred from this trace’s evidence.</p>
-                </div>
-              </div>
-            </header>
-            <div className="list-stack">
-              {trace.artifacts.length > 0 ? trace.artifacts.map((artifact) => (
-                <article key={artifact.id} className="entity-row entity-row--block">
-                  <div className="entity-row__meta">
-                    <StatusPill label={artifact.kind} tone="neutral" />
-                    <span className="muted">{artifact.created_at}</span>
-                  </div>
-                  <div className="entity-row__content">
-                    <strong>{artifact.title ?? artifact.id}</strong>
-                    <p>{artifact.uri}</p>
-                  </div>
-                </article>
-              )) : <div className="search-empty">No artifacts extracted for this trace yet.</div>}
-            </div>
-          </section>
-
-          <section className="dash-panel card panel-span-12">
-            <header className="dash-panel__header">
-              <div className="section-header__title">
-                <span className="section-header__icon"><Route size={18} /></span>
-                <div>
-                  <h2>Event timeline</h2>
-                  <p>Chronological view of the imported evidence for this trace.</p>
-                </div>
-              </div>
-            </header>
-            <div className="list-stack">
-              {trace.events.length > 0 ? trace.events.map((event) => (
-                <article key={event.id} className="entity-row entity-row--block">
-                  <div className="entity-row__meta">
-                    <StatusPill label={event.kind} tone="neutral" />
-                    <span className="muted">{event.created_at}</span>
-                  </div>
-                  <div className="entity-row__content">
-                    <p>{event.text_preview ?? "No preview available."}</p>
-                  </div>
-                </article>
-              )) : <div className="search-empty">No events captured for this trace.</div>}
-            </div>
-          </section>
-        </section>
+      <div className="metadata-bar">
+        <MetricInline label="Status" value={trace.status} />
+        <MetricInline label="Session" value={trace.session_label ?? "unknown"} />
+        <MetricInline label="Tool calls" value={String(trace.tools.length)} />
+        <MetricInline label="Artifacts" value={String(trace.artifacts.length)} />
+        <MetricInline label="Updated" value={trace.updated_at} mono />
+        <MetricInline label="Trace ID" value={trace.id} mono />
       </div>
-    </main>
-  );
-}
 
-function Metric({ label, value, tone }: { label: string; value: string; tone: "accent" | "neutral" }) {
-  return (
-    <div className={`metric metric--${tone}`}>
-      <span>{label}</span>
-      <strong>{value}</strong>
-    </div>
-  );
-}
+      {/* Tool calls */}
+      <div className="section">
+        <div className="section__header">
+          <span className="section__title">Observed tool calls</span>
+          <span className="section__description">{trace.tools.length} tool{trace.tools.length !== 1 ? "s" : ""}</span>
+        </div>
 
-function StatusPill({ label, tone }: { label: string; tone: "accent" | "neutral" | "danger" | "success" }) {
-  return <span className={`pill pill--${tone}`}>{label}</span>;
-}
+        {trace.tools.length > 0 ? (
+          <div className="list-group">
+            {trace.tools.map((tool) => (
+              <div key={tool.id} className="list-item" style={{ flexDirection: "column", alignItems: "stretch", cursor: "default" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <Pill
+                    label={tool.status}
+                    tone={tool.status === "error" ? "danger" : tool.finished_at ? "success" : "info"}
+                  />
+                  <span className="list-item__title" style={{ flex: 1 }}>{tool.tool_name}</span>
+                  <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>{tool.started_at}</span>
+                </div>
+                <div style={{ marginTop: 6, fontSize: "0.8125rem", color: "var(--text-secondary)" }}>
+                  {tool.error_text ?? (tool.finished_at ? "Completed successfully." : "Awaiting paired result.")}
+                </div>
+                {(tool.result_json || tool.finished_at) && (
+                  <details className="expandable" style={{ marginTop: 8 }}>
+                    <summary>Result details</summary>
+                    <div className="expandable__content">
+                      <p style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginBottom: 8 }}>
+                        Finished: {tool.finished_at ?? "not yet paired"}
+                      </p>
+                      <pre>{tool.result_json ?? "No result payload captured."}</pre>
+                    </div>
+                  </details>
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <EmptyState message="No tool calls captured for this trace." />
+        )}
+      </div>
 
-function StatusStripItem({ label, value, tone }: { label: string; value: string; tone: "accent" | "neutral" | "danger" | "success" }) {
-  return (
-    <div className="status-strip__item">
-      <span>{label}</span>
-      <div className="status-strip__value"><StatusPill label={value} tone={tone} /></div>
-    </div>
+      {/* Artifacts */}
+      <div className="section">
+        <div className="section__header">
+          <span className="section__title">Referenced artifacts</span>
+          <span className="section__description">{trace.artifacts.length} artifact{trace.artifacts.length !== 1 ? "s" : ""}</span>
+        </div>
+
+        {trace.artifacts.length > 0 ? (
+          <div className="list-group">
+            {trace.artifacts.map((artifact) => (
+              <div key={artifact.id} className="list-item" style={{ cursor: "default" }}>
+                <div className="list-item__content">
+                  <span className="list-item__title">{artifact.title ?? artifact.id}</span>
+                  <span className="list-item__subtitle">{artifact.uri}</span>
+                </div>
+                <div className="list-item__meta">
+                  <Pill label={artifact.kind} tone="neutral" />
+                  <span style={{ fontSize: "0.6875rem", fontFamily: "var(--font-mono)" }}>{artifact.created_at}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <EmptyState message="No artifacts extracted for this trace." />
+        )}
+      </div>
+
+      {/* Event timeline */}
+      <div className="section">
+        <div className="section__header">
+          <span className="section__title">Event timeline</span>
+          <span className="section__description">{trace.events.length} event{trace.events.length !== 1 ? "s" : ""}</span>
+        </div>
+
+        {trace.events.length > 0 ? (
+          <div className="timeline">
+            {trace.events.map((event) => (
+              <div key={event.id} className="timeline__item">
+                <div className="timeline__item-time">{event.created_at}</div>
+                <div className="timeline__item-kind">
+                  <Pill label={event.kind} tone="neutral" />
+                </div>
+                <div className="timeline__item-text">{event.text_preview ?? "No preview available."}</div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <EmptyState message="No events captured for this trace." />
+        )}
+      </div>
+    </>
   );
 }

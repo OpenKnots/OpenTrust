@@ -6,7 +6,7 @@ Build a local-first traceability and intelligence layer for OpenClaw that makes 
 
 ## Core architecture
 
-### 1. Local evidence store
+### 1. Local Evidence Store
 - SQLite as the system of record
 - append-only event capture
 - stable IDs for sessions, traces, workflows, capabilities, and artifacts

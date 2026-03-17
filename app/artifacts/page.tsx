@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { ArrowLeft, Layers3, Sparkles } from "lucide-react";
 import { getRecentArtifacts } from "@/lib/opentrust/artifacts";
 import { formatRelativeTime } from "@/lib/opentrust/format";
+import { PageHeader } from "@/components/ui/page-header";
+import { Pill } from "@/components/ui/pill";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export const dynamic = "force-dynamic";
 
@@ -17,79 +19,60 @@ export default async function ArtifactsPage({
   const kinds = ["url", "doc", "repo", "note"];
 
   return (
-    <main className="dashboard-shell">
-      <div className="dashboard-bg" />
-      <div className="dashboard-container">
-        <section className="status-strip card">
-          <StatusStripItem label="artifacts" value={String(artifacts.length)} tone="accent" />
-          <StatusStripItem label="filter" value={kind ?? "all"} tone="neutral" />
-          <StatusStripItem label="sort" value={sort} tone="success" />
-          <StatusStripItem label="source" value="real data" tone="neutral" />
-        </section>
+    <>
+      <PageHeader
+        title="Artifacts"
+        subtitle="URLs, docs, repos, and references extracted from imported evidence."
+        breadcrumbs={[
+          { label: "Overview", href: "/" },
+          { label: "Artifacts" },
+        ]}
+      />
 
-        <section className="detail-hero card">
-          <div className="hero__badge">Artifact explorer / registry</div>
-          <div className="detail-hero__top">
-            <div>
-              <h1>Browse the concrete things your traces and workflows reference.</h1>
-              <p>
-                URLs, docs, repos, and file-like references extracted from real imported evidence and surfaced as a local-first registry.
-              </p>
-            </div>
-            <div className="detail-actions">
-              <Link href="/" className="action-link"><ArrowLeft size={16} /><span>Back to dashboard</span></Link>
-              <Link href="/investigations" className="action-link"><Sparkles size={16} /><span>Investigations</span></Link>
-            </div>
-          </div>
-        </section>
-
-        <section className="dash-panel card">
-          <header className="dash-panel__header">
-            <div className="section-header__title">
-              <span className="section-header__icon"><Layers3 size={18} /></span>
-              <div>
-                <h2>Artifact stream</h2>
-                <p>Newest indexed artifacts across traces and workflows.</p>
-              </div>
-            </div>
-            <div className="filter-row">
-              <Link href="/artifacts" className={`filter-chip ${!kind ? "filter-chip--active" : ""}`}>All</Link>
-              {kinds.map((value) => (
-                <Link key={value} href={`/artifacts?kind=${value}&sort=${sort}`} className={`filter-chip ${kind === value ? "filter-chip--active" : ""}`}>{value}</Link>
-              ))}
-              <Link href={`/artifacts?${kind ? `kind=${kind}&` : ""}sort=newest`} className={`filter-chip ${sort === "newest" ? "filter-chip--active" : ""}`}>Newest</Link>
-              <Link href={`/artifacts?${kind ? `kind=${kind}&` : ""}sort=kind`} className={`filter-chip ${sort === "kind" ? "filter-chip--active" : ""}`}>By kind</Link>
-            </div>
-          </header>
-          <div className="bento-grid">
-            {artifacts.length > 0 ? artifacts.map((artifact) => (
-              <article key={artifact.id} className="dash-panel card panel-span-4 compact-panel">
-                <div className="entity-row__meta">
-                  <StatusPill label={artifact.kind} tone="neutral" />
-                  <span className="muted">{formatRelativeTime(artifact.created_at)}</span>
-                </div>
-                <div className="entity-row__content">
-                  <strong>{artifact.title ?? artifact.id}</strong>
-                  <p>{artifact.uri}</p>
-                </div>
-              </article>
-            )) : <div className="search-empty">No artifacts match the current filter.</div>}
-          </div>
-        </section>
+      <div className="filter-bar">
+        <Link href="/artifacts" className={`filter-chip${!kind ? " filter-chip--active" : ""}`}>All</Link>
+        {kinds.map((value) => (
+          <Link
+            key={value}
+            href={`/artifacts?kind=${value}&sort=${sort}`}
+            className={`filter-chip${kind === value ? " filter-chip--active" : ""}`}
+          >
+            {value}
+          </Link>
+        ))}
+        <span style={{ width: 1, height: 20, background: "var(--border)", margin: "0 4px" }} />
+        <Link
+          href={`/artifacts?${kind ? `kind=${kind}&` : ""}sort=newest`}
+          className={`filter-chip${sort === "newest" ? " filter-chip--active" : ""}`}
+        >
+          Newest
+        </Link>
+        <Link
+          href={`/artifacts?${kind ? `kind=${kind}&` : ""}sort=kind`}
+          className={`filter-chip${sort === "kind" ? " filter-chip--active" : ""}`}
+        >
+          By kind
+        </Link>
       </div>
-    </main>
-  );
-}
 
-function StatusPill({ label, tone }: { label: string; tone: "accent" | "neutral" | "danger" | "success" }) {
-  return <span className={`pill pill--${tone}`}>{label}</span>;
-}
-
-function StatusStripItem({ label, value, tone }: { label: string; value: string; tone: "accent" | "neutral" | "danger" | "success" }) {
-  return (
-    <div className="status-strip__item">
-      <span>{label}</span>
-      <div className="status-strip__value"><StatusPill label={value} tone={tone} /></div>
-    </div>
+      {artifacts.length > 0 ? (
+        <div className="card-grid">
+          {artifacts.map((artifact) => (
+            <div key={artifact.id} className="artifact-card">
+              <div className="artifact-card__kind">
+                <Pill label={artifact.kind} tone="neutral" />
+                <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)", marginLeft: 8 }}>
+                  {formatRelativeTime(artifact.created_at)}
+                </span>
+              </div>
+              <div className="artifact-card__title">{artifact.title ?? artifact.id}</div>
+              <div className="artifact-card__uri">{artifact.uri}</div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <EmptyState message="No artifacts match the current filter." />
+      )}
+    </>
   );
 }

@@ -17,7 +17,7 @@ export function CopyButton({ text, label = "Copy" }: { text: string; label?: str
   }
 
   return (
-    <button type="button" onClick={handleCopy} className="action-link action-link--button">
+    <button type="button" onClick={handleCopy} className="btn btn--ghost">
       {copied ? <Check size={16} /> : <Copy size={16} />}
       <span>{copied ? "Copied" : label}</span>
     </button>
