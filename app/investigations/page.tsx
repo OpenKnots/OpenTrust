@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowLeft, SearchCode, Sparkles } from "lucide-react";
 import { ensureBootstrapped } from "@/lib/opentrust/bootstrap";
 import { getSavedInvestigations } from "@/lib/opentrust/investigations";
 
@@ -9,33 +10,75 @@ export default function InvestigationsPage() {
   const investigations = getSavedInvestigations();
 
   return (
-    <main className="shell shell--detail">
-      <div className="content">
-        <section className="card hero">
-          <div className="hero__badge">Saved investigations</div>
-          <h2>Reusable SQL investigations for common operator questions.</h2>
-          <p className="hero__lede">
-            These are local-first investigation presets meant to speed up incident review, workflow debugging, and evidence-driven tracing.
-          </p>
-          <div className="detail-actions">
-            <Link href="/" className="search-form__button">Back to field manual</Link>
+    <main className="dashboard-shell">
+      <div className="dashboard-bg" />
+      <div className="dashboard-container">
+        <section className="status-strip card">
+          <StatusStripItem label="saved" value={String(investigations.length)} tone="accent" />
+          <StatusStripItem label="mode" value="sql presets" tone="neutral" />
+          <StatusStripItem label="scope" value="local-first" tone="success" />
+          <StatusStripItem label="surface" value="operator" tone="neutral" />
+        </section>
+
+        <section className="detail-hero card">
+          <div className="hero__badge">Saved investigations / operator library</div>
+          <div className="detail-hero__top">
+            <div>
+              <h1>Reusable SQL investigations for common operator questions.</h1>
+              <p>
+                Local-first investigation presets for incident review, workflow debugging, and evidence-driven tracing across sessions, workflows, and artifacts.
+              </p>
+            </div>
+            <div className="detail-actions">
+              <Link href="/" className="action-link"><ArrowLeft size={16} /><span>Back to dashboard</span></Link>
+              <Link href="/?q=gateway" className="action-link"><Sparkles size={16} /><span>Quick search</span></Link>
+            </div>
           </div>
         </section>
 
-        <section className="stack">
-          {investigations.map((investigation) => (
-            <article key={investigation.id} className="card card--soft">
-              <div className="meta-row">
-                <span className="pill pill--outline">saved</span>
-                <span className="muted">{investigation.id}</span>
+        <section className="dash-panel card">
+          <header className="dash-panel__header">
+            <div className="section-header__title">
+              <span className="section-header__icon"><SearchCode size={18} /></span>
+              <div>
+                <h2>Investigation presets</h2>
+                <p>Reusable SQL designed for the most common operational questions.</p>
               </div>
-              <h3>{investigation.title}</h3>
-              <p>{investigation.description ?? "No description."}</p>
-              <pre>{investigation.sql_text}</pre>
-            </article>
-          ))}
+            </div>
+          </header>
+          <div className="list-stack">
+            {investigations.map((investigation) => (
+              <article key={investigation.id} className="entity-row entity-row--block">
+                <div className="entity-row__meta">
+                  <StatusPill label="saved" tone="accent" />
+                  <span className="muted">{investigation.id}</span>
+                </div>
+                <div className="entity-row__content">
+                  <strong>{investigation.title}</strong>
+                  <p>{investigation.description ?? "No description."}</p>
+                </div>
+                <details>
+                  <summary>SQL</summary>
+                  <pre>{investigation.sql_text}</pre>
+                </details>
+              </article>
+            ))}
+          </div>
         </section>
       </div>
     </main>
+  );
+}
+
+function StatusPill({ label, tone }: { label: string; tone: "accent" | "neutral" | "danger" | "success" }) {
+  return <span className={`pill pill--${tone}`}>{label}</span>;
+}
+
+function StatusStripItem({ label, value, tone }: { label: string; value: string; tone: "accent" | "neutral" | "danger" | "success" }) {
+  return (
+    <div className="status-strip__item">
+      <span>{label}</span>
+      <div className="status-strip__value"><StatusPill label={value} tone={tone} /></div>
+    </div>
   );
 }
