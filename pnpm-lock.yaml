@@ -20,6 +20,9 @@ importers:
       react-dom:
         specifier: 19.0.0
         version: 19.0.0(react@19.0.0)
+      sqlite-vec:
+        specifier: ^0.1.7
+        version: 0.1.7
     devDependencies:
       '@secretlint/core':
         specifier: ^11.3.1
@@ -861,6 +864,34 @@ packages:
   spdx-license-ids@3.0.23:
     resolution: {integrity: sha512-CWLcCCH7VLu13TgOH+r8p1O/Znwhqv/dbb6lqWy67G+pT1kHmeD/+V36AVb/vq8QMIQwVShJ6Ssl5FPh0fuSdw==}
 
+  sqlite-vec-darwin-arm64@0.1.7:
+    resolution: {integrity: sha512-dQ7u4GKPdOPi3IfZ44K7HHdYup2JssM6fuKR9zgqRzW137uFOQmRhbYChNu+ZfW+yhJutsPgfNRFsuWKmy627w==}
+    cpu: [arm64]
+    os: [darwin]
+
+  sqlite-vec-darwin-x64@0.1.7:
+    resolution: {integrity: sha512-MDoczft1BriQcGMEz+CqeSCkB0OsAf12ytZOapS6MaB7zgNzLLSLH6Sxe3yzcPWUyDuCWgK7WzyRIo8u1vAIVA==}
+    cpu: [x64]
+    os: [darwin]
+
+  sqlite-vec-linux-arm64@0.1.7:
+    resolution: {integrity: sha512-V429sYT/gwr9PgtT8rbjQd6ls7CFchFpiS45TKSf7rU7wxt9MBmCVorUcheD4kEZb4VeZ6PnFXXCqPMeaHkaUw==}
+    cpu: [arm64]
+    os: [linux]
+
+  sqlite-vec-linux-x64@0.1.7:
+    resolution: {integrity: sha512-wZL+lXeW7y63DLv6FYU6Q4nv2lP5F94cWt7bJCWNiHmZ6NdKIgz/p0QlyuJA/51b8TyoDvsTdusLVlZz9cIh5A==}
+    cpu: [x64]
+    os: [linux]
+
+  sqlite-vec-windows-x64@0.1.7:
+    resolution: {integrity: sha512-FEZMjMT03irJxwqMQg+A+4hHCiFslxISOAkQ0eYn2lP7GdpppkgYveaT5Xnw/2V+GLq2MXOJb0nDGFNethHSkg==}
+    cpu: [x64]
+    os: [win32]
+
+  sqlite-vec@0.1.7:
+    resolution: {integrity: sha512-1Sge9uRc3B6wDKR4J6sGFi/E2ai9SAU5FenDki3OmhdP/a49PO2Juy1U5yQnx2bZP5t+C3BYJTkG+KkDi3q9Xg==}
+
   string-width@4.2.3:
     resolution: {integrity: sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==}
     engines: {node: '>=8'}
@@ -1659,6 +1690,29 @@ snapshots:
       spdx-license-ids: 3.0.23
 
   spdx-license-ids@3.0.23: {}
+
+  sqlite-vec-darwin-arm64@0.1.7:
+    optional: true
+
+  sqlite-vec-darwin-x64@0.1.7:
+    optional: true
+
+  sqlite-vec-linux-arm64@0.1.7:
+    optional: true
+
+  sqlite-vec-linux-x64@0.1.7:
+    optional: true
+
+  sqlite-vec-windows-x64@0.1.7:
+    optional: true
+
+  sqlite-vec@0.1.7:
+    optionalDependencies:
+      sqlite-vec-darwin-arm64: 0.1.7
+      sqlite-vec-darwin-x64: 0.1.7
+      sqlite-vec-linux-arm64: 0.1.7
+      sqlite-vec-linux-x64: 0.1.7
+      sqlite-vec-windows-x64: 0.1.7
 
   string-width@4.2.3:
     dependencies:

@@ -136,6 +136,16 @@ CREATE TABLE IF NOT EXISTS ingestion_state (
   metadata_json TEXT NOT NULL DEFAULT '{}'
 );
 
+CREATE TABLE IF NOT EXISTS saved_investigations (
+  id TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  description TEXT,
+  sql_text TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  metadata_json TEXT NOT NULL DEFAULT '{}'
+);
+
 CREATE VIRTUAL TABLE IF NOT EXISTS search_chunks USING fts5(
   source_kind,
   source_id,

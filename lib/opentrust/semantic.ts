@@ -1,6 +1,9 @@
 import { createHash } from "node:crypto";
-import { execute, getDb, queryJson, queryOne, runSql } from "@/lib/opentrust/db";
+import { getLoadablePath } from "sqlite-vec";
+import { escapeSqlString, execute, getDb, queryJson, queryOne, runSql } from "@/lib/opentrust/db";
 import { recordIngestionState } from "@/lib/opentrust/ingestion-state";
+
+const VECTOR_DIMS = 64;
 
 export interface SemanticChunkRow {
   chunk_id: string;
@@ -37,6 +40,47 @@ function splitIntoChunks(text: string, maxChars = 1200) {
   return chunks;
 }
 
+function normalizeVector(values: number[]) {
+  const norm = Math.sqrt(values.reduce((sum, value) => sum + value * value, 0)) || 1;
+  return values.map((value) => value / norm);
+}
+
+function embedText(text: string, dims = VECTOR_DIMS) {
+  const values = Array.from({ length: dims }, () => 0);
+  const lowered = text.toLowerCase();
+  for (let i = 0; i < lowered.length; i += 1) {
+    const code = lowered.charCodeAt(i);
+    values[i % dims] += ((code % 37) - 18) / 18;
+  }
+  return normalizeVector(values);
+}
+
+function vectorJson(text: string) {
+  return JSON.stringify(embedText(text));
+}
+
+function tryLoadSqliteVec() {
+  const db = getDb();
+  const configuredPath = process.env.OPENTRUST_SQLITE_VEC_PATH ?? getLoadablePath();
+
+  try {
+    db.loadExtension(configuredPath);
+    runSql(`
+      CREATE VIRTUAL TABLE IF NOT EXISTS semantic_vec USING vec0(
+        embedding float[${VECTOR_DIMS}]
+      );
+
+      CREATE TABLE IF NOT EXISTS semantic_vec_map (
+        rowid INTEGER PRIMARY KEY,
+        chunk_id TEXT NOT NULL UNIQUE
+      );
+    `);
+    return { ok: true, path: configuredPath };
+  } catch {
+    return { ok: false, path: configuredPath };
+  }
+}
+
 export function ensureSemanticTables() {
   runSql(`
     CREATE TABLE IF NOT EXISTS semantic_chunks (
@@ -62,8 +106,13 @@ export function ensureSemanticTables() {
 
 export function rebuildSemanticChunks() {
   ensureSemanticTables();
+  const vec = tryLoadSqliteVec();
 
   runSql("DELETE FROM semantic_chunks;");
+  if (vec.ok) {
+    runSql("DELETE FROM semantic_vec_map;");
+    runSql("DELETE FROM semantic_vec;");
+  }
 
   const createdAt = nowIso();
   const traceRows = queryJson<{ source_id: string; title: string | null; body: string | null }>(`
@@ -74,52 +123,8 @@ export function rebuildSemanticChunks() {
 
   let inserted = 0;
 
-  for (const row of traceRows) {
-    const chunks = splitIntoChunks(`${row.title ?? row.source_id}\n\n${row.body ?? ""}`);
-    chunks.forEach((chunk, index) => {
-      execute(
-        `
-          INSERT INTO semantic_chunks (
-            chunk_id,
-            source_kind,
-            source_id,
-            title,
-            body,
-            token_estimate,
-            created_at,
-            metadata_json
-          ) VALUES (
-            :chunkId,
-            'trace',
-            :sourceId,
-            :title,
-            :body,
-            :tokenEstimate,
-            :createdAt,
-            :metadataJson
-          )
-        `,
-        {
-          chunkId: hashId("trace", row.source_id, chunk, index),
-          sourceId: row.source_id,
-          title: row.title,
-          body: chunk,
-          tokenEstimate: Math.ceil(chunk.length / 4),
-          createdAt,
-          metadataJson: JSON.stringify({ chunkIndex: index }),
-        },
-      );
-      inserted += 1;
-    });
-  }
-
-  const artifactRows = queryJson<{ id: string; title: string | null; uri: string; kind: string }>(`
-    SELECT id, title, uri, kind
-    FROM artifacts;
-  `);
-
-  for (const row of artifactRows) {
-    const body = `${row.title ?? row.id}\n\n${row.uri}\n\n${row.kind}`;
+  const insertChunk = (sourceKind: string, sourceId: string, title: string | null, body: string, metadata: Record<string, unknown>) => {
+    const chunkId = hashId(sourceKind, sourceId, body, inserted + 1);
     execute(
       `
         INSERT INTO semantic_chunks (
@@ -133,7 +138,7 @@ export function rebuildSemanticChunks() {
           metadata_json
         ) VALUES (
           :chunkId,
-          'artifact',
+          :sourceKind,
           :sourceId,
           :title,
           :body,
@@ -143,22 +148,45 @@ export function rebuildSemanticChunks() {
         )
       `,
       {
-        chunkId: hashId("artifact", row.id, body, 0),
-        sourceId: row.id,
-        title: row.title,
+        chunkId,
+        sourceKind,
+        sourceId,
+        title,
         body,
         tokenEstimate: Math.ceil(body.length / 4),
         createdAt,
-        metadataJson: JSON.stringify({ uri: row.uri, kind: row.kind }),
+        metadataJson: JSON.stringify(metadata),
       },
     );
+
+    if (vec.ok) {
+      const rowid = inserted + 1;
+      runSql(`INSERT INTO semantic_vec(rowid, embedding) VALUES (${rowid}, ${escapeSqlString(vectorJson(`${title ?? sourceId}\n\n${body}`))});`);
+      execute(`INSERT INTO semantic_vec_map(rowid, chunk_id) VALUES (:rowid, :chunkId);`, { rowid, chunkId });
+    }
+
     inserted += 1;
+  };
+
+  for (const row of traceRows) {
+    const chunks = splitIntoChunks(`${row.title ?? row.source_id}\n\n${row.body ?? ""}`);
+    chunks.forEach((chunk, index) => insertChunk("trace", row.source_id, row.title, chunk, { chunkIndex: index }));
+  }
+
+  const artifactRows = queryJson<{ id: string; title: string | null; uri: string; kind: string }>(`
+    SELECT id, title, uri, kind
+    FROM artifacts;
+  `);
+
+  for (const row of artifactRows) {
+    const body = `${row.title ?? row.id}\n\n${row.uri}\n\n${row.kind}`;
+    insertChunk("artifact", row.id, row.title, body, { uri: row.uri, kind: row.kind });
   }
 
   execute(
     `
       INSERT INTO semantic_index_state (id, status, vector_extension_path, last_chunk_run_at, metadata_json)
-      VALUES ('primary', 'chunked', :vectorPath, :lastRunAt, :metadataJson)
+      VALUES ('primary', :status, :vectorPath, :lastRunAt, :metadataJson)
       ON CONFLICT(id) DO UPDATE SET
         status=excluded.status,
         vector_extension_path=excluded.vector_extension_path,
@@ -166,9 +194,10 @@ export function rebuildSemanticChunks() {
         metadata_json=excluded.metadata_json;
     `,
     {
-      vectorPath: process.env.OPENTRUST_SQLITE_VEC_PATH ?? null,
+      status: vec.ok ? "vector-ready" : "chunked",
+      vectorPath: vec.path ?? null,
       lastRunAt: createdAt,
-      metadataJson: JSON.stringify({ chunkCount: inserted, vectorReady: false }),
+      metadataJson: JSON.stringify({ chunkCount: inserted, vectorReady: vec.ok }),
     },
   );
 
@@ -180,7 +209,7 @@ export function rebuildSemanticChunks() {
     lastRunAt: createdAt,
     lastStatus: "ok",
     importedCount: inserted,
-    metadata: { vectorReady: false },
+    metadata: { vectorReady: vec.ok },
   });
 
   return inserted;
@@ -197,7 +226,7 @@ export function getSemanticStatus(): SemanticStatus {
     LIMIT 1;
   `);
 
-  const metadata = state?.metadata_json ? JSON.parse(state.metadata_json) as { vectorReady?: boolean } : {};
+  const metadata = state?.metadata_json ? (JSON.parse(state.metadata_json) as { vectorReady?: boolean }) : {};
 
   return {
     chunkCount: counts.count,
@@ -209,6 +238,23 @@ export function getSemanticStatus(): SemanticStatus {
 
 export function searchSemanticFallback(query: string) {
   ensureSemanticTables();
+  const state = getSemanticStatus();
+
+  if (state.vectorReady) {
+    return queryJson<{ source_id: string; source_kind: string; title: string | null; body: string }>(
+      `
+        SELECT semantic_chunks.source_id, semantic_chunks.source_kind, semantic_chunks.title, semantic_chunks.body
+        FROM semantic_vec
+        JOIN semantic_vec_map ON semantic_vec_map.rowid = semantic_vec.rowid
+        JOIN semantic_chunks ON semantic_chunks.chunk_id = semantic_vec_map.chunk_id
+        WHERE semantic_vec.embedding MATCH :embedding
+        ORDER BY distance
+        LIMIT 8;
+      `,
+      { embedding: vectorJson(query) },
+    );
+  }
+
   const q = `%${query.toLowerCase()}%`;
   return queryJson<{ source_id: string; source_kind: string; title: string | null; body: string }>(`
     SELECT source_id, source_kind, title, body

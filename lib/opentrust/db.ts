@@ -24,7 +24,7 @@ export function getDb() {
   if (database) return database;
 
   ensureStorageDir();
-  database = new DatabaseSync(dbPath);
+  database = new DatabaseSync(dbPath, { allowExtension: true });
   database.exec("PRAGMA journal_mode=WAL;");
   database.exec("PRAGMA foreign_keys=ON;");
   return database;
@@ -73,6 +73,16 @@ export function ensureMigrated() {
       last_run_at TEXT,
       last_status TEXT,
       imported_count INTEGER NOT NULL DEFAULT 0,
+      metadata_json TEXT NOT NULL DEFAULT '{}'
+    );
+
+    CREATE TABLE IF NOT EXISTS saved_investigations (
+      id TEXT PRIMARY KEY,
+      title TEXT NOT NULL,
+      description TEXT,
+      sql_text TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
       metadata_json TEXT NOT NULL DEFAULT '{}'
     );
 

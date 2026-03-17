@@ -1,8 +1,8 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
-import { escapeSqlString, execute, runSql } from "@/lib/opentrust/db";
-import { recordIngestionState } from "@/lib/opentrust/ingestion-state";
 import { upsertArtifactsForTrace } from "@/lib/opentrust/artifact-extract";
+import { execute, escapeSqlString, runSql } from "@/lib/opentrust/db";
+import { getIngestionState, recordIngestionState } from "@/lib/opentrust/ingestion-state";
 import { makeToolCallDraft, maybeBuildToolResultUpdate } from "@/lib/opentrust/tool-results";
 
 type SessionIndexEntry = {
@@ -23,6 +23,8 @@ type JsonlRecord = {
   id?: string;
   timestamp?: string;
   message?: {
+    id?: string;
+    parentId?: string;
     role?: string;
     timestamp?: number;
     content?: Array<Record<string, unknown>>;
@@ -41,6 +43,8 @@ function extractTextSnippet(content: Record<string, unknown>): string {
   if (typeof content.text === "string") return cleanText(content.text);
   if (typeof content.thinking === "string") return cleanText(content.thinking);
   if (typeof content.name === "string") return cleanText(content.name);
+  if (typeof content.stdout === "string") return cleanText(content.stdout);
+  if (typeof content.stderr === "string") return cleanText(content.stderr);
   return cleanText(JSON.stringify(content).slice(0, 600));
 }
 
@@ -63,7 +67,7 @@ function loadJsonlRecords(file: string): JsonlRecord[] {
   if (!existsSync(file)) return [];
   const lines = readFileSync(file, "utf8").split(/\r?\n/).filter(Boolean);
   const records: JsonlRecord[] = [];
-  for (const line of lines.slice(-400)) {
+  for (const line of lines.slice(-800)) {
     try {
       records.push(JSON.parse(line) as JsonlRecord);
     } catch {
@@ -136,9 +140,13 @@ function upsertSessionAndTrace(sessionKey: string, entry: SessionIndexEntry, rec
     DELETE FROM tool_calls WHERE trace_id = ${escapeSqlString(traceId)};
     DELETE FROM trace_capabilities WHERE trace_id = ${escapeSqlString(traceId)};
     DELETE FROM search_chunks WHERE source_kind = 'trace' AND source_id = ${escapeSqlString(traceId)};
+    DELETE FROM trace_edges WHERE from_kind = 'event' AND from_id LIKE ${escapeSqlString(`${traceId}:event:%`)};
   `);
 
   let sequenceNo = 0;
+  const contentIdToEventId = new Map<string, string>();
+  const pendingEdges: Array<{ fromId: string; edgeType: string; toRef: string }> = [];
+
   for (const record of records) {
     if (record.type !== "message") continue;
     const role = record.message?.role ?? "unknown";
@@ -149,6 +157,7 @@ function upsertSessionAndTrace(sessionKey: string, entry: SessionIndexEntry, rec
       const contentType = typeof item.type === "string" ? item.type : "unknown";
       const preview = extractTextSnippet(item).slice(0, 1200);
       const eventId = `${traceId}:event:${sequenceNo}`;
+      const createdAt = record.timestamp ?? startedAt;
 
       runSql(`
         INSERT INTO events (id, trace_id, session_id, kind, sequence_no, created_at, payload_json, text_preview)
@@ -158,14 +167,24 @@ function upsertSessionAndTrace(sessionKey: string, entry: SessionIndexEntry, rec
           ${escapeSqlString(sessionKey)},
           ${escapeSqlString(`message.${role}.${contentType}`)},
           ${sequenceNo},
-          ${escapeSqlString(record.timestamp ?? startedAt)},
+          ${escapeSqlString(createdAt)},
           ${sqlJson(item)},
           ${escapeSqlString(preview)}
         );
       `);
 
+      if (typeof item.id === "string") {
+        contentIdToEventId.set(item.id, eventId);
+      }
+      if (typeof item.parentId === "string") {
+        pendingEdges.push({ fromId: eventId, edgeType: "parent", toRef: item.parentId });
+      }
+      if (typeof item.toolUseId === "string") {
+        pendingEdges.push({ fromId: eventId, edgeType: "tool-result-of", toRef: item.toolUseId });
+      }
+
       if (contentType === "toolCall") {
-        const toolDraft = makeToolCallDraft(item, `${traceId}:tool:${sequenceNo}`, record.timestamp ?? startedAt);
+        const toolDraft = makeToolCallDraft(item, `${traceId}:tool:${sequenceNo}`, createdAt);
         execute(
           `
             INSERT OR REPLACE INTO tool_calls (id, trace_id, session_id, tool_name, arguments_json, status, started_at)
@@ -208,6 +227,24 @@ function upsertSessionAndTrace(sessionKey: string, entry: SessionIndexEntry, rec
     }
   }
 
+  for (const edge of pendingEdges) {
+    const toEventId = contentIdToEventId.get(edge.toRef);
+    if (!toEventId) continue;
+    runSql(`
+      INSERT OR REPLACE INTO trace_edges (id, from_kind, from_id, edge_type, to_kind, to_id, created_at, metadata_json)
+      VALUES (
+        ${escapeSqlString(`edge:${edge.fromId}:${edge.edgeType}:${toEventId}`)},
+        'event',
+        ${escapeSqlString(edge.fromId)},
+        ${escapeSqlString(edge.edgeType)},
+        'event',
+        ${escapeSqlString(toEventId)},
+        ${escapeSqlString(updatedAt)},
+        ${sqlJson({ source: 'openclaw-session-lineage' })}
+      );
+    `);
+  }
+
   const searchBody = messageSnippets.slice(-12).join("\n\n").slice(0, 12000);
 
   runSql(`
@@ -221,16 +258,47 @@ function upsertSessionAndTrace(sessionKey: string, entry: SessionIndexEntry, rec
   `);
 
   upsertArtifactsForTrace(traceId, `${label}\n\n${searchBody}`, updatedAt);
+
+  recordIngestionState({
+    sourceKey: `openclaw:session:${sessionKey}`,
+    sourceKind: "session-jsonl",
+    cursorText: entry.sessionId ?? null,
+    cursorNumber: entry.updatedAt ?? null,
+    lastRunAt: new Date().toISOString(),
+    lastStatus: "ok",
+    importedCount: records.length,
+    metadata: { traceId, sessionFile: entry.sessionFile ?? null },
+  });
 }
 
 export function importRecentOpenClawSessions(limit = 24) {
   const items = loadSessionIndex().slice(0, limit);
+  let imported = 0;
+  const globalState = getIngestionState("openclaw:sessions:main");
+
   for (const { sessionKey, entry } of items) {
     const file = entry.sessionFile;
     if (!file) continue;
+
+    const perSessionState = getIngestionState(`openclaw:session:${sessionKey}`);
+    const unchanged =
+      perSessionState?.cursor_number != null &&
+      entry.updatedAt != null &&
+      Number(perSessionState.cursor_number) >= entry.updatedAt;
+
+    const globallyOlder =
+      globalState?.cursor_number != null &&
+      entry.updatedAt != null &&
+      Number(globalState.cursor_number) > entry.updatedAt;
+
+    if (unchanged || globallyOlder) {
+      continue;
+    }
+
     const records = loadJsonlRecords(file);
     if (records.length === 0) continue;
     upsertSessionAndTrace(sessionKey, entry, records);
+    imported += 1;
   }
 
   recordIngestionState({
@@ -240,7 +308,7 @@ export function importRecentOpenClawSessions(limit = 24) {
     cursorNumber: items[0]?.entry.updatedAt ?? null,
     lastRunAt: new Date().toISOString(),
     lastStatus: "ok",
-    importedCount: items.length,
+    importedCount: imported,
     metadata: {
       limit,
       newestSessionKey: items[0]?.sessionKey ?? null,
@@ -248,5 +316,5 @@ export function importRecentOpenClawSessions(limit = 24) {
     },
   });
 
-  return items.length;
+  return imported;
 }

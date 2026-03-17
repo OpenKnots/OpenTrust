@@ -308,7 +308,7 @@ export default async function HomePage({
                   <span className="pill pill--outline">{workflow.status}</span>
                   <span className="muted">{workflow.source_kind ?? "workflow"}</span>
                 </div>
-                <h3>{workflow.name}</h3>
+                <h3><Link href={`/workflows/${encodeURIComponent(workflow.id)}`}>{workflow.name}</Link></h3>
                 <p>{workflow.summary ?? "No summary yet."}</p>
                 <details>
                   <summary>Workflow identity</summary>
@@ -340,6 +340,10 @@ export default async function HomePage({
               Imported workflow cards now show whether they came from cron ingestion, seed data, or future runtime sources,
               making the field manual view much clearer during incident review and routine operations.
             </p>
+            <div className="detail-actions">
+              <Link href="/artifacts" className="search-form__button">Open artifact explorer</Link>
+              <Link href="/investigations" className="search-form__button">Open saved investigations</Link>
+            </div>
           </div>
         </section>
       </div>

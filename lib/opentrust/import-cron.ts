@@ -1,8 +1,8 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
-import { escapeSqlString, runSql } from "@/lib/opentrust/db";
-import { recordIngestionState } from "@/lib/opentrust/ingestion-state";
 import { upsertArtifactsForWorkflow } from "@/lib/opentrust/artifact-extract";
+import { escapeSqlString, runSql } from "@/lib/opentrust/db";
+import { getIngestionState, recordIngestionState } from "@/lib/opentrust/ingestion-state";
 
 interface CronJobEntry {
   id: string;
@@ -61,7 +61,7 @@ function loadRunRecords(jobId: string): CronRunRecord[] {
   return readFileSync(file, "utf8")
     .split(/\r?\n/)
     .filter(Boolean)
-    .slice(-80)
+    .slice(-120)
     .flatMap((line) => {
       try {
         return [JSON.parse(line) as CronRunRecord];
@@ -134,18 +134,38 @@ function upsertWorkflow(job: CronJobEntry, records: CronRunRecord[]) {
       .slice(0, 12000),
     updatedAt,
   );
+
+  recordIngestionState({
+    sourceKey: `openclaw:cron-job:${job.id}`,
+    sourceKind: "cron-run-log",
+    cursorText: job.id,
+    cursorNumber: job.state?.lastRunAtMs ?? records.at(-1)?.ts ?? null,
+    lastRunAt: new Date().toISOString(),
+    lastStatus: "ok",
+    importedCount: records.length,
+    metadata: { workflowId, latestStatus: status },
+  });
 }
 
 export function importCronWorkflows(limit = 24) {
   const jobs = loadJobs().slice(0, limit);
+  let imported = 0;
+  const globalState = getIngestionState("openclaw:cron:main");
+
   for (const job of jobs) {
+    const lastCursor = job.state?.lastRunAtMs ?? 0;
+    const perJobState = getIngestionState(`openclaw:cron-job:${job.id}`);
+    const unchanged = perJobState?.cursor_number != null && Number(perJobState.cursor_number) >= lastCursor;
+    const globallyOlder = globalState?.cursor_number != null && Number(globalState.cursor_number) > lastCursor;
+
+    if (unchanged || globallyOlder) continue;
+
     const records = loadRunRecords(job.id);
     upsertWorkflow(job, records);
+    imported += 1;
   }
 
-  const latestRunMs = jobs
-    .map((job) => job.state?.lastRunAtMs ?? 0)
-    .sort((a, b) => b - a)[0] ?? null;
+  const latestRunMs = jobs.map((job) => job.state?.lastRunAtMs ?? 0).sort((a, b) => b - a)[0] ?? null;
 
   recordIngestionState({
     sourceKey: "openclaw:cron:main",
@@ -154,7 +174,7 @@ export function importCronWorkflows(limit = 24) {
     cursorNumber: latestRunMs,
     lastRunAt: new Date().toISOString(),
     lastStatus: "ok",
-    importedCount: jobs.length,
+    importedCount: imported,
     metadata: {
       limit,
       newestJobId: jobs[0]?.id ?? null,
@@ -162,5 +182,5 @@ export function importCronWorkflows(limit = 24) {
     },
   });
 
-  return jobs.length;
+  return imported;
 }
