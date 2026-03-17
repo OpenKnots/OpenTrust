@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { ensureMigrated, escapeSqlString, queryOne, runSql } from "@/lib/opentrust/db";
+import { importRecentOpenClawSessions } from "@/lib/opentrust/import-openclaw";
 
 function sqlJson(value: unknown) {
   return escapeSqlString(JSON.stringify(value));
@@ -136,4 +137,5 @@ export function ensureBootstrapped() {
   syncSoulFromIdentity();
   seedBundleCapability();
   seedDemoTraceIfEmpty();
+  importRecentOpenClawSessions();
 }

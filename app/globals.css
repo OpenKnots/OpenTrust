@@ -259,6 +259,64 @@ code {
   line-height: 1.65;
 }
 
+.search-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.search-form__label {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.search-form__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+}
+
+.search-form__input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(2, 9, 19, 0.6);
+  color: var(--text);
+  padding: 14px 16px;
+  outline: none;
+}
+
+.search-form__button {
+  border: 1px solid var(--line-strong);
+  border-radius: 16px;
+  background: rgba(141, 208, 255, 0.1);
+  color: var(--accent);
+  padding: 14px 18px;
+  font-weight: 600;
+}
+
+.search-results {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.search-result,
+.search-empty {
+  margin-top: 18px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 16px;
+}
+
+.search-result mark {
+  background: rgba(197, 180, 255, 0.3);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 0 3px;
+}
+
 @media (max-width: 1120px) {
   .shell {
     grid-template-columns: 1fr;

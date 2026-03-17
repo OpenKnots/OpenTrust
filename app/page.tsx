@@ -1,6 +1,8 @@
 import { DatabaseZap, FileStack, Layers3, Route, SearchCode, ShieldCheck, Sparkles, Telescope, Workflow } from "lucide-react";
 import { capabilityCards, manualSections, queryExamples, traceCards } from "@/lib/mock-data";
 import { getOverview } from "@/lib/opentrust/overview";
+import { searchInvestigations } from "@/lib/opentrust/search";
+import { getImportedSessionTraces } from "@/lib/opentrust/session-traces";
 
 export const dynamic = "force-dynamic";
 
@@ -12,8 +14,16 @@ const sectionIcons = {
   storage: DatabaseZap,
 } as const;
 
-export default function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ q?: string }>;
+}) {
   const overview = getOverview();
+  const params = (await searchParams) ?? {};
+  const query = typeof params.q === "string" ? params.q : "";
+  const investigationResults = query ? searchInvestigations(query) : [];
+  const importedSessionTraces = getImportedSessionTraces();
 
   return (
     <main className="shell">
@@ -112,6 +122,30 @@ export default function HomePage() {
               </article>
             ))}
           </div>
+          <div className="stack">
+            <SectionHeader
+              icon={<Route size={18} />}
+              title="Imported OpenClaw sessions"
+              summary="Recent real session traces imported from local OpenClaw JSONL transcripts, keeping the operator flow grounded in actual runtime evidence."
+            />
+            <div className="grid grid--two">
+              {importedSessionTraces.map((trace) => (
+                <article key={trace.id} className="card card--soft">
+                  <div className="meta-row">
+                    <span className="pill pill--outline">{trace.status}</span>
+                    <span className="muted">{trace.session_label ?? trace.id}</span>
+                  </div>
+                  <h3>{trace.title ?? trace.id}</h3>
+                  <p>{trace.summary ?? "No summary yet."}</p>
+                  <details>
+                    <summary>Imported trace details</summary>
+                    <p>Updated: {trace.updated_at}</p>
+                    <p>Trace ID: {trace.id}</p>
+                  </details>
+                </article>
+              ))}
+            </div>
+          </div>
         </section>
 
         <section id="capabilities" className="stack">
@@ -156,6 +190,46 @@ export default function HomePage() {
             title="Investigation Studio"
             summary="Power users get real SQL. Beginners get saved investigations, friendly summaries, and expandable evidence panes."
           />
+          <div className="card card--soft">
+            <form method="GET" className="search-form">
+              <label className="search-form__label" htmlFor="investigation-query">
+                Search real imported traces
+              </label>
+              <div className="search-form__row">
+                <input
+                  id="investigation-query"
+                  name="q"
+                  defaultValue={query}
+                  placeholder="gateway auth, claw-knots, cron, plugin failure…"
+                  className="search-form__input"
+                />
+                <button type="submit" className="search-form__button">
+                  Search
+                </button>
+              </div>
+            </form>
+
+            {query ? (
+              investigationResults.length > 0 ? (
+                <div className="search-results">
+                  {investigationResults.map((result) => (
+                    <article key={`${result.source_id}:${result.title}`} className="search-result">
+                      <div className="meta-row">
+                        <span className="pill pill--outline">match</span>
+                        <span className="muted">{result.source_id}</span>
+                      </div>
+                      <h3>{result.title}</h3>
+                      <p dangerouslySetInnerHTML={{ __html: result.snippet.replaceAll('‹mark›', '<mark>').replaceAll('‹/mark›', '</mark>') }} />
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <div className="search-empty">No matches yet for “{query}”. Try a repo, workflow, plugin, session topic, or agent name.</div>
+              )
+            ) : (
+              <div className="search-empty">Start with a simple query like <strong>gateway</strong>, <strong>cron</strong>, <strong>claw-knots</strong>, or <strong>plugin failure</strong>.</div>
+            )}
+          </div>
           <div className="grid grid--two">
             {queryExamples.map((query) => (
               <article key={query.title} className="card card--soft">
