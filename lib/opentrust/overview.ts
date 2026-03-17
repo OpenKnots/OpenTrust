@@ -2,6 +2,7 @@ import { getRecentArtifacts, type ArtifactRow } from "@/lib/opentrust/artifacts"
 import { ensureBootstrapped } from "@/lib/opentrust/bootstrap";
 import { queryJson, queryOne } from "@/lib/opentrust/db";
 import { getIngestionStates, type IngestionStateRow } from "@/lib/opentrust/ingestion-state";
+import { getSemanticStatus, type SemanticStatus } from "@/lib/opentrust/semantic";
 
 export interface OverviewCounts {
   sessions: number;
@@ -40,20 +41,22 @@ export interface OpenTrustOverview {
   recentWorkflows: WorkflowSummary[];
   recentArtifacts: ArtifactRow[];
   ingestionStates: IngestionStateRow[];
+  semanticStatus: SemanticStatus;
   localDatabasePath: string;
 }
 
 export function getOverview(): OpenTrustOverview {
   ensureBootstrapped();
 
-  const counts = queryOne<OverviewCounts>(`
-    SELECT
-      (SELECT COUNT(*) FROM sessions) AS sessions,
-      (SELECT COUNT(*) FROM traces) AS traces,
-      (SELECT COUNT(*) FROM workflow_runs) AS workflows,
-      (SELECT COUNT(*) FROM capabilities) AS capabilities,
-      (SELECT COUNT(*) FROM artifacts) AS artifacts;
-  `) ?? { sessions: 0, traces: 0, workflows: 0, capabilities: 0, artifacts: 0 };
+  const counts =
+    queryOne<OverviewCounts>(`
+      SELECT
+        (SELECT COUNT(*) FROM sessions) AS sessions,
+        (SELECT COUNT(*) FROM traces) AS traces,
+        (SELECT COUNT(*) FROM workflow_runs) AS workflows,
+        (SELECT COUNT(*) FROM capabilities) AS capabilities,
+        (SELECT COUNT(*) FROM artifacts) AS artifacts;
+    `) ?? { sessions: 0, traces: 0, workflows: 0, capabilities: 0, artifacts: 0 };
 
   const recentTraces = queryJson<RecentTrace>(`
     SELECT
@@ -85,6 +88,7 @@ export function getOverview(): OpenTrustOverview {
 
   const recentArtifacts = getRecentArtifacts();
   const ingestionStates = getIngestionStates();
+  const semanticStatus = getSemanticStatus();
 
   const dbInfo = queryOne<{ file: string }>(`PRAGMA database_list;`) ?? { file: "storage/opentrust.sqlite" };
 
@@ -95,6 +99,7 @@ export function getOverview(): OpenTrustOverview {
     recentWorkflows,
     recentArtifacts,
     ingestionStates,
+    semanticStatus,
     localDatabasePath: dbInfo.file,
   };
 }

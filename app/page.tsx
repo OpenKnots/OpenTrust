@@ -102,6 +102,21 @@ export default async function HomePage({
               </article>
             ))}
           </div>
+          <div className="card card--soft">
+            <div className="meta-row">
+              <span className="pill pill--outline">{overview.semanticStatus.vectorReady ? "vector-ready" : "chunk-ready"}</span>
+              <span className="muted">semantic indexing</span>
+            </div>
+            <h3>Semantic search foundation</h3>
+            <p>
+              {overview.semanticStatus.chunkCount} semantic chunks are staged locally. True sqlite-vec mode will activate once a vector extension path is configured.
+            </p>
+            <details>
+              <summary>Semantic index details</summary>
+              <p>Last chunk run: {overview.semanticStatus.lastChunkRunAt ?? "never"}</p>
+              <p>Vector extension path: {overview.semanticStatus.vectorExtensionPath ?? "not configured"}</p>
+            </details>
+          </div>
         </section>
 
         <section id="traces" className="stack">

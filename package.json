@@ -12,6 +12,7 @@
     "db:init": "tsx scripts/init-db.ts",
     "ingest:openclaw": "tsx scripts/ingest-openclaw.ts",
     "ingest:cron": "tsx scripts/ingest-cron.ts",
+    "index:semantic": "tsx scripts/index-semantic.ts",
     "secrets:check": "secretlint --secretlintrc .secretlintrc.json \"**/*\"",
     "prepare": "husky"
   },

@@ -75,5 +75,24 @@ export function ensureMigrated() {
       imported_count INTEGER NOT NULL DEFAULT 0,
       metadata_json TEXT NOT NULL DEFAULT '{}'
     );
+
+    CREATE TABLE IF NOT EXISTS semantic_chunks (
+      chunk_id TEXT PRIMARY KEY,
+      source_kind TEXT NOT NULL,
+      source_id TEXT NOT NULL,
+      title TEXT,
+      body TEXT NOT NULL,
+      token_estimate INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL,
+      metadata_json TEXT NOT NULL DEFAULT '{}'
+    );
+
+    CREATE TABLE IF NOT EXISTS semantic_index_state (
+      id TEXT PRIMARY KEY,
+      status TEXT NOT NULL,
+      vector_extension_path TEXT,
+      last_chunk_run_at TEXT,
+      metadata_json TEXT NOT NULL DEFAULT '{}'
+    );
   `);
 }
