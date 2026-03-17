@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { escapeSqlString, runSql } from "@/lib/opentrust/db";
+import { recordIngestionState } from "@/lib/opentrust/ingestion-state";
 
 type SessionIndexEntry = {
   sessionId?: string;
@@ -199,5 +200,21 @@ export function importRecentOpenClawSessions(limit = 24) {
     if (records.length === 0) continue;
     upsertSessionAndTrace(sessionKey, entry, records);
   }
+
+  recordIngestionState({
+    sourceKey: "openclaw:sessions:main",
+    sourceKind: "session-index",
+    cursorText: items[0]?.entry.sessionId ?? null,
+    cursorNumber: items[0]?.entry.updatedAt ?? null,
+    lastRunAt: new Date().toISOString(),
+    lastStatus: "ok",
+    importedCount: items.length,
+    metadata: {
+      limit,
+      newestSessionKey: items[0]?.sessionKey ?? null,
+      oldestSessionKey: items.at(-1)?.sessionKey ?? null,
+    },
+  });
+
   return items.length;
 }

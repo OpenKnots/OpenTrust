@@ -1,5 +1,6 @@
 import { ensureBootstrapped } from "@/lib/opentrust/bootstrap";
 import { queryJson, queryOne } from "@/lib/opentrust/db";
+import { getIngestionStates, type IngestionStateRow } from "@/lib/opentrust/ingestion-state";
 
 export interface OverviewCounts {
   sessions: number;
@@ -23,11 +24,20 @@ export interface CapabilitySummary {
   count: number;
 }
 
+export interface WorkflowSummary {
+  id: string;
+  name: string;
+  status: string;
+  summary: string | null;
+  source_kind: string | null;
+}
+
 export interface OpenTrustOverview {
   counts: OverviewCounts;
   recentTraces: RecentTrace[];
   capabilityBreakdown: CapabilitySummary[];
-  recentWorkflows: Array<{ id: string; name: string; status: string; summary: string | null }>;
+  recentWorkflows: WorkflowSummary[];
+  ingestionStates: IngestionStateRow[];
   localDatabasePath: string;
 }
 
@@ -64,12 +74,14 @@ export function getOverview(): OpenTrustOverview {
     ORDER BY count DESC, kind ASC;
   `);
 
-  const recentWorkflows = queryJson<{ id: string; name: string; status: string; summary: string | null }>(`
-    SELECT id, name, status, summary
+  const recentWorkflows = queryJson<WorkflowSummary>(`
+    SELECT id, name, status, summary, source_kind
     FROM workflow_runs
     ORDER BY updated_at DESC
-    LIMIT 6;
+    LIMIT 8;
   `);
+
+  const ingestionStates = getIngestionStates();
 
   const dbInfo = queryOne<{ file: string }>(`PRAGMA database_list;`) ?? { file: "storage/opentrust.sqlite" };
 
@@ -78,6 +90,7 @@ export function getOverview(): OpenTrustOverview {
     recentTraces,
     capabilityBreakdown,
     recentWorkflows,
+    ingestionStates,
     localDatabasePath: dbInfo.file,
   };
 }

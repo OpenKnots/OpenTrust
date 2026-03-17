@@ -1,6 +1,7 @@
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
-import { escapeSqlString, queryOne, runSql } from "@/lib/opentrust/db";
+import { escapeSqlString, runSql } from "@/lib/opentrust/db";
+import { recordIngestionState } from "@/lib/opentrust/ingestion-state";
 
 interface CronJobEntry {
   id: string;
@@ -132,5 +133,25 @@ export function importCronWorkflows(limit = 24) {
     const records = loadRunRecords(job.id);
     upsertWorkflow(job, records);
   }
+
+  const latestRunMs = jobs
+    .map((job) => job.state?.lastRunAtMs ?? 0)
+    .sort((a, b) => b - a)[0] ?? null;
+
+  recordIngestionState({
+    sourceKey: "openclaw:cron:main",
+    sourceKind: "cron-jobs",
+    cursorText: jobs[0]?.id ?? null,
+    cursorNumber: latestRunMs,
+    lastRunAt: new Date().toISOString(),
+    lastStatus: "ok",
+    importedCount: jobs.length,
+    metadata: {
+      limit,
+      newestJobId: jobs[0]?.id ?? null,
+      oldestJobId: jobs.at(-1)?.id ?? null,
+    },
+  });
+
   return jobs.length;
 }

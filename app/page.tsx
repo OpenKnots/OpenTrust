@@ -84,6 +84,24 @@ export default async function HomePage({
             <Metric label="Artifacts tracked" value={String(overview.counts.artifacts)} />
             <Metric label="Database file" value={overview.localDatabasePath} />
           </div>
+          <div className="grid grid--two">
+            {overview.ingestionStates.map((state) => (
+              <article key={state.source_key} className="card card--soft">
+                <div className="meta-row">
+                  <span className="pill pill--outline">{state.last_status ?? "idle"}</span>
+                  <span className="muted">{state.source_kind}</span>
+                </div>
+                <h3>{state.source_key}</h3>
+                <p>Imported {state.imported_count} records on the last run.</p>
+                <details>
+                  <summary>Cursor + run details</summary>
+                  <p>Last run: {state.last_run_at ?? "never"}</p>
+                  <p>Cursor text: {state.cursor_text ?? "—"}</p>
+                  <p>Cursor number: {state.cursor_number ?? "—"}</p>
+                </details>
+              </article>
+            ))}
+          </div>
         </section>
 
         <section id="traces" className="stack">
@@ -273,12 +291,28 @@ export default async function HomePage({
               <article key={workflow.id} className="card card--soft">
                 <div className="meta-row">
                   <span className="pill pill--outline">{workflow.status}</span>
-                  <span className="muted">workflow run</span>
+                  <span className="muted">{workflow.source_kind ?? "workflow"}</span>
                 </div>
                 <h3>{workflow.name}</h3>
                 <p>{workflow.summary ?? "No summary yet."}</p>
+                <details>
+                  <summary>Workflow identity</summary>
+                  <p>Source: {workflow.source_kind ?? "unknown"}</p>
+                  <p>Workflow ID: {workflow.id}</p>
+                </details>
               </article>
             ))}
+          </div>
+          <div className="card card--soft">
+            <div className="meta-row">
+              <span className="pill">cron visibility</span>
+              <span className="muted">operator clarity</span>
+            </div>
+            <h3>Cron and workflow runs are now distinguished explicitly.</h3>
+            <p>
+              Imported workflow cards now show whether they came from cron ingestion, seed data, or future runtime sources,
+              making the field manual view much clearer during incident review and routine operations.
+            </p>
           </div>
         </section>
       </div>

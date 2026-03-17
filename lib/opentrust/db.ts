@@ -63,4 +63,17 @@ export function ensureMigrated() {
   if (!hasSourceKind) {
     runSql("ALTER TABLE workflow_runs ADD COLUMN source_kind TEXT;");
   }
+
+  runSql(`
+    CREATE TABLE IF NOT EXISTS ingestion_state (
+      source_key TEXT PRIMARY KEY,
+      source_kind TEXT NOT NULL,
+      cursor_text TEXT,
+      cursor_number INTEGER,
+      last_run_at TEXT,
+      last_status TEXT,
+      imported_count INTEGER NOT NULL DEFAULT 0,
+      metadata_json TEXT NOT NULL DEFAULT '{}'
+    );
+  `);
 }
