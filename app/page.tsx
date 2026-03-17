@@ -38,6 +38,13 @@ export default async function HomePage({
     <main className="dashboard-shell">
       <div className="dashboard-bg" />
       <div className="dashboard-container">
+        <section className="status-strip card">
+          <StatusStripItem label="runtime" value="local-first / real data" tone="accent" />
+          <StatusStripItem label="latest ingest" value={latestIngestion} tone="neutral" />
+          <StatusStripItem label="semantic" value={overview.semanticStatus.vectorReady ? "vector-ready" : "chunk-ready"} tone="success" />
+          <StatusStripItem label="attention" value={String(attentionCount)} tone={attentionCount > 0 ? "danger" : "success"} />
+        </section>
+
         <header className="dash-header card">
           <div className="dash-header__main">
             <div className="hero__badge">OpenTrust / real-data-only / local-first</div>
@@ -78,6 +85,10 @@ export default async function HomePage({
               The homepage now acts like a live command center: health, ingestion freshness, recent traces,
               workflows, artifacts, and investigations without the heavy docs-rail feel.
             </p>
+            <div className="hero-band__cta-row">
+              <ActionLink href="/investigations" icon={<SearchCode size={16} />} label="Open investigations" />
+              <ActionLink href="/artifacts" icon={<Layers3 size={16} />} label="Browse artifacts" />
+            </div>
           </div>
           <div className="hero-band__stats">
             <MetricCard icon={<DatabaseZap size={18} />} label="Sessions indexed" value={String(overview.counts.sessions)} tone="accent" />
@@ -212,21 +223,24 @@ export default async function HomePage({
           </DashboardPanel>
 
           <DashboardPanel
-            className="panel-span-4"
+            className="panel-span-12"
             icon={<SearchCode size={18} />}
             title="Investigation studio"
             summary="Search imported traces now, then jump into deeper investigations."
           >
-            <form method="GET" className="search-form search-form--tight">
-              <div className="search-form__row">
-                <input
-                  id="investigation-query"
-                  name="q"
-                  defaultValue={query}
-                  placeholder="gateway auth, cron, plugin failure…"
-                  className="search-form__input"
-                />
-                <button type="submit" className="search-form__button">
+            <form method="GET" className="search-form search-form--tight search-form--command">
+              <div className="search-form__row search-form__row--command">
+                <div className="command-input-wrap">
+                  <span className="command-prefix">/investigate</span>
+                  <input
+                    id="investigation-query"
+                    name="q"
+                    defaultValue={query}
+                    placeholder="gateway auth, cron, plugin failure…"
+                    className="search-form__input search-form__input--command"
+                  />
+                </div>
+                <button type="submit" className="search-form__button search-form__button--command">
                   Search
                 </button>
               </div>
@@ -355,6 +369,17 @@ function ActionLink({ href, icon, label }: { href: string; icon: React.ReactNode
 
 function StatusPill({ label, tone }: { label: string; tone: "accent" | "neutral" | "danger" | "success" }) {
   return <span className={`pill pill--${tone}`}>{label}</span>;
+}
+
+function StatusStripItem({ label, value, tone }: { label: string; value: string; tone: "accent" | "neutral" | "danger" | "success" }) {
+  return (
+    <div className="status-strip__item">
+      <span>{label}</span>
+      <div className="status-strip__value">
+        <StatusPill label={value} tone={tone} />
+      </div>
+    </div>
+  );
 }
 
 function renderHighlightedSnippet(snippet: string) {
