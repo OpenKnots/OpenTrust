@@ -1,19 +1,25 @@
 import Link from "next/link";
-import { DatabaseZap, FileStack, Layers3, Route, SearchCode, ShieldCheck, Sparkles, Telescope, Workflow } from "lucide-react";
-import { capabilityCards, manualSections, queryExamples, traceCards } from "@/lib/mock-data";
+import {
+  Activity,
+  ArrowRight,
+  BookOpenText,
+  Bot,
+  DatabaseZap,
+  FileSearch,
+  Layers3,
+  Orbit,
+  Route,
+  SearchCode,
+  ShieldCheck,
+  Sparkles,
+  Telescope,
+  Workflow,
+} from "lucide-react";
 import { getOverview } from "@/lib/opentrust/overview";
 import { searchInvestigations } from "@/lib/opentrust/search";
 import { getImportedSessionTraces } from "@/lib/opentrust/session-traces";
 
 export const dynamic = "force-dynamic";
-
-const sectionIcons = {
-  briefing: Sparkles,
-  traces: Route,
-  capabilities: Layers3,
-  queries: SearchCode,
-  storage: DatabaseZap,
-} as const;
 
 export default async function HomePage({
   searchParams,
@@ -24,221 +30,200 @@ export default async function HomePage({
   const params = (await searchParams) ?? {};
   const query = typeof params.q === "string" ? params.q : "";
   const investigationResults = query ? searchInvestigations(query) : [];
-  const importedSessionTraces = getImportedSessionTraces();
+  const importedSessionTraces = getImportedSessionTraces(6);
+  const latestIngestion = overview.ingestionStates[0]?.last_run_at ?? "never";
+  const attentionCount = overview.recentTraces.filter((trace) => trace.status === "attention").length;
 
   return (
-    <main className="shell">
-      <aside className="rail">
-        <div className="rail__brand">
-          <div className="rail__eyebrow">FIELD MANUAL</div>
-          <h1>OpenTrust</h1>
-          <p>
-            Local-first intelligence and traceability for OpenClaw sessions, workflows, skills, plugins, souls,
-            and bundles.
-          </p>
-        </div>
-
-        <nav className="rail__nav" aria-label="Manual sections">
-          {manualSections.map((section) => {
-            const Icon = sectionIcons[section.id as keyof typeof sectionIcons];
-            return (
-              <a key={section.id} href={`#${section.id}`} className="rail__link">
-                <span className="rail__icon">{Icon ? <Icon size={16} /> : null}</span>
-                <span>
-                  <strong>{section.title}</strong>
-                  <small>{section.summary}</small>
-                </span>
-              </a>
-            );
-          })}
-        </nav>
-      </aside>
-
-      <div className="content">
-        <section id="briefing" className="hero card">
-          <div className="hero__badge">OpenKnots / OpenClaw / local-first</div>
-          <h2>Braintrust for OpenClaw — but grounded in real SQL, local vectors, and explainable lineage.</h2>
-          <p className="hero__lede">
-            OpenTrust is designed as a beginner-friendly field manual first, then progressively discloses traces,
-            SQL, raw events, and provenance as the operator needs more depth.
-          </p>
-          <div className="hero__grid">
-            <Metric label="Primary store" value="SQLite + sqlite-vec" />
-            <Metric label="Search model" value="hybrid: FTS5 + vectors" />
-            <Metric label="Trace scope" value="sessions · workflows · capabilities" />
-            <Metric label="UX mode" value="minimalist · progressive disclosure" />
-          </div>
-        </section>
-
-        <section className="stack">
-          <SectionHeader
-            icon={<DatabaseZap size={18} />}
-            title="Local runtime status"
-            summary="Phase 2 now boots a real local SQLite store, migrates schema, seeds first traces, and syncs visible capabilities from the current OpenClaw environment."
-          />
-          <div className="grid grid--three">
-            <Metric label="Sessions indexed" value={String(overview.counts.sessions)} />
-            <Metric label="Traces available" value={String(overview.counts.traces)} />
-            <Metric label="Capabilities synced" value={String(overview.counts.capabilities)} />
-            <Metric label="Workflows tracked" value={String(overview.counts.workflows)} />
-            <Metric label="Artifacts tracked" value={String(overview.counts.artifacts)} />
-            <Metric label="Database file" value={overview.localDatabasePath} />
-          </div>
-          <div className="grid grid--two">
-            {overview.ingestionStates.map((state) => (
-              <article key={state.source_key} className="card card--soft">
-                <div className="meta-row">
-                  <span className="pill pill--outline">{state.last_status ?? "idle"}</span>
-                  <span className="muted">{state.source_kind}</span>
-                </div>
-                <h3>{state.source_key}</h3>
-                <p>Imported {state.imported_count} records on the last run.</p>
-                <details>
-                  <summary>Cursor + run details</summary>
-                  <p>Last run: {state.last_run_at ?? "never"}</p>
-                  <p>Cursor text: {state.cursor_text ?? "—"}</p>
-                  <p>Cursor number: {state.cursor_number ?? "—"}</p>
-                </details>
-              </article>
-            ))}
-          </div>
-          <div className="card card--soft">
-            <div className="meta-row">
-              <span className="pill pill--outline">{overview.semanticStatus.vectorReady ? "vector-ready" : "chunk-ready"}</span>
-              <span className="muted">semantic indexing</span>
-            </div>
-            <h3>Semantic search foundation</h3>
-            <p>
-              {overview.semanticStatus.chunkCount} semantic chunks are staged locally. True sqlite-vec mode will activate once a vector extension path is configured.
-            </p>
-            <details>
-              <summary>Semantic index details</summary>
-              <p>Last chunk run: {overview.semanticStatus.lastChunkRunAt ?? "never"}</p>
-              <p>Vector extension path: {overview.semanticStatus.vectorExtensionPath ?? "not configured"}</p>
-            </details>
-          </div>
-        </section>
-
-        <section id="traces" className="stack">
-          <SectionHeader
-            icon={<Telescope size={18} />}
-            title="Trace Atlas"
-            summary="Every answer should be traceable back through messages, tool calls, workflow steps, capabilities, and artifacts."
-          />
-          <div className="grid grid--three">
-            {traceCards.map((card) => (
-              <article key={card.title} className="card card--soft">
-                <div className="pill">{card.badge}</div>
-                <h3>{card.title}</h3>
-                <p>{card.summary}</p>
-                <ul>
-                  {card.bullets.map((bullet) => (
-                    <li key={bullet}>{bullet}</li>
-                  ))}
-                </ul>
-              </article>
-            ))}
-          </div>
-          <div className="grid grid--two">
-            {overview.recentTraces.map((trace) => (
-              <article key={trace.id} className="card card--soft">
-                <div className="meta-row">
-                  <span className="pill pill--outline">{trace.status}</span>
-                  <span className="muted">{trace.session_label ?? trace.id}</span>
-                </div>
-                <h3><Link href={`/traces/${encodeURIComponent(trace.id)}`}>{trace.title ?? trace.id}</Link></h3>
-                <p>{trace.summary ?? "No summary yet."}</p>
-                <details>
-                  <summary>Trace metadata</summary>
-                  <p>Updated: {trace.updated_at}</p>
-                  <p>Trace ID: {trace.id}</p>
-                </details>
-              </article>
-            ))}
-          </div>
-          <div className="stack">
-            <SectionHeader
-              icon={<Route size={18} />}
-              title="Imported OpenClaw sessions"
-              summary="Recent real session traces imported from local OpenClaw JSONL transcripts, keeping the operator flow grounded in actual runtime evidence."
-            />
-            {importedSessionTraces.length > 0 ? (
-              <div className="grid grid--two">
-                {importedSessionTraces.map((trace) => (
-                  <article key={trace.id} className="card card--soft">
-                    <div className="meta-row">
-                      <span className="pill pill--outline">{trace.status}</span>
-                      <span className="muted">{trace.session_label ?? trace.id}</span>
-                    </div>
-                    <h3><Link href={`/traces/${encodeURIComponent(trace.id)}`}>{trace.title ?? trace.id}</Link></h3>
-                    <p>{trace.summary ?? "No summary yet."}</p>
-                    <details>
-                      <summary>Imported trace details</summary>
-                      <p>Updated: {trace.updated_at}</p>
-                      <p>Trace ID: {trace.id}</p>
-                    </details>
-                  </article>
-                ))}
+    <main className="dashboard-shell">
+      <div className="dashboard-bg" />
+      <div className="dashboard-container">
+        <header className="dash-header card">
+          <div className="dash-header__main">
+            <div className="hero__badge">OpenTrust / real-data-only / local-first</div>
+            <div className="dash-header__title-row">
+              <div>
+                <h1>OpenTrust</h1>
+                <p>
+                  Operator-grade traceability for OpenClaw sessions, workflows, artifacts, and capability lineage —
+                  now with real local evidence, semantic indexing, and drill-down routes.
+                </p>
               </div>
-            ) : (
-              <div className="search-empty">No imported OpenClaw session traces yet. Run <code>pnpm run ingest:openclaw</code> to refresh the local evidence store.</div>
-            )}
+              <div className="dash-badges">
+                <StatusPill label={overview.semanticStatus.vectorReady ? "vector-ready" : "chunk-ready"} tone="accent" />
+                <StatusPill label="real-data-only" tone="neutral" />
+                <StatusPill label={`attention ${attentionCount}`} tone={attentionCount > 0 ? "danger" : "success"} />
+              </div>
+            </div>
+          </div>
+
+          <div className="dash-actions">
+            <ActionLink href="/investigations" icon={<SearchCode size={16} />} label="Saved investigations" />
+            <ActionLink href="/artifacts" icon={<Layers3 size={16} />} label="Artifact explorer" />
+            {overview.recentWorkflows[0] ? (
+              <ActionLink
+                href={`/workflows/${encodeURIComponent(overview.recentWorkflows[0].id)}`}
+                icon={<Workflow size={16} />}
+                label="Latest workflow"
+              />
+            ) : null}
+          </div>
+        </header>
+
+        <section className="hero-band card">
+          <div className="hero-band__copy">
+            <div className="section-kicker">One-glance status</div>
+            <h2>Claw-dash energy, but for evidence and trust.</h2>
+            <p>
+              The homepage now acts like a live command center: health, ingestion freshness, recent traces,
+              workflows, artifacts, and investigations without the heavy docs-rail feel.
+            </p>
+          </div>
+          <div className="hero-band__stats">
+            <MetricCard icon={<DatabaseZap size={18} />} label="Sessions indexed" value={String(overview.counts.sessions)} tone="accent" />
+            <MetricCard icon={<Route size={18} />} label="Traces available" value={String(overview.counts.traces)} tone="neutral" />
+            <MetricCard icon={<Workflow size={18} />} label="Workflows tracked" value={String(overview.counts.workflows)} tone="neutral" />
+            <MetricCard icon={<Layers3 size={18} />} label="Artifacts tracked" value={String(overview.counts.artifacts)} tone="neutral" />
+            <MetricCard icon={<Sparkles size={18} />} label="Semantic chunks" value={String(overview.semanticStatus.chunkCount)} tone="accent" />
+            <MetricCard icon={<ShieldCheck size={18} />} label="Last ingest" value={latestIngestion} tone="neutral" compact />
           </div>
         </section>
 
-        <section id="capabilities" className="stack">
-          <SectionHeader
+        <section className="bento-grid">
+          <DashboardPanel
+            className="panel-span-7"
+            icon={<Activity size={18} />}
+            title="Runtime and ingestion health"
+            summary="Freshness, cursor position, and pipeline status for the local evidence model."
+          >
+            <div className="mini-grid mini-grid--two">
+              {overview.ingestionStates.map((state) => (
+                <article key={state.source_key} className="mini-card">
+                  <div className="meta-row">
+                    <StatusPill label={state.last_status ?? "idle"} tone={state.last_status === "ok" ? "success" : "danger"} />
+                    <span className="muted">{state.source_kind}</span>
+                  </div>
+                  <h3>{state.source_key}</h3>
+                  <p>Imported {state.imported_count} records on the last run.</p>
+                  <div className="key-value-list">
+                    <div><span>Run</span><strong>{state.last_run_at ?? "never"}</strong></div>
+                    <div><span>Cursor</span><strong>{state.cursor_text ?? String(state.cursor_number ?? "—")}</strong></div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </DashboardPanel>
+
+          <DashboardPanel
+            className="panel-span-5"
+            icon={<Orbit size={18} />}
+            title="Quick actions"
+            summary="Jump straight to the most useful operator flows."
+          >
+            <div className="quick-actions-grid">
+              <QuickAction title="Artifacts" subtitle="Browse indexed docs, repos, and URLs" href="/artifacts" icon={<Layers3 size={18} />} />
+              <QuickAction title="Investigations" subtitle="Use saved SQL investigations" href="/investigations" icon={<FileSearch size={18} />} />
+              <QuickAction title="Semantic index" subtitle={`${overview.semanticStatus.vectorReady ? "Vector-ready" : "Chunk-ready"} / ${overview.semanticStatus.chunkCount} chunks`} href="/?q=gateway" icon={<Bot size={18} />} />
+              <QuickAction title="System docs" subtitle="Architecture, ingestion, and phase map" href="/investigations" icon={<BookOpenText size={18} />} />
+            </div>
+          </DashboardPanel>
+
+          <DashboardPanel
+            className="panel-span-6"
+            icon={<Telescope size={18} />}
+            title="Recent traces"
+            summary="High-signal recent traces with direct drill-down into evidence."
+          >
+            <div className="list-stack">
+              {overview.recentTraces.map((trace) => (
+                <Link key={trace.id} href={`/traces/${encodeURIComponent(trace.id)}`} className="entity-row">
+                  <div className="entity-row__meta">
+                    <StatusPill label={trace.status} tone={trace.status === "attention" ? "danger" : trace.status === "streaming" ? "accent" : "neutral"} />
+                    <span className="muted">{trace.session_label ?? trace.id}</span>
+                  </div>
+                  <div className="entity-row__content">
+                    <strong>{trace.title ?? trace.id}</strong>
+                    <p>{trace.summary ?? "No summary yet."}</p>
+                  </div>
+                  <ArrowRight size={16} />
+                </Link>
+              ))}
+            </div>
+          </DashboardPanel>
+
+          <DashboardPanel
+            className="panel-span-6"
             icon={<Workflow size={18} />}
-            title="Capability Registry"
-            summary="OpenTrust treats skills, plugins, souls, and bundles as first-class traceable capabilities instead of anonymous metadata blobs."
-          />
-          <div className="grid grid--two">
-            {capabilityCards.map((card) => (
-              <article key={card.name} className="card card--soft">
-                <div className="meta-row">
-                  <span className="pill pill--outline">{card.kind}</span>
-                  <span className="muted">traceable capability</span>
-                </div>
-                <h3>{card.name}</h3>
-                <p>{card.summary}</p>
-                <details>
-                  <summary>Why this matters</summary>
-                  <p>{card.evidence}</p>
-                </details>
-              </article>
-            ))}
-          </div>
-          <div className="grid grid--two">
-            {overview.capabilityBreakdown.map((entry) => (
-              <article key={entry.kind} className="card card--soft">
-                <div className="meta-row">
-                  <span className="pill pill--outline">{entry.kind}</span>
-                  <span className="muted">live registry count</span>
-                </div>
-                <h3>{entry.count}</h3>
-                <p>Capabilities of type {entry.kind} are currently indexed into the local registry.</p>
-              </article>
-            ))}
-          </div>
-        </section>
+            title="Workflow ledger"
+            summary="Recent workflow runs, clearly labeled by source."
+          >
+            <div className="list-stack">
+              {overview.recentWorkflows.map((workflow) => (
+                <Link key={workflow.id} href={`/workflows/${encodeURIComponent(workflow.id)}`} className="entity-row">
+                  <div className="entity-row__meta">
+                    <StatusPill label={workflow.status} tone={workflow.status === "error" || workflow.status === "attention" ? "danger" : "neutral"} />
+                    <span className="muted">{workflow.source_kind ?? "workflow"}</span>
+                  </div>
+                  <div className="entity-row__content">
+                    <strong>{workflow.name}</strong>
+                    <p>{workflow.summary ?? "No summary yet."}</p>
+                  </div>
+                  <ArrowRight size={16} />
+                </Link>
+              ))}
+            </div>
+          </DashboardPanel>
 
-        <section id="queries" className="stack">
-          <SectionHeader
-            icon={<FileStack size={18} />}
-            title="Investigation Studio"
-            summary="Power users get real SQL. Beginners get saved investigations, friendly summaries, and expandable evidence panes."
-          />
-          <div className="card card--soft">
-            <form method="GET" className="search-form">
-              <label className="search-form__label" htmlFor="investigation-query">
-                Search real imported traces
-              </label>
+          <DashboardPanel
+            className="panel-span-4"
+            icon={<Layers3 size={18} />}
+            title="Artifact stream"
+            summary="Most recently referenced artifacts across traces and workflows."
+          >
+            <div className="list-stack">
+              {overview.recentArtifacts.slice(0, 6).map((artifact) => (
+                <div key={artifact.id} className="entity-row entity-row--static">
+                  <div className="entity-row__meta">
+                    <StatusPill label={artifact.kind} tone="neutral" />
+                  </div>
+                  <div className="entity-row__content">
+                    <strong>{artifact.title ?? artifact.id}</strong>
+                    <p>{artifact.uri}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </DashboardPanel>
+
+          <DashboardPanel
+            className="panel-span-4"
+            icon={<Sparkles size={18} />}
+            title="Capability registry"
+            summary="Live counts for the capability types OpenTrust is tracking."
+          >
+            <div className="capability-list">
+              {overview.capabilityBreakdown.map((entry) => (
+                <div key={entry.kind} className="capability-list__item">
+                  <span>{entry.kind}</span>
+                  <strong>{entry.count}</strong>
+                </div>
+              ))}
+            </div>
+          </DashboardPanel>
+
+          <DashboardPanel
+            className="panel-span-4"
+            icon={<SearchCode size={18} />}
+            title="Investigation studio"
+            summary="Search imported traces now, then jump into deeper investigations."
+          >
+            <form method="GET" className="search-form search-form--tight">
               <div className="search-form__row">
                 <input
                   id="investigation-query"
                   name="q"
                   defaultValue={query}
-                  placeholder="gateway auth, claw-knots, cron, plugin failure…"
+                  placeholder="gateway auth, cron, plugin failure…"
                   className="search-form__input"
                 />
                 <button type="submit" className="search-form__button">
@@ -246,14 +231,13 @@ export default async function HomePage({
                 </button>
               </div>
             </form>
-
             {query ? (
               investigationResults.length > 0 ? (
-                <div className="search-results">
-                  {investigationResults.map((result) => (
+                <div className="search-results search-results--tight">
+                  {investigationResults.slice(0, 4).map((result) => (
                     <article key={`${result.source_id}:${result.title}`} className="search-result">
                       <div className="meta-row">
-                        <span className="pill pill--outline">match</span>
+                        <StatusPill label={result.mode ?? "fts"} tone={result.mode === "semantic-fallback" ? "accent" : "neutral"} />
                         <span className="muted">{result.source_id}</span>
                       </div>
                       <h3>{result.title}</h3>
@@ -262,126 +246,115 @@ export default async function HomePage({
                   ))}
                 </div>
               ) : (
-                <div className="search-empty">No matches yet for “{query}”. Try a repo, workflow, plugin, session topic, or agent name.</div>
+                <div className="search-empty">No matches for “{query}”. Try a repo, cron name, or agent/tool topic.</div>
               )
             ) : (
-              <div className="search-empty">Start with a simple query like <strong>gateway</strong>, <strong>cron</strong>, <strong>claw-knots</strong>, or <strong>plugin failure</strong>.</div>
+              <div className="search-empty">Start with a quick operator query, then jump into saved investigations.</div>
             )}
-          </div>
-          <div className="grid grid--two">
-            {queryExamples.map((query) => (
-              <article key={query.title} className="card card--soft">
-                <h3>{query.title}</h3>
-                <pre>{query.sql}</pre>
-              </article>
-            ))}
-          </div>
+          </DashboardPanel>
         </section>
 
-        <section id="storage" className="stack">
-          <SectionHeader
-            icon={<ShieldCheck size={18} />}
-            title="Storage & Trust Blueprint"
-            summary="Local-first by default. Append-only evidence. Derived views for speed. Progressive disclosure for calm operator UX."
-          />
-          <div className="grid grid--three">
-            <BlueprintCard
-              icon={<DatabaseZap size={18} />}
-              title="Storage engine"
-              body="SQLite is the system of record. sqlite-vec handles semantic retrieval. FTS5 handles exact and lexical search. JSON columns preserve raw OpenClaw event shape."
-            />
-            <BlueprintCard
-              icon={<Route size={18} />}
-              title="Trace model"
-              body="Events remain append-only. Traces and workflow summaries are derived, queryable projections. Everything points back to evidence rows and stable IDs."
-            />
-            <BlueprintCard
-              icon={<Layers3 size={18} />}
-              title="UI stance"
-              body="Beginner-friendly first screen. Advanced panes unfold with details, lineage, SQL, and payload views only when the operator asks for more."
-            />
+        <section className="dash-footer-note card">
+          <div className="meta-row">
+            <StatusPill label="field-manual mode" tone="accent" />
+            <span className="muted">claw-dash inspired layout</span>
           </div>
-          <div className="grid grid--two">
-            {overview.recentWorkflows.map((workflow) => (
-              <article key={workflow.id} className="card card--soft">
-                <div className="meta-row">
-                  <span className="pill pill--outline">{workflow.status}</span>
-                  <span className="muted">{workflow.source_kind ?? "workflow"}</span>
-                </div>
-                <h3><Link href={`/workflows/${encodeURIComponent(workflow.id)}`}>{workflow.name}</Link></h3>
-                <p>{workflow.summary ?? "No summary yet."}</p>
-                <details>
-                  <summary>Workflow identity</summary>
-                  <p>Source: {workflow.source_kind ?? "unknown"}</p>
-                  <p>Workflow ID: {workflow.id}</p>
-                </details>
-              </article>
-            ))}
-          </div>
-          <div className="grid grid--two">
-            {overview.recentArtifacts.map((artifact) => (
-              <article key={artifact.id} className="card card--soft">
-                <div className="meta-row">
-                  <span className="pill pill--outline">{artifact.kind}</span>
-                  <span className="muted">artifact registry</span>
-                </div>
-                <h3>{artifact.title ?? artifact.id}</h3>
-                <p>{artifact.uri}</p>
-              </article>
-            ))}
-          </div>
-          <div className="card card--soft">
-            <div className="meta-row">
-              <span className="pill">cron visibility</span>
-              <span className="muted">operator clarity</span>
-            </div>
-            <h3>Cron and workflow runs are now distinguished explicitly.</h3>
-            <p>
-              Imported workflow cards now show whether they came from cron ingestion, seed data, or future runtime sources,
-              making the field manual view much clearer during incident review and routine operations.
-            </p>
-            <div className="detail-actions">
-              <Link href="/artifacts" className="search-form__button">Open artifact explorer</Link>
-              <Link href="/investigations" className="search-form__button">Open saved investigations</Link>
-            </div>
-          </div>
+          <h3>OpenTrust now behaves more like a cockpit than a docs surface.</h3>
+          <p>
+            The left rail is gone from the homepage, the top header is sticky and operational, and the core evidence
+            surfaces are arranged as quick-glance bento panels instead of long stacked documentation blocks.
+          </p>
         </section>
       </div>
     </main>
   );
 }
 
-function SectionHeader({ icon, title, summary }: { icon: React.ReactNode; title: string; summary: string }) {
+function DashboardPanel({
+  title,
+  summary,
+  icon,
+  className,
+  children,
+}: {
+  title: string;
+  summary: string;
+  icon: React.ReactNode;
+  className?: string;
+  children: React.ReactNode;
+}) {
   return (
-    <header className="section-header">
-      <div className="section-header__title">
-        <span className="section-header__icon">{icon}</span>
-        <h2>{title}</h2>
-      </div>
-      <p>{summary}</p>
-    </header>
+    <section className={`dash-panel card ${className ?? ""}`.trim()}>
+      <header className="dash-panel__header">
+        <div className="section-header__title">
+          <span className="section-header__icon">{icon}</span>
+          <div>
+            <h2>{title}</h2>
+            <p>{summary}</p>
+          </div>
+        </div>
+      </header>
+      {children}
+    </section>
   );
 }
 
-function Metric({ label, value }: { label: string; value: string }) {
+function MetricCard({
+  icon,
+  label,
+  value,
+  tone,
+  compact = false,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  tone: "accent" | "neutral";
+  compact?: boolean;
+}) {
   return (
-    <div className="metric">
+    <div className={`metric metric--${tone} ${compact ? "metric--compact" : ""}`.trim()}>
+      <div className="metric__icon">{icon}</div>
       <span>{label}</span>
       <strong>{value}</strong>
     </div>
   );
 }
 
-function BlueprintCard({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) {
+function QuickAction({
+  title,
+  subtitle,
+  href,
+  icon,
+}: {
+  title: string;
+  subtitle: string;
+  href: string;
+  icon: React.ReactNode;
+}) {
   return (
-    <article className="card card--soft">
-      <div className="section-header__title">
-        <span className="section-header__icon">{icon}</span>
-        <h3>{title}</h3>
-      </div>
-      <p>{body}</p>
-    </article>
+    <Link href={href} className="quick-action">
+      <span className="quick-action__icon">{icon}</span>
+      <span>
+        <strong>{title}</strong>
+        <small>{subtitle}</small>
+      </span>
+      <ArrowRight size={16} />
+    </Link>
   );
+}
+
+function ActionLink({ href, icon, label }: { href: string; icon: React.ReactNode; label: string }) {
+  return (
+    <Link href={href} className="action-link">
+      {icon}
+      <span>{label}</span>
+    </Link>
+  );
+}
+
+function StatusPill({ label, tone }: { label: string; tone: "accent" | "neutral" | "danger" | "success" }) {
+  return <span className={`pill pill--${tone}`}>{label}</span>;
 }
 
 function renderHighlightedSnippet(snippet: string) {
