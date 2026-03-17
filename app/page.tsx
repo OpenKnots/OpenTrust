@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {
   Activity,
+  AlertTriangle,
   ArrowRight,
   BookOpenText,
   Bot,
@@ -15,6 +16,8 @@ import {
   Telescope,
   Workflow,
 } from "lucide-react";
+import { formatRelativeTime } from "@/lib/opentrust/format";
+import { summarizeHealth } from "@/lib/opentrust/health";
 import { getOverview } from "@/lib/opentrust/overview";
 import { searchInvestigations } from "@/lib/opentrust/search";
 import { getImportedSessionTraces } from "@/lib/opentrust/session-traces";
@@ -32,7 +35,12 @@ export default async function HomePage({
   const investigationResults = query ? searchInvestigations(query) : [];
   const importedSessionTraces = getImportedSessionTraces(6);
   const latestIngestion = overview.ingestionStates[0]?.last_run_at ?? "never";
-  const attentionCount = overview.recentTraces.filter((trace) => trace.status === "attention").length;
+  const health = summarizeHealth({
+    traces: overview.recentTraces,
+    workflows: overview.recentWorkflows,
+    ingestionStates: overview.ingestionStates,
+  });
+  const attentionCount = health.attentionTraces;
 
   return (
     <main className="dashboard-shell">
@@ -96,7 +104,7 @@ export default async function HomePage({
             <MetricCard icon={<Workflow size={18} />} label="Workflows tracked" value={String(overview.counts.workflows)} tone="neutral" />
             <MetricCard icon={<Layers3 size={18} />} label="Artifacts tracked" value={String(overview.counts.artifacts)} tone="neutral" />
             <MetricCard icon={<Sparkles size={18} />} label="Semantic chunks" value={String(overview.semanticStatus.chunkCount)} tone="accent" />
-            <MetricCard icon={<ShieldCheck size={18} />} label="Last ingest" value={latestIngestion} tone="neutral" compact />
+            <MetricCard icon={<ShieldCheck size={18} />} label="Last ingest" value={formatRelativeTime(latestIngestion)} tone="neutral" compact />
           </div>
         </section>
 
@@ -127,6 +135,36 @@ export default async function HomePage({
 
           <DashboardPanel
             className="panel-span-5"
+            icon={<AlertTriangle size={18} />}
+            title="Needs attention"
+            summary="Fast anomaly surfacing across traces, workflows, and ingestion freshness."
+          >
+            <div className="attention-grid">
+              <div className="attention-card attention-card--danger">
+                <span>attention traces</span>
+                <strong>{health.attentionTraces}</strong>
+                <small>{health.attentionTraces > 0 ? "Recent traces need review." : "No urgent trace flags."}</small>
+              </div>
+              <div className="attention-card attention-card--warning">
+                <span>risky workflows</span>
+                <strong>{health.riskyWorkflows}</strong>
+                <small>{health.riskyWorkflows > 0 ? "Workflow ledger has failures or attention states." : "Workflow ledger looks calm."}</small>
+              </div>
+              <div className="attention-card attention-card--neutral">
+                <span>stale pipelines</span>
+                <strong>{health.stalePipelines}</strong>
+                <small>{health.stalePipelines > 0 ? "One or more pipelines may need a refresh." : "Pipelines are fresh."}</small>
+              </div>
+              <div className="attention-card attention-card--accent">
+                <span>latest activity</span>
+                <strong>{health.latestActivityLabel}</strong>
+                <small>Most recent ingestion or trace activity.</small>
+              </div>
+            </div>
+          </DashboardPanel>
+
+          <DashboardPanel
+            className="panel-span-5"
             icon={<Orbit size={18} />}
             title="Quick actions"
             summary="Jump straight to the most useful operator flows."
@@ -150,7 +188,7 @@ export default async function HomePage({
                 <Link key={trace.id} href={`/traces/${encodeURIComponent(trace.id)}`} className="entity-row">
                   <div className="entity-row__meta">
                     <StatusPill label={trace.status} tone={trace.status === "attention" ? "danger" : trace.status === "streaming" ? "accent" : "neutral"} />
-                    <span className="muted">{trace.session_label ?? trace.id}</span>
+                    <span className="muted">{formatRelativeTime(trace.updated_at)}</span>
                   </div>
                   <div className="entity-row__content">
                     <strong>{trace.title ?? trace.id}</strong>
@@ -172,14 +210,36 @@ export default async function HomePage({
               {overview.recentWorkflows.map((workflow) => (
                 <Link key={workflow.id} href={`/workflows/${encodeURIComponent(workflow.id)}`} className="entity-row">
                   <div className="entity-row__meta">
-                    <StatusPill label={workflow.status} tone={workflow.status === "error" || workflow.status === "attention" ? "danger" : "neutral"} />
-                    <span className="muted">{workflow.source_kind ?? "workflow"}</span>
+                    <StatusPill label={workflow.status} tone={workflow.status === "error" || workflow.status === "attention" ? "danger" : workflow.status === "active" ? "accent" : "neutral"} />
+                    <span className="muted">{workflow.source_kind ?? "workflow"} · {workflow.summary ? "active context" : "no summary"}</span>
                   </div>
                   <div className="entity-row__content">
                     <strong>{workflow.name}</strong>
                     <p>{workflow.summary ?? "No summary yet."}</p>
                   </div>
                   <ArrowRight size={16} />
+                </Link>
+              ))}
+            </div>
+          </DashboardPanel>
+
+          <DashboardPanel
+            className="panel-span-4"
+            icon={<Route size={18} />}
+            title="Recent activity pulse"
+            summary="A compact feed of what changed most recently across imported traces."
+          >
+            <div className="list-stack">
+              {importedSessionTraces.slice(0, 5).map((trace) => (
+                <Link key={trace.id} href={`/traces/${encodeURIComponent(trace.id)}`} className="entity-row">
+                  <div className="entity-row__meta">
+                    <StatusPill label={trace.status} tone={trace.status === "attention" ? "danger" : trace.status === "streaming" ? "accent" : "neutral"} />
+                    <span className="muted">{formatRelativeTime(trace.updated_at)}</span>
+                  </div>
+                  <div className="entity-row__content">
+                    <strong>{trace.title ?? trace.id}</strong>
+                    <p>{trace.summary ?? "No summary yet."}</p>
+                  </div>
                 </Link>
               ))}
             </div>
