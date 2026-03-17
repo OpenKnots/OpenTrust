@@ -15,7 +15,7 @@ Build a local-first traceability and intelligence layer for OpenClaw that makes 
 
 ### 2. Retrieval layers
 - FTS5 for exact / lexical search
-- sqlite-vec planned for semantic search over normalized evidence chunks
+- sqlite-vec for vector search over locally staged semantic chunks
 - relational SQL for joins, lineage traversal, and operator investigations
 
 ### 3. Data model layers
@@ -25,15 +25,17 @@ Build a local-first traceability and intelligence layer for OpenClaw that makes 
 - capability registry
 - artifact registry
 - ingestion state / cursors
+- saved investigations
 - graph edges for lineage
+- semantic chunk + vector layer
 
 ### 4. Operator UX layers
 - briefing layer
 - trace explorer
-- workflow ledger
+- workflow explorer
 - capability explorer
 - SQL / investigation studio
-- artifact visibility in overview + trace drill-down
+- artifact explorer
 - expandable raw evidence panes
 
 ## Current schema domains
@@ -49,19 +51,11 @@ Build a local-first traceability and intelligence layer for OpenClaw that makes 
 - `run_artifacts`
 - `trace_edges`
 - `ingestion_state`
+- `saved_investigations`
 - `search_chunks` (FTS5)
-- `embedding_chunks_vec` (planned sqlite-vec runtime table)
-
-## Why SQLite + sqlite-vec
-
-This stack is local-first, portable, auditable, and operationally simple.
-
-It avoids the complexity tax of a remote database while still supporting:
-- real SQL joins
-- event journaling
-- hybrid search
-- provenance-first querying
-- exportable single-file storage
+- `semantic_chunks`
+- `semantic_index_state`
+- `semantic_vec` / `semantic_vec_map` (runtime-managed when sqlite-vec loads)
 
 ## What is implemented today
 
@@ -74,15 +68,15 @@ It avoids the complexity tax of a remote database while still supporting:
 - artifact extraction from imported evidence
 - investigation search with FTS5
 - trace detail route
+- workflow detail route
+- artifact explorer route
+- saved investigations route
+- tool-call/result pairing
+- event lineage edges for parent/result relationships
+- incremental-style ingestion through cursor checks
+- sqlite-vec activation and semantic chunk indexing
 - secret-blocking pre-commit hook
-
-### Not yet implemented
-- sqlite-vec embedding pipeline
-- saved investigations
-- dedicated artifact explorer page
-- deep workflow detail pages
-- richer tool-result pairing and full parent-child event lineage
 
 ## Phase map
 
-See `docs/PHASES.md` for the shipped phases and remaining roadmap.
+See `docs/PHASES.md` for the completed phase map and optional next expansions.

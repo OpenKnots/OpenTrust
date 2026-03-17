@@ -47,24 +47,40 @@ Shipped:
 - artifact registry population
 - trace → artifact linkage
 - workflow → artifact linkage
-- artifact display in homepage and trace detail views
+- artifact display in overview and trace detail views
 
-## Remaining recommended phases
+## Phase 6 — Tool pairing and workflow surfaces ✅
 
-### Phase 6 — Richer tool-result pairing
-- pair tool calls with corresponding results where present
-- improve tool lifecycle status mapping
-- expose richer tool evidence in trace details
-- link tool activity more clearly into artifact generation
-
-### Phase 7 — Semantic indexing
-- add sqlite-vec runtime table + embedding pipeline
-- chunk traces, workflows, and artifacts
-- support hybrid semantic + lexical investigations
-
-### Phase 8 — Saved investigations and operator flows
-- named investigations
-- reusable SQL views/queries
+Shipped:
+- richer tool-call / tool-result pairing
+- workflow detail pages
 - artifact explorer page
-- deeper workflow detail pages
-- export / backup / audit affordances
+- saved investigations page
+- workflow and artifact navigation from the field manual
+
+## Phase 7 — Lineage and incremental ingestion ✅
+
+Shipped:
+- event lineage edges for parent/tool-result relationships
+- incremental-style ingestion behavior using ingestion state cursors
+- per-session and per-cron-job ingestion tracking
+
+## Phase 8 — Semantic indexing activation ✅
+
+Shipped:
+- semantic chunk staging for traces and artifacts
+- sqlite-vec activation via installed extension package
+- vector-ready semantic index status in UI
+- semantic indexing command
+- vector-backed fallback search path
+
+## Current status
+
+The originally planned phases and steps are now complete.
+
+Remaining work from here is optional expansion rather than completion work, for example:
+- richer artifact normalization
+- deeper workflow analytics
+- editing/saving custom investigations from the UI
+- stronger semantic embedding models
+- exports, backups, and audit/report tooling

@@ -21,6 +21,11 @@ OpenTrust now includes:
 - FTS-backed investigation search
 - artifact extraction and registry population
 - trace detail pages
+- workflow detail pages
+- artifact explorer
+- saved investigations
+- semantic chunk indexing
+- sqlite-vec activation
 - secret-blocking pre-commit protection
 
 ## Principles
@@ -37,8 +42,8 @@ OpenTrust now includes:
 - React 19
 - TypeScript
 - SQLite
+- sqlite-vec
 - FTS5
-- sqlite-vec (planned)
 
 ## Development
 
@@ -47,6 +52,7 @@ pnpm install
 pnpm run db:init
 pnpm run ingest:openclaw
 pnpm run ingest:cron
+pnpm run index:semantic
 pnpm dev
 ```
 

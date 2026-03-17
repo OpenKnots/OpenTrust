@@ -12,10 +12,11 @@ Imported into:
 - `sessions`
 - `traces`
 - `events`
-- `tool_calls` (observed tool calls)
+- `tool_calls`
 - `search_chunks`
-- `artifacts` (inferred)
+- `artifacts`
 - `trace_edges`
+- `ingestion_state`
 
 ### 2. Cron jobs and runs
 - `~/.openclaw/cron/jobs.json`
@@ -24,28 +25,22 @@ Imported into:
 Imported into:
 - `workflow_runs`
 - `workflow_steps`
-- `artifacts` (inferred)
+- `artifacts`
 - `run_artifacts`
-
-### 3. Ingestion state tracking
-Imported into:
 - `ingestion_state`
 
-Tracks:
-- source key
-- source kind
-- cursor text
-- cursor number
-- last run time
-- last status
-- imported count
-- metadata JSON
+### 3. Semantic indexing
+Built from ingested local evidence into:
+- `semantic_chunks`
+- `semantic_index_state`
+- `semantic_vec` / `semantic_vec_map` when sqlite-vec loads
 
 ## Runtime split
 
 OpenTrust keeps these responsibilities separate:
 - **bootstrap** — migrate schema and sync static capability metadata
 - **ingest** — pull in session/workflow evidence on demand or in background jobs
+- **index** — build semantic chunks/vectors from ingested data
 - **query** — render UI and investigations from already-ingested local data
 
 ## Current commands
@@ -54,11 +49,16 @@ OpenTrust keeps these responsibilities separate:
 pnpm run db:init
 pnpm run ingest:openclaw
 pnpm run ingest:cron
+pnpm run index:semantic
 ```
 
-## Artifact extraction
+## Incremental behavior
 
-Current artifact extraction is heuristic and safe-by-default.
+OpenTrust now tracks per-source and per-item ingestion state so repeated imports can skip unchanged sessions/jobs based on stored cursors.
+
+## Current artifact extraction
+
+Current artifact extraction is heuristic and local-first.
 
 It infers and registers:
 - URLs
@@ -66,13 +66,21 @@ It infers and registers:
 - docs / file paths
 - lightweight document references
 
-This is enough for first-pass traceability, but it is not yet a full structured artifact parser.
+## Current lineage support
 
-## What remains
+OpenTrust currently records lineage edges for:
+- event parent relationships when detectable
+- tool-result to tool-call relationships
+- trace to artifact references
+- workflow to artifact references
 
-### Next highest-priority ingestion work
-1. richer tool-result pairing in imported traces
-2. better parent/child event linkage
-3. incremental ingestion based on cursors instead of simple recent-window imports
-4. more structured artifact extraction
-5. sqlite-vec chunking + embedding jobs
+## What remains from here
+
+Completion work is done.
+
+Next work is optional enhancement, such as:
+- stronger artifact normalization
+- richer event lineage coverage
+- more advanced embedding models
+- export/backup flows
+- UI authoring for saved investigations
