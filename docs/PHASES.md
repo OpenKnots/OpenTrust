@@ -16,8 +16,8 @@ Shipped:
 - real SQLite runtime layer
 - schema bootstrap and migration path
 - capability sync from the local OpenClaw environment
-- seeded sessions, traces, workflows, artifacts, and tool calls
 - homepage driven by local DB state
+- now operating in real-data-only mode (seed evidence removed)
 
 ## Phase 3 — Real evidence ingestion ✅
 

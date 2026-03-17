@@ -38,10 +38,12 @@ Built from ingested local evidence into:
 ## Runtime split
 
 OpenTrust keeps these responsibilities separate:
-- **bootstrap** — migrate schema and sync static capability metadata
+- **bootstrap** — migrate schema and sync static capability metadata only
 - **ingest** — pull in session/workflow evidence on demand or in background jobs
 - **index** — build semantic chunks/vectors from ingested data
 - **query** — render UI and investigations from already-ingested local data
+
+OpenTrust now runs in **real-data-only** mode. Dummy seeded traces/workflows/artifacts are no longer created.
 
 ## Current commands
 

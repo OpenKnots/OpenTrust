@@ -15,6 +15,7 @@ OpenTrust now includes:
 - polished field-manual UI shell
 - local SQLite runtime
 - explicit bootstrap / ingest / query architecture
+- real-data-only local evidence model
 - local OpenClaw session ingestion
 - cron/workflow ingestion
 - ingestion state tracking

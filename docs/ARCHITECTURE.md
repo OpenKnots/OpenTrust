@@ -62,6 +62,7 @@ Build a local-first traceability and intelligence layer for OpenClaw that makes 
 ### Implemented
 - local SQLite runtime
 - explicit bootstrap / ingest / query separation
+- real-data-only evidence flow (no dummy seeded traces/workflows)
 - session transcript ingestion
 - cron/workflow ingestion
 - ingestion state tracking
