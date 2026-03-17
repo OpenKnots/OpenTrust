@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { escapeSqlString, runSql } from "@/lib/opentrust/db";
 import { recordIngestionState } from "@/lib/opentrust/ingestion-state";
+import { upsertArtifactsForWorkflow } from "@/lib/opentrust/artifact-extract";
 
 interface CronJobEntry {
   id: string;
@@ -125,6 +126,14 @@ function upsertWorkflow(job: CronJobEntry, records: CronRunRecord[]) {
       );
     `);
   });
+
+  upsertArtifactsForWorkflow(
+    workflowId,
+    [job.name ?? job.id, summary, JSON.stringify(job.payload ?? {}), JSON.stringify(job.delivery ?? {}), ...records.map((record) => `${record.summary ?? ""} ${record.error ?? ""}`)]
+      .join("\n\n")
+      .slice(0, 12000),
+    updatedAt,
+  );
 }
 
 export function importCronWorkflows(limit = 24) {

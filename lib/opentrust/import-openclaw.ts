@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { escapeSqlString, runSql } from "@/lib/opentrust/db";
 import { recordIngestionState } from "@/lib/opentrust/ingestion-state";
+import { upsertArtifactsForTrace } from "@/lib/opentrust/artifact-extract";
 
 type SessionIndexEntry = {
   sessionId?: string;
@@ -180,15 +181,19 @@ function upsertSessionAndTrace(sessionKey: string, entry: SessionIndexEntry, rec
     }
   }
 
+  const searchBody = messageSnippets.slice(-12).join("\n\n").slice(0, 12000);
+
   runSql(`
     INSERT INTO search_chunks (source_kind, source_id, title, body)
     VALUES (
       'trace',
       ${escapeSqlString(traceId)},
       ${escapeSqlString(label)},
-      ${escapeSqlString(messageSnippets.slice(-12).join("\n\n").slice(0, 12000))}
+      ${escapeSqlString(searchBody)}
     );
   `);
+
+  upsertArtifactsForTrace(traceId, `${label}\n\n${searchBody}`, updatedAt);
 }
 
 export function importRecentOpenClawSessions(limit = 24) {

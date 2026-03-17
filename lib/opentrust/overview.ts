@@ -1,3 +1,4 @@
+import { getRecentArtifacts, type ArtifactRow } from "@/lib/opentrust/artifacts";
 import { ensureBootstrapped } from "@/lib/opentrust/bootstrap";
 import { queryJson, queryOne } from "@/lib/opentrust/db";
 import { getIngestionStates, type IngestionStateRow } from "@/lib/opentrust/ingestion-state";
@@ -37,6 +38,7 @@ export interface OpenTrustOverview {
   recentTraces: RecentTrace[];
   capabilityBreakdown: CapabilitySummary[];
   recentWorkflows: WorkflowSummary[];
+  recentArtifacts: ArtifactRow[];
   ingestionStates: IngestionStateRow[];
   localDatabasePath: string;
 }
@@ -81,6 +83,7 @@ export function getOverview(): OpenTrustOverview {
     LIMIT 8;
   `);
 
+  const recentArtifacts = getRecentArtifacts();
   const ingestionStates = getIngestionStates();
 
   const dbInfo = queryOne<{ file: string }>(`PRAGMA database_list;`) ?? { file: "storage/opentrust.sqlite" };
@@ -90,6 +93,7 @@ export function getOverview(): OpenTrustOverview {
     recentTraces,
     capabilityBreakdown,
     recentWorkflows,
+    recentArtifacts,
     ingestionStates,
     localDatabasePath: dbInfo.file,
   };

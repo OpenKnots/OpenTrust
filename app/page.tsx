@@ -303,6 +303,18 @@ export default async function HomePage({
               </article>
             ))}
           </div>
+          <div className="grid grid--two">
+            {overview.recentArtifacts.map((artifact) => (
+              <article key={artifact.id} className="card card--soft">
+                <div className="meta-row">
+                  <span className="pill pill--outline">{artifact.kind}</span>
+                  <span className="muted">artifact registry</span>
+                </div>
+                <h3>{artifact.title ?? artifact.id}</h3>
+                <p>{artifact.uri}</p>
+              </article>
+            ))}
+          </div>
           <div className="card card--soft">
             <div className="meta-row">
               <span className="pill">cron visibility</span>

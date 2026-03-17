@@ -56,6 +56,28 @@ export default async function TraceDetailPage({ params }: { params: Promise<{ id
           <header className="section-header">
             <div className="section-header__title">
               <span className="section-header__icon">02</span>
+              <h2>Referenced artifacts</h2>
+            </div>
+            <p>Files, repos, docs, and URLs inferred from this trace’s evidence.</p>
+          </header>
+          <div className="grid grid--two">
+            {trace.artifacts.length > 0 ? trace.artifacts.map((artifact) => (
+              <article key={artifact.id} className="card card--soft">
+                <div className="meta-row">
+                  <span className="pill pill--outline">{artifact.kind}</span>
+                  <span className="muted">{artifact.created_at}</span>
+                </div>
+                <h3>{artifact.title ?? artifact.id}</h3>
+                <p>{artifact.uri}</p>
+              </article>
+            )) : <div className="search-empty">No artifacts extracted for this trace yet.</div>}
+          </div>
+        </section>
+
+        <section className="stack">
+          <header className="section-header">
+            <div className="section-header__title">
+              <span className="section-header__icon">03</span>
               <h2>Event timeline</h2>
             </div>
             <p>Chronological view of the imported evidence for this trace.</p>

@@ -1,5 +1,6 @@
 import { ensureBootstrapped } from "@/lib/opentrust/bootstrap";
 import { queryJson, queryOne } from "@/lib/opentrust/db";
+import { getArtifactsForTrace, type ArtifactRow } from "@/lib/opentrust/artifacts";
 
 export interface TraceEventRow {
   id: string;
@@ -26,6 +27,7 @@ export interface TraceDetail {
   metadata_json: string;
   events: TraceEventRow[];
   tools: TraceToolRow[];
+  artifacts: ArtifactRow[];
 }
 
 export function getTraceDetail(traceId: string): TraceDetail | null {
@@ -63,5 +65,7 @@ export function getTraceDetail(traceId: string): TraceDetail | null {
     ORDER BY started_at ASC;
   `, { traceId });
 
-  return { ...trace, events, tools };
+  const artifacts = getArtifactsForTrace(traceId);
+
+  return { ...trace, events, tools, artifacts };
 }
