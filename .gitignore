@@ -1,0 +1,14 @@
+node_modules
+.next
+out
+.DS_Store
+.env
+.env.local
+.env.*.local
+pnpm-debug.log*
+coverage
+*.sqlite
+*.sqlite3
+*.db
+*.tsbuildinfo
+storage/*.sqlite*
