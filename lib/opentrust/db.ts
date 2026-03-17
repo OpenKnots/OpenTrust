@@ -57,4 +57,10 @@ export function escapeSqlString(value: string) {
 export function ensureMigrated() {
   const migrationSql = readFileSync(migrationPath, "utf8");
   runSql(migrationSql);
+
+  const workflowRunColumns = queryJson<{ name: string }>("PRAGMA table_info(workflow_runs);");
+  const hasSourceKind = workflowRunColumns.some((column) => column.name === "source_kind");
+  if (!hasSourceKind) {
+    runSql("ALTER TABLE workflow_runs ADD COLUMN source_kind TEXT;");
+  }
 }

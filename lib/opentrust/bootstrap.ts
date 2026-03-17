@@ -75,9 +75,9 @@ function seedDemoTraceIfEmpty() {
       ('session:nova:seed-1', 'imessage', 'main', 'OpenTrust seed session', ${escapeSqlString(createdAt)}, 'complete', ${sqlJson({ source: 'seed' })}),
       ('session:nova:seed-2', 'discord', 'main', 'Workflow trace session', ${escapeSqlString(createdAt)}, 'active', ${sqlJson({ source: 'seed' })});
 
-    INSERT INTO workflow_runs (id, name, workflow_key, status, started_at, updated_at, summary, metadata_json)
+    INSERT INTO workflow_runs (id, name, workflow_key, status, started_at, updated_at, summary, source_kind, metadata_json)
     VALUES
-      ('workflow:seed:incident', 'Gateway incident review', 'incident-review', 'attention', ${escapeSqlString(createdAt)}, ${escapeSqlString(createdAt)}, 'Reviewing a gateway regression across sessions and tools.', ${sqlJson({ source: 'seed' })});
+      ('workflow:seed:incident', 'Gateway incident review', 'incident-review', 'attention', ${escapeSqlString(createdAt)}, ${escapeSqlString(createdAt)}, 'Reviewing a gateway regression across sessions and tools.', 'seed', ${sqlJson({ source: 'seed' })});
 
     INSERT INTO traces (id, session_id, workflow_run_id, title, status, summary, started_at, updated_at, metadata_json)
     VALUES

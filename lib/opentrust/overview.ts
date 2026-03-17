@@ -68,7 +68,7 @@ export function getOverview(): OpenTrustOverview {
     SELECT id, name, status, summary
     FROM workflow_runs
     ORDER BY updated_at DESC
-    LIMIT 4;
+    LIMIT 6;
   `);
 
   const dbInfo = queryOne<{ file: string }>(`PRAGMA database_list;`) ?? { file: "storage/opentrust.sqlite" };

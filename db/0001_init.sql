@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS workflow_runs (
   updated_at TEXT NOT NULL,
   ended_at TEXT,
   summary TEXT,
+  source_kind TEXT,
   metadata_json TEXT NOT NULL DEFAULT '{}'
 );
 

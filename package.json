@@ -10,7 +10,10 @@
     "typecheck": "tsc --noEmit",
     "check": "pnpm run typecheck",
     "db:init": "tsx scripts/init-db.ts",
-    "ingest:openclaw": "tsx scripts/ingest-openclaw.ts"
+    "ingest:openclaw": "tsx scripts/ingest-openclaw.ts",
+    "ingest:cron": "tsx scripts/ingest-cron.ts",
+    "secrets:check": "secretlint --secretlintrc .secretlintrc.json \"**/*\"",
+    "prepare": "husky"
   },
   "dependencies": {
     "lucide-react": "^0.511.0",
@@ -19,9 +22,13 @@
     "react-dom": "19.0.0"
   },
   "devDependencies": {
+    "@secretlint/core": "^11.3.1",
+    "@secretlint/secretlint-rule-preset-recommend": "^11.3.1",
     "@types/node": "^22.14.0",
     "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
+    "husky": "^9.1.7",
+    "secretlint": "^11.3.1",
     "tsx": "^4.20.6",
     "typescript": "^5.8.3"
   }
