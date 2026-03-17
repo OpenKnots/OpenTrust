@@ -1,4 +1,4 @@
-# OpenTrust — V1 Architecture
+# OpenTrust — Architecture
 
 ## Goal
 
@@ -10,11 +10,12 @@ Build a local-first traceability and intelligence layer for OpenClaw that makes 
 - SQLite as the system of record
 - append-only event capture
 - stable IDs for sessions, traces, workflows, capabilities, and artifacts
-- dedicated runtime access layer instead of shelling out to the sqlite CLI on every query
+- dedicated runtime access layer via Node SQLite runtime
+- schema repair/migration support for evolving local databases
 
 ### 2. Retrieval layers
 - FTS5 for exact / lexical search
-- sqlite-vec for semantic search over normalized evidence chunks
+- sqlite-vec planned for semantic search over normalized evidence chunks
 - relational SQL for joins, lineage traversal, and operator investigations
 
 ### 3. Data model layers
@@ -23,6 +24,7 @@ Build a local-first traceability and intelligence layer for OpenClaw that makes 
 - workflow summaries
 - capability registry
 - artifact registry
+- ingestion state / cursors
 - graph edges for lineage
 
 ### 4. Operator UX layers
@@ -31,7 +33,24 @@ Build a local-first traceability and intelligence layer for OpenClaw that makes 
 - workflow ledger
 - capability explorer
 - SQL / investigation studio
+- artifact visibility in overview + trace drill-down
 - expandable raw evidence panes
+
+## Current schema domains
+- `sessions`
+- `traces`
+- `events`
+- `workflow_runs`
+- `workflow_steps`
+- `capabilities`
+- `trace_capabilities`
+- `tool_calls`
+- `artifacts`
+- `run_artifacts`
+- `trace_edges`
+- `ingestion_state`
+- `search_chunks` (FTS5)
+- `embedding_chunks_vec` (planned sqlite-vec runtime table)
 
 ## Why SQLite + sqlite-vec
 
@@ -44,37 +63,26 @@ It avoids the complexity tax of a remote database while still supporting:
 - provenance-first querying
 - exportable single-file storage
 
-## Initial schema domains
-- `sessions`
-- `traces`
-- `events`
-- `workflow_runs`
-- `workflow_steps`
-- `capabilities`
-- `trace_capabilities`
-- `tool_calls`
-- `artifacts`
-- `run_artifacts`
-- `trace_edges`
-- `search_chunks` (FTS5)
-- `embedding_chunks_vec` (sqlite-vec runtime table)
+## What is implemented today
 
-## V1 roadmap
+### Implemented
+- local SQLite runtime
+- explicit bootstrap / ingest / query separation
+- session transcript ingestion
+- cron/workflow ingestion
+- ingestion state tracking
+- artifact extraction from imported evidence
+- investigation search with FTS5
+- trace detail route
+- secret-blocking pre-commit hook
 
-### Phase 1
-- shell UI
-- schema
-- mock investigations
-- architecture docs
-
-### Phase 2
-- OpenClaw session ingestion
-- workflow ingestion
-- skill/plugin registry sync
-- trace projections
-
-### Phase 3
-- semantic indexing
+### Not yet implemented
+- sqlite-vec embedding pipeline
 - saved investigations
-- evidence-backed summaries
-- artifact lineage explorer
+- dedicated artifact explorer page
+- deep workflow detail pages
+- richer tool-result pairing and full parent-child event lineage
+
+## Phase map
+
+See `docs/PHASES.md` for the shipped phases and remaining roadmap.

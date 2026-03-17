@@ -39,6 +39,7 @@ Every important view should show provenance:
 - tools invoked
 - artifacts created
 - evidence rows available
+- ingestion freshness when relevant
 
 ### 5. Local-first confidence
 The operator should always understand:
@@ -47,14 +48,23 @@ The operator should always understand:
 - what is indexed semantically
 - how to inspect or export raw evidence
 
-## Core V1 views
+## Current UX surfaces
 
+Implemented today:
 - Home / briefing
 - Trace atlas
-- Workflow ledger
+- Imported OpenClaw sessions
+- Workflow ledger cards
 - Capability registry
 - Investigation studio
-- Artifact explorer
+- Runtime / ingestion status cards
+- Trace detail pages with tools, events, and artifacts
+
+Still recommended:
+- dedicated artifact explorer
+- dedicated workflow detail pages
+- saved investigations
+- semantic retrieval views
 
 ## Language style
 
@@ -66,5 +76,6 @@ Use human labels like:
 - evidence
 - lineage
 - investigation
+- artifact
 
 Reveal lower-level terms only as users drill deeper.

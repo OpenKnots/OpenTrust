@@ -9,14 +9,19 @@ It is designed to answer questions like:
 - what artifacts were produced?
 - what evidence supports this summary?
 
-## V1 scaffold
+## Current status
 
-This repository starts with:
-- a polished Next.js shell
-- a field-manual UI blueprint
-- a local-first SQLite schema
-- sqlite-vec + FTS5 architecture guidance
-- a capability model covering skills, plugins, souls, and bundles
+OpenTrust now includes:
+- polished field-manual UI shell
+- local SQLite runtime
+- explicit bootstrap / ingest / query architecture
+- local OpenClaw session ingestion
+- cron/workflow ingestion
+- ingestion state tracking
+- FTS-backed investigation search
+- artifact extraction and registry population
+- trace detail pages
+- secret-blocking pre-commit protection
 
 ## Principles
 
@@ -32,8 +37,8 @@ This repository starts with:
 - React 19
 - TypeScript
 - SQLite
-- sqlite-vec
 - FTS5
+- sqlite-vec (planned)
 
 ## Development
 
@@ -41,12 +46,26 @@ This repository starts with:
 pnpm install
 pnpm run db:init
 pnpm run ingest:openclaw
+pnpm run ingest:cron
 pnpm dev
 ```
 
-## Database blueprint
+## Safety
 
-See:
-- `db/0001_init.sql`
+This repo includes a pre-commit secret scan:
+- Husky pre-commit hook
+- Secretlint ruleset
+
+Run manually with:
+
+```bash
+pnpm run secrets:check
+```
+
+## Docs
+
 - `docs/ARCHITECTURE.md`
 - `docs/FIELD-MANUAL.md`
+- `docs/INGESTION.md`
+- `docs/PHASES.md`
+- `db/0001_init.sql`

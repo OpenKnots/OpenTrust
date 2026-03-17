@@ -1,48 +1,78 @@
-# OpenTrust — Phase 2 Ingestion Foundation
+# OpenTrust — Ingestion Foundation
 
-## What Phase 2 adds
+## Current ingestion coverage
 
-Phase 2 introduces a real local runtime foundation:
-- SQLite database file under `storage/opentrust.sqlite`
-- automatic schema migration from `db/0001_init.sql`
-- capability sync from the current OpenClaw environment
-- first seeded traces / workflows / artifacts / tool calls
-- live dashboard summaries rendered from the local database
+OpenTrust currently ingests from these local OpenClaw sources:
 
-## Bootstrap behavior
+### 1. Main session transcripts
+- `~/.openclaw/agents/main/sessions/sessions.json`
+- linked session `*.jsonl` transcript files
 
-`ensureBootstrapped()` performs:
-1. schema migration
-2. skill sync from workspace skill folders
-3. skill sync from built-in OpenClaw skill folders
-4. plugin sync from `~/.openclaw/openclaw.json`
-5. soul sync from `~/.openclaw/workspace/IDENTITY.md`
-6. bundle seed for the OpenTrust starter bundle
-7. initial trace/workflow seed when the database is empty
+Imported into:
+- `sessions`
+- `traces`
+- `events`
+- `tool_calls` (observed tool calls)
+- `search_chunks`
+- `artifacts` (inferred)
+- `trace_edges`
 
-## Why this matters
+### 2. Cron jobs and runs
+- `~/.openclaw/cron/jobs.json`
+- `~/.openclaw/cron/runs/*.jsonl`
 
-This turns OpenTrust from a static shell into a local-first runtime that can now support:
-- real ingestion
-- trace projections
-- capability lineage
-- hybrid search later in Phase 3
+Imported into:
+- `workflow_runs`
+- `workflow_steps`
+- `artifacts` (inferred)
+- `run_artifacts`
+
+### 3. Ingestion state tracking
+Imported into:
+- `ingestion_state`
+
+Tracks:
+- source key
+- source kind
+- cursor text
+- cursor number
+- last run time
+- last status
+- imported count
+- metadata JSON
 
 ## Runtime split
 
-OpenTrust should keep these responsibilities separate:
+OpenTrust keeps these responsibilities separate:
 - **bootstrap** — migrate schema and sync static capability metadata
 - **ingest** — pull in session/workflow evidence on demand or in background jobs
 - **query** — render UI and investigations from already-ingested local data
 
-Current commands:
-- `pnpm run db:init`
-- `pnpm run ingest:openclaw`
+## Current commands
 
-## Next ingestion steps
+```bash
+pnpm run db:init
+pnpm run ingest:openclaw
+pnpm run ingest:cron
+```
 
-- map workflow and cron events into `workflow_runs` + `workflow_steps`
-- index tool calls from real traces more deeply
-- normalize artifacts from repo/file/message outputs
-- create chunking + embedding jobs for sqlite-vec
-- add incremental cursors and ingestion state tracking
+## Artifact extraction
+
+Current artifact extraction is heuristic and safe-by-default.
+
+It infers and registers:
+- URLs
+- repos (`owner/repo`)
+- docs / file paths
+- lightweight document references
+
+This is enough for first-pass traceability, but it is not yet a full structured artifact parser.
+
+## What remains
+
+### Next highest-priority ingestion work
+1. richer tool-result pairing in imported traces
+2. better parent/child event linkage
+3. incremental ingestion based on cursors instead of simple recent-window imports
+4. more structured artifact extraction
+5. sqlite-vec chunking + embedding jobs
