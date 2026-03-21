@@ -18,20 +18,20 @@
   },
   "dependencies": {
     "lucide-react": "^0.511.0",
-    "next": "^16.1.7",
+    "next": "^16.2.1",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "sqlite-vec": "^0.1.7"
   },
   "devDependencies": {
-    "@secretlint/core": "^11.3.1",
-    "@secretlint/secretlint-rule-preset-recommend": "^11.3.1",
-    "@types/node": "^22.14.0",
-    "@types/react": "^19.0.12",
-    "@types/react-dom": "^19.0.4",
+    "@secretlint/core": "^11.4.0",
+    "@secretlint/secretlint-rule-preset-recommend": "^11.4.0",
+    "@types/node": "^22.19.15",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "husky": "^9.1.7",
-    "secretlint": "^11.3.1",
-    "tsx": "^4.20.6",
-    "typescript": "^5.8.3"
+    "secretlint": "^11.4.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
   }
 }
