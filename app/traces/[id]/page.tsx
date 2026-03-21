@@ -20,7 +20,7 @@ export default async function TraceDetailPage({ params }: { params: Promise<{ id
         subtitle={trace.summary ?? "No summary available for this trace."}
         breadcrumbs={[
           { label: "Overview", href: "/" },
-          { label: "Traces", href: "/" },
+          { label: "Traces", href: "/traces" },
           { label: trace.title ?? trace.id },
         ]}
         actions={

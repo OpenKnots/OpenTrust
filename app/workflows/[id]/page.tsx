@@ -20,7 +20,7 @@ export default async function WorkflowDetailPage({ params }: { params: Promise<{
         subtitle={workflow.summary ?? "No summary available for this workflow."}
         breadcrumbs={[
           { label: "Overview", href: "/" },
-          { label: "Workflows", href: "/" },
+          { label: "Workflows", href: "/workflows" },
           { label: workflow.name },
         ]}
       />
