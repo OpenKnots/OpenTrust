@@ -28,8 +28,10 @@ OpenTrust should focus on:
 - insight and metrics
 - memory health
 - agent/operator integration
+- first-class OpenClaw plugin packaging readiness
 
 OpenTrust should avoid drifting into:
 - generic database admin tooling
 - broad data-ops product sprawl detached from OpenClaw
 - backend-driven redesigns that discard the memory model
+andard and provenance guarantees

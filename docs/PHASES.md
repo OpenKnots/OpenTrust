@@ -133,12 +133,19 @@ Includes:
 ### Phase 14 — Official OpenClaw integration standard
 Goal: expose OpenTrust cleanly as OpenClaw’s memory infrastructure.
 
+Primary design docs:
+- `docs/MEMORY-API-CONTRACT.md`
+- `docs/OPENCLAW-PLUGIN-PACKAGING.md`
+- `docs/PLUGIN-READY-REFACTOR-PLAN.md`
+
 Includes:
 - [ ] stable memory API contracts for OpenClaw retrieval
 - [ ] agent-facing retrieval interface design
 - [ ] memory writeback / promotion interface design
 - [ ] integration with OpenClaw operator surfaces
+- [ ] plugin-ready packaging plan under OpenClaw plugin conventions
 - [ ] clear standards for source metadata, provenance, and retrieval response shape
+- [ ] eventual first-class packaging as an OpenClaw plugin
 
 ## Evaluation
 

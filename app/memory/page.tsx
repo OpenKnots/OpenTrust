@@ -33,8 +33,17 @@ function reviewTone(reviewStatus: string) {
   }
 }
 
-export default function MemoryPage() {
-  const entries = listMemoryEntries({ limit: 200 });
+export default async function MemoryPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ review?: string; retention?: string }>;
+}) {
+  const params = (await searchParams) ?? {};
+  const entries = listMemoryEntries({
+    limit: 200,
+    reviewStatus: typeof params.review === "string" ? (params.review as any) : undefined,
+    retentionClass: typeof params.retention === "string" ? (params.retention as any) : undefined,
+  });
 
   return (
     <>
@@ -72,6 +81,11 @@ export default function MemoryPage() {
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: "0.75rem", color: "var(--text-muted)" }}>
                 <div>{entry.origins.length} origin reference{entry.origins.length === 1 ? "" : "s"}</div>
+                <div>
+                  {entry.origins.length > 0
+                    ? `origins: ${entry.origins.map((origin) => `${origin.origin_type}:${origin.origin_id}`).join(", ")}`
+                    : "origins: none"}
+                </div>
                 <div>{entry.tags.length > 0 ? `tags: ${entry.tags.map((tag) => tag.tag).join(", ")}` : "no tags"}</div>
                 <div>{entry.confidence_reason ?? "No confidence note recorded."}</div>
               </div>

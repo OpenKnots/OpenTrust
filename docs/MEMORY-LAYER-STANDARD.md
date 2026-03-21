@@ -48,6 +48,7 @@ The OpenClaw memory layer must provide:
 - suitable for agent memory search
 - suitable for operator memory review
 - suitable for future writeback APIs
+- packageable as a first-class OpenClaw plugin under standard plugin conventions
 
 ## Current implementation baseline
 
@@ -80,5 +81,7 @@ OpenTrust already provides:
 - `docs/MEMORY-API-CONTRACT.md` — formal interface contract
 - `docs/CURATED-MEMORY-DESIGN.md` — Phase 9 implementation design
 - `docs/PHASE-9-IMPLEMENTATION-PLAN.md` — concrete build sequence
+- `docs/OPENCLAW-PLUGIN-PACKAGING.md` — first-class plugin packaging target
+- `docs/PLUGIN-READY-REFACTOR-PLAN.md` — plugin-ready separation plan
 - `docs/CONVEX-PRODUCT-SPEC.md` — product-level requirements
 - `docs/CONVEX-REPLACEMENT-BLUEPRINT.md` — integration blueprint

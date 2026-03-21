@@ -72,6 +72,7 @@ The OpenClaw memory layer should provide:
 - compatible with future agent memory APIs
 - suitable for direct use by OpenClaw UI surfaces and agent tools
 - extensible toward official memory contracts and retrieval services
+- planned for first-class packaging as an OpenClaw plugin
 
 ## Current implementation status
 
@@ -150,5 +151,7 @@ pnpm run secrets:check
 - `docs/MEMORY-API-CONTRACT.md`
 - `docs/CURATED-MEMORY-DESIGN.md`
 - `docs/PHASE-9-IMPLEMENTATION-PLAN.md`
+- `docs/OPENCLAW-PLUGIN-PACKAGING.md`
+- `docs/PLUGIN-READY-REFACTOR-PLAN.md`
 - `docs/DOCS-ALIGNMENT-NOTES.md`
 - `db/0001_init.sql`

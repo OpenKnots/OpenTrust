@@ -121,6 +121,7 @@ Future OpenClaw integration should expose:
 - integrate retrieval into OpenClaw memory search
 - integrate health and traceability surfaces into operator dashboards
 - expose memory writeback/promote flows where appropriate
+- package the memory layer under OpenClaw plugin conventions as a first-class plugin
 
 ## Proposed standards to formalize
 
