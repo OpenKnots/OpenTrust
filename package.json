@@ -17,6 +17,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "better-sqlite3": "^12.8.0",
     "lucide-react": "^0.511.0",
     "next": "^16.2.1",
     "react": "19.0.0",
@@ -26,6 +27,7 @@
   "devDependencies": {
     "@secretlint/core": "^11.4.0",
     "@secretlint/secretlint-rule-preset-recommend": "^11.4.0",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^22.19.15",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",

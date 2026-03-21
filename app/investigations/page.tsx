@@ -30,17 +30,17 @@ export default function InvestigationsPage() {
         </div>
 
         {investigations.length > 0 ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <div className="stack-list">
             {investigations.map((investigation) => {
               const previewRows = previewSavedInvestigation(investigation.sql_text, 5);
               const columns = Object.keys(previewRows[0] ?? {});
               return (
                 <details key={investigation.id} className="expandable">
                   <summary>
-                    <span style={{ flex: 1, display: "flex", alignItems: "center", gap: 10 }}>
+                    <span className="summary-row">
                       <Pill label="saved" tone="accent" />
-                      <span style={{ fontWeight: 500, color: "var(--text)" }}>{investigation.title}</span>
-                      <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)", marginLeft: "auto" }}>
+                      <span className="summary-row__title">{investigation.title}</span>
+                      <span className="summary-row__meta">
                         {formatRelativeTime(investigation.updated_at)}
                       </span>
                     </span>
@@ -51,9 +51,7 @@ export default function InvestigationsPage() {
                     </p>
 
                     <div style={{ marginBottom: 16 }}>
-                      <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--text)", marginBottom: 8 }}>
-                        Preview
-                      </div>
+                      <div className="subsection-title">Preview</div>
                       {previewRows.length > 0 ? (
                         <DataTable columns={columns} rows={previewRows} />
                       ) : (

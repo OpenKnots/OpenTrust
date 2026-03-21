@@ -237,7 +237,8 @@ export default async function HomePage({
               investigationResults.slice(0, 4).map((result) => (
                 <div key={`${result.source_id}:${result.title}`} className="search-result">
                   <div className="search-result__meta">
-                    <Pill label={result.mode ?? "fts"} tone={result.mode === "semantic-fallback" ? "info" : "neutral"} />
+                    <Pill label={result.mode ?? "fts"} tone={result.mode === "semantic-fallback" ? "info" : result.mode === "memory-entry" ? "accent" : "neutral"} />
+                    {result.sourceType ? <Pill label={result.sourceType} tone={result.sourceType === "memory" ? "accent" : "neutral"} /> : null}
                     <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>{result.source_id}</span>
                   </div>
                   <div className="search-result__title">{result.title}</div>

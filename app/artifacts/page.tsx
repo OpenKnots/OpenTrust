@@ -40,7 +40,7 @@ export default async function ArtifactsPage({
             {value}
           </Link>
         ))}
-        <span style={{ width: 1, height: 20, background: "var(--border)", margin: "0 4px" }} />
+        <span className="filter-bar__divider" />
         <Link
           href={`/artifacts?${kind ? `kind=${kind}&` : ""}sort=newest`}
           className={`filter-chip${sort === "newest" ? " filter-chip--active" : ""}`}

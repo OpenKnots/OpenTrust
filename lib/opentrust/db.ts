@@ -1,4 +1,4 @@
-import { DatabaseSync } from "node:sqlite";
+import Database from "better-sqlite3";
 import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 
@@ -7,7 +7,7 @@ const storageDir = path.join(repoRoot, "storage");
 const dbPath = path.join(storageDir, "opentrust.sqlite");
 const migrationPath = path.join(repoRoot, "db", "0001_init.sql");
 
-let database: DatabaseSync | null = null;
+let database: Database.Database | null = null;
 
 function ensureStorageDir() {
   if (!existsSync(storageDir)) {
@@ -24,7 +24,7 @@ export function getDb() {
   if (database) return database;
 
   ensureStorageDir();
-  database = new DatabaseSync(dbPath, { allowExtension: true });
+  database = new Database(dbPath);
   database.exec("PRAGMA journal_mode=WAL;");
   database.exec("PRAGMA foreign_keys=ON;");
   return database;
@@ -104,5 +104,44 @@ export function ensureMigrated() {
       last_chunk_run_at TEXT,
       metadata_json TEXT NOT NULL DEFAULT '{}'
     );
+
+    CREATE TABLE IF NOT EXISTS memory_entries (
+      id TEXT PRIMARY KEY,
+      kind TEXT NOT NULL,
+      title TEXT NOT NULL,
+      body TEXT NOT NULL,
+      summary TEXT,
+      retention_class TEXT NOT NULL,
+      review_status TEXT NOT NULL,
+      confidence_score REAL,
+      confidence_reason TEXT,
+      uncertainty_summary TEXT,
+      author_type TEXT NOT NULL,
+      author_id TEXT,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      reviewed_at TEXT,
+      reviewed_by TEXT
+    );
+
+    CREATE TABLE IF NOT EXISTS memory_entry_origins (
+      memory_entry_id TEXT NOT NULL REFERENCES memory_entries(id) ON DELETE CASCADE,
+      origin_type TEXT NOT NULL,
+      origin_id TEXT NOT NULL,
+      relationship TEXT NOT NULL,
+      PRIMARY KEY (memory_entry_id, origin_type, origin_id, relationship)
+    );
+
+    CREATE TABLE IF NOT EXISTS memory_entry_tags (
+      memory_entry_id TEXT NOT NULL REFERENCES memory_entries(id) ON DELETE CASCADE,
+      tag TEXT NOT NULL,
+      PRIMARY KEY (memory_entry_id, tag)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_memory_entry_origins_origin ON memory_entry_origins(origin_type, origin_id);
+    CREATE INDEX IF NOT EXISTS idx_memory_entry_tags_tag ON memory_entry_tags(tag);
+    CREATE INDEX IF NOT EXISTS idx_memory_entries_review_status ON memory_entries(review_status);
+    CREATE INDEX IF NOT EXISTS idx_memory_entries_retention_class ON memory_entries(retention_class);
+    CREATE INDEX IF NOT EXISTS idx_memory_entries_updated_at ON memory_entries(updated_at DESC);
   `);
 }

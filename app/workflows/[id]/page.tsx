@@ -44,24 +44,24 @@ export default async function WorkflowDetailPage({ params }: { params: Promise<{
         {workflow.steps.length > 0 ? (
           <div className="list-group">
             {workflow.steps.map((step) => (
-              <div key={step.id} className="list-item" style={{ flexDirection: "column", alignItems: "stretch", cursor: "default" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <div key={step.id} className="list-item detail-stack">
+                <div className="detail-stack__header">
                   <Pill
                     label={step.status}
                     tone={step.status === "error" || step.status === "attention" ? "danger" : step.status === "active" ? "info" : "neutral"}
                   />
-                  <span className="list-item__title" style={{ flex: 1 }}>{step.label ?? step.step_key}</span>
-                  <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
+                  <span className="list-item__title detail-stack__title">{step.label ?? step.step_key}</span>
+                  <span className="detail-stack__timestamp">
                     {step.updated_at ?? step.started_at ?? step.id}
                   </span>
                 </div>
-                <div style={{ marginTop: 4, fontSize: "0.8125rem", color: "var(--text-muted)" }}>
+                <div className="detail-stack__subtle">
                   Step key: {step.step_key}
                 </div>
                 <details className="expandable" style={{ marginTop: 8 }}>
                   <summary>Timing</summary>
                   <div className="expandable__content">
-                    <div style={{ display: "flex", gap: 24, fontSize: "0.8125rem", color: "var(--text-secondary)" }}>
+                    <div className="detail-timing">
                       <span>Started: {step.started_at ?? "—"}</span>
                       <span>Updated: {step.updated_at ?? "—"}</span>
                       <span>Ended: {step.ended_at ?? "—"}</span>

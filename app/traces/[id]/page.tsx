@@ -44,16 +44,16 @@ export default async function TraceDetailPage({ params }: { params: Promise<{ id
         {trace.tools.length > 0 ? (
           <div className="list-group">
             {trace.tools.map((tool) => (
-              <div key={tool.id} className="list-item" style={{ flexDirection: "column", alignItems: "stretch", cursor: "default" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <div key={tool.id} className="list-item detail-stack">
+                <div className="detail-stack__header">
                   <Pill
                     label={tool.status}
                     tone={tool.status === "error" ? "danger" : tool.finished_at ? "success" : "info"}
                   />
-                  <span className="list-item__title" style={{ flex: 1 }}>{tool.tool_name}</span>
-                  <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>{tool.started_at}</span>
+                  <span className="list-item__title detail-stack__title">{tool.tool_name}</span>
+                  <span className="detail-stack__timestamp">{tool.started_at}</span>
                 </div>
-                <div style={{ marginTop: 6, fontSize: "0.8125rem", color: "var(--text-secondary)" }}>
+                <div className="detail-stack__body">
                   {tool.error_text ?? (tool.finished_at ? "Completed successfully." : "Awaiting paired result.")}
                 </div>
                 {(tool.result_json || tool.finished_at) && (
