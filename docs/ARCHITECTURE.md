@@ -2,21 +2,55 @@
 
 ## Goal
 
-Build a local-first traceability and intelligence layer for OpenClaw that makes sessions, workflows, skills, plugins, souls, bundles, and artifacts queryable and explainable.
+Build the **official OpenClaw memory layer standard**:
+- a durable evidence store
+- a reliable retrieval system
+- a lineage and provenance graph
+- an insight and metrics layer
+- an operator interface for memory health, investigations, and traceability
+
+OpenTrust is the memory substrate for OpenClaw.
+It should make stored data and events reliably available to:
+- operators
+- product surfaces
+- retrieval APIs
+- agents
+- investigations
+- metrics and health systems
+
+## Architectural thesis
+
+A world-class memory layer for OpenClaw must support five capabilities at once:
+
+1. **Capture** — ingest events, workflows, artifacts, and state changes safely
+2. **Store** — preserve evidence durably with stable identifiers and migration support
+3. **Retrieve** — support lexical, semantic, and relational retrieval
+4. **Explain** — preserve provenance, lineage, and uncertainty
+5. **Optimize** — derive health, insights, metrics, and dynamic intelligence over time
 
 ## Core architecture
 
 ### 1. Local Evidence Store
-- SQLite as the system of record
-- append-only event capture
+- SQLite as the current system of record
+- append-safe event capture
 - stable IDs for sessions, traces, workflows, capabilities, and artifacts
 - dedicated runtime access layer via Node SQLite runtime
-- schema repair/migration support for evolving local databases
+- schema repair and migration support for evolving local databases
+
+Why this matters:
+- local durability is essential for trustworthy memory
+- replayability and auditability matter more than glossy abstractions
+- memory should survive agent/session resets
 
 ### 2. Retrieval layers
-- FTS5 for exact / lexical search
-- sqlite-vec for vector search over locally staged semantic chunks
-- relational SQL for joins, lineage traversal, and operator investigations
+- FTS5 for exact and lexical retrieval
+- sqlite-vec for vector search over semantic chunks
+- relational SQL for joins, filters, lineage traversal, and investigations
+
+The standard should assume all three retrieval modes are necessary:
+- lexical alone misses fuzzy recall
+- semantic alone hides precise grounding
+- SQL alone is too raw for most recall workflows
 
 ### 3. Data model layers
 - raw events
@@ -28,17 +62,30 @@ Build a local-first traceability and intelligence layer for OpenClaw that makes 
 - saved investigations
 - graph edges for lineage
 - semantic chunk + vector layer
+- health and metrics derivations
+- insight surfaces derived from evidence, not free-floating narrative
 
-### 4. Operator UX layers
+### 4. OpenClaw integration layers
+- session transcript ingestion
+- cron/workflow ingestion
+- memory-search support layer
+- future agent-facing retrieval APIs
+- future writeback flows for curated memory and promoted insights
+- operator-facing dashboard routes
+
+### 5. Operator UX layers
 - briefing layer
 - trace explorer
 - workflow explorer
-- capability explorer
-- SQL / investigation studio
+- saved investigations
 - artifact explorer
+- memory health view
+- lineage and provenance panes
+- insight and metrics surfaces
 - expandable raw evidence panes
 
 ## Current schema domains
+
 - `sessions`
 - `traces`
 - `events`
@@ -59,10 +106,10 @@ Build a local-first traceability and intelligence layer for OpenClaw that makes 
 
 ## What is implemented today
 
-### Implemented
+### Implemented baseline
 - local SQLite runtime
 - explicit bootstrap / ingest / query separation
-- real-data-only evidence flow (no dummy seeded traces/workflows)
+- real-data-only evidence flow
 - session transcript ingestion
 - cron/workflow ingestion
 - ingestion state tracking
@@ -78,6 +125,68 @@ Build a local-first traceability and intelligence layer for OpenClaw that makes 
 - sqlite-vec activation and semantic chunk indexing
 - secret-blocking pre-commit hook
 
+## Standard-level capabilities still needed
+
+To become the full OpenClaw memory standard, OpenTrust should add or harden:
+
+### A. Memory write paths
+- promotion of important derived insights into curated memory layers
+- durable labeling of memory importance and retention class
+- support for agent-authored memory writebacks with review controls
+
+### B. Retrieval contracts
+- a stable API contract for OpenClaw memory search
+- source-aware retrieval results
+- confidence / provenance metadata in responses
+- support for “why this result surfaced” explanations
+
+### C. Health and metrics
+- ingestion freshness metrics
+- semantic indexing freshness metrics
+- retrieval quality tracking
+- stale-source detection
+- coverage metrics by evidence type and source
+- operator-facing alerts for memory degradation
+
+### D. Insight derivation
+- anomaly and drift detection
+- summary and claim derivation tied to evidence provenance
+- cluster- and timeline-aware exploration
+- repeatable insight generation over traces/workflows/events
+
+### E. Export and auditability
+- backup/export flows
+- audit/report generation
+- reproducible evidence bundles
+- safe sharing of non-secret operational memory outputs
+
+## Design constraints
+
+The OpenClaw memory layer must:
+- remain explainable
+- avoid hallucinated authority
+- expose provenance clearly
+- distinguish observation from interpretation
+- make uncertainty visible
+- keep local durability a first-class concern
+- support future backends without discarding the memory model
+
+## Architectural position on future backends
+
+Implementation details may evolve.
+The memory standard should not.
+
+That means:
+- SQLite is the current durable local substrate
+- additional runtimes or sync layers may be introduced later
+- any future provider must preserve:
+  - stable references
+  - evidence provenance
+  - queryability
+  - lineage
+  - retrieval quality
+  - operator auditability
+
 ## Phase map
 
-See `docs/PHASES.md` for the completed phase map and optional next expansions.
+See `docs/PHASES.md` for the aligned roadmap from completed baseline to full OpenClaw memory standard.

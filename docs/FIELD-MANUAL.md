@@ -4,16 +4,26 @@
 
 OpenTrust should feel calm, legible, and capable.
 
-It is **not** a noisy observability console.
-It should feel like a **clear operational dashboard** for understanding what happened inside OpenClaw and why.
+It is not a noisy observability console.
+It is not a toy memory browser.
+It should feel like a **clear operational dashboard for OpenClaw memory** — a place where an operator can understand:
+- what happened
+- what was stored
+- what is retrievable
+- what is missing
+- what changed
+- what can be trusted
+- what needs attention
 
 ## UX principles
 
 ### 1. Beginner-friendly first screen
 The first screen should answer:
-- what is this system for?
-- what can I inspect?
-- where do I click first?
+- what is this memory layer for?
+- what kinds of evidence are stored?
+- what is fresh vs stale?
+- what can I inspect first?
+- what needs attention now?
 
 ### 2. Progressive disclosure
 Every major view should unfold in layers:
@@ -40,13 +50,33 @@ Every important view should show provenance:
 - artifacts created
 - evidence rows available
 - ingestion freshness when relevant
+- whether the result is observed, derived, or inferred
 
 ### 5. Local-first confidence
 The operator should always understand:
 - where data lives
 - what remains local
 - what is indexed semantically
+- what has been ingested vs not yet ingested
 - how to inspect or export raw evidence
+
+### 6. Memory health must be visible
+The UI should make it easy to see:
+- stale pipelines
+- failed ingestion
+- missing vectors
+- weak retrieval coverage
+- unsupported conclusions
+- low-confidence summaries
+
+### 7. Insight must remain evidence-backed
+OpenTrust should expose dynamic intelligence, but never as disconnected magic.
+Insight surfaces should always make it easy to inspect:
+- supporting evidence
+- freshness
+- related traces/workflows
+- uncertainty
+- source provenance
 
 ## Current UX surfaces
 
@@ -60,11 +90,15 @@ Implemented today:
 - Runtime / ingestion status cards
 - Trace detail pages with tools, events, and artifacts
 
-Still recommended:
-- editable investigation presets
-- stronger artifact filtering/grouping
+Needed to fulfill the memory-layer standard:
+- explicit memory health view
+- better retrieval quality / freshness views
+- stronger artifact filtering and grouping
 - richer workflow analytics
-- deeper lineage visualizations
+- editable investigation presets and authoring flows
+- clearer insight derivation surfaces
+- better export/audit views
+- stronger memory promotion and retention UX
 
 ## Language style
 
@@ -77,10 +111,29 @@ Use human labels like:
 - lineage
 - investigation
 - artifact
+- memory health
+- retrieval quality
+- insight
 
 Reveal lower-level terms only as users drill deeper.
 
+## Mental model for operators
+
+The UI should reinforce this sequence:
+
+1. **Observe** what happened
+2. **Trace** where it came from
+3. **Inspect** the evidence and artifacts
+4. **Retrieve** related memory
+5. **Judge** confidence and uncertainty
+6. **Act** on what needs review or repair
+
 ## Note on naming
 
-"Field manual" was a design inspiration, not the literal product identity.
-The user-facing product should present as a dashboard / observability surface rather than a manual.
+“Field manual” is still a useful design inspiration, but the user-facing identity should remain:
+- dashboard-first
+- operator-grade
+- evidence-backed
+- OpenClaw-native
+
+This is the memory layer for OpenClaw, not a detached manual or generic admin panel.

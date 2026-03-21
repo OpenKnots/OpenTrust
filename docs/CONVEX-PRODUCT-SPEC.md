@@ -1,352 +1,166 @@
-# Convex-native Replacement — Product Spec
+# OpenClaw Memory Layer Standard — Product Spec
 
 ## Working status
-Draft product spec for a new Convex-native replacement inspired by OpenTrust's UX and operator model.
 
----
+This document defines the **product-level standard** for OpenTrust as OpenClaw’s memory layer.
 
-## 1. Product name
+It supersedes the earlier idea of a separate Convex-native replacement product as the primary strategic direction.
+Backend/runtime changes may still happen later, but the product contract should stay centered on OpenClaw memory.
 
-**Working codename:** OpenTrust Next
+## 1. Product thesis
 
-This is a placeholder.
-Do not treat it as final branding.
+Build a **world-class memory layer for OpenClaw** that:
+- stores events and evidence reliably
+- retrieves them accurately
+- preserves lineage and provenance
+- exposes health, freshness, and uncertainty
+- derives actionable insights and metrics
+- supports both operators and agents
 
----
-
-## 2. Product thesis
-
-Build a **database operations cockpit** for modern app backends.
-
-The product should help developers and operators:
-- inspect data systems quickly
-- understand what changed and why
-- run saved investigations
-- surface anomalies and failing jobs
-- move fluidly between dashboard, source detail, query detail, jobs, and artifacts
-
-This is **not** meant to be a generic legacy admin tool clone.
-It should feel:
-- modern
-- real-time
+This should feel:
+- operator-grade
+- trustworthy
+- explainable
+- dynamic
 - dashboard-first
-- operator-friendly
-- minimal but powerful
+- evidence-backed
 
----
+## 2. Primary audience
 
-## 3. Primary audience
+### Core audiences
+- OpenClaw operators
+- developers working on OpenClaw features and tooling
+- agent builders
+- technical investigators and maintainers
+- advanced users who need reliable recall and traceability
 
-### Core audience
-- developers
-- DevRel engineers
-- technical operators
-- startup engineers
-- internal platform teams
+### Usage modes
+- inspecting what happened in sessions or workflows
+- diagnosing agent/tool behavior
+- retrieving past context safely
+- investigating incidents or regressions
+- promoting important information into durable memory
+- understanding health, freshness, and confidence of stored memory
 
-### Likely usage modes
-- investigating production issues
-- inspecting backend activity
-- reviewing scheduled jobs
-- running saved queries
-- validating schema/data expectations
-- generating operational visibility for demos/support/debugging
+## 3. MVP standard promise
 
----
+A user or agent should be able to:
+- ingest OpenClaw evidence safely
+- search and retrieve it reliably
+- inspect lineage and provenance
+- review artifacts and workflows
+- see freshness and health state
+- run saved investigations
+- begin deriving trustworthy insights from stored evidence
 
-## 4. MVP product definition
+## 4. Product pillars
 
-## MVP promise
-A user can connect to a backend source, land on a dashboard, inspect health/activity, run saved investigations, review jobs, and browse related artifacts without needing raw infrastructure spelunking.
+### A. Durable first
+If memory is not durable, it is not memory.
 
-## MVP includes
-- dashboard homepage
-- source/deployment model
-- saved investigations
-- query result previews
-- jobs view
-- artifact explorer
-- alert/anomaly surfacing
-- recent activity feed
-- Convex as the primary backend/provider
+### B. Retrieval must be evidence-backed
+Every surfaced result should preserve grounding and explainability.
 
-## MVP excludes
-- full multi-provider support on day one
-- collaborative editing/sharing
-- fine-grained RBAC beyond simple operator roles
-- giant graph visualizations
-- massive ETL/data warehouse functionality
+### C. Lineage matters
+The system should show what caused what, not just list records.
 
----
+### D. Insight must stay honest
+Derived summaries and metrics should expose uncertainty and provenance.
+
+### E. OpenClaw-native integration
+The memory layer should fit naturally into OpenClaw’s agent and operator workflows.
 
 ## 5. Core user stories
 
-### Dashboard
-- As an operator, I want to see source health and recent activity immediately.
-- As an operator, I want to know if anything needs attention without clicking around.
+### Storage
+- As an operator, I want OpenClaw events and evidence stored durably with stable identifiers.
 
-### Investigations
-- As an operator, I want reusable investigations for common problems.
-- As an operator, I want preview results quickly without context switching.
+### Retrieval
+- As an agent, I want to retrieve relevant prior evidence with clear provenance and confidence.
 
-### Jobs
-- As an operator, I want to review recent jobs, failures, and status transitions.
+### Traceability
+- As an operator, I want to know which tool, workflow, or event produced an outcome.
 
-### Artifacts
-- As an operator, I want to inspect exports, links, logs, or other generated outputs in one place.
+### Insight
+- As an operator, I want to surface changes, anomalies, and useful patterns from stored evidence.
 
-### Source detail
-- As an operator, I want to understand a deployment/source’s state, recent activity, and relevant investigations.
+### Health
+- As an operator, I want to see if ingestion, indexing, or retrieval quality is degraded.
 
----
+### Curation
+- As an operator, I want to promote important evidence into longer-lived memory intentionally.
 
-## 6. Product pillars
-
-### A. Dashboard-first
-The homepage is the command center.
-
-### B. Investigation-first
-Saved investigations are first-class, not an afterthought.
-
-### C. Real-time operational clarity
-The product should feel alive and current, not stale or static.
-
-### D. Progressive disclosure
-Show summaries first, then details, then raw records.
-
-### E. Minimalist power
-Keep it visually calm while exposing powerful flows.
-
----
-
-## 7. Information architecture
+## 6. Information architecture
 
 ## Primary routes
-- `/` — dashboard
-- `/sources` — data sources / deployments
-- `/sources/[id]` — source detail
-- `/investigations` — saved investigations
-- `/investigations/[id]` — investigation detail
-- `/jobs` — job runs and status
-- `/jobs/[id]` — job detail
+- `/` — overview / briefing
+- `/traces` — session and trace explorer
+- `/traces/[id]` — trace detail
+- `/workflows` — workflow ledger
+- `/workflows/[id]` — workflow detail
 - `/artifacts` — artifact explorer
-- `/alerts` — anomalies / attention items
-- `/activity` — recent activity feed
+- `/investigations` — saved investigations
+- `/health` — memory health and freshness
+- `/insights` — derived insights and metrics
+- `/admin/memory` — future operator administration / maintenance surface
 
 ## Dashboard modules
-- source health summary
-- latest activity pulse
+- ingestion freshness
+- retrieval health
+- recent traces
+- risky workflows
+- recent artifacts
 - attention panel
-- recent jobs
 - saved investigations preview
-- artifact preview
-- quick actions
+- semantic index status
+- derived insight pulse
 
----
+## 7. Domain model
 
-## 8. Domain model
-
-## Top-level entities
-- `workspaces`
-- `projects`
-- `dataSources`
-- `deployments`
-- `collections` or `tables`
-- `queries`
-- `queryRuns`
-- `jobs`
-- `jobRuns`
+### Core entities
+- `sessions`
+- `traces`
+- `events`
+- `workflowRuns`
+- `workflowSteps`
+- `capabilities`
+- `toolCalls`
 - `artifacts`
-- `investigations`
-- `alerts`
-- `activityEvents`
+- `traceEdges`
+- `savedInvestigations`
+- `ingestionState`
+- `semanticChunks`
+- `semanticIndexState`
+- `memoryEntries` (future curated memory)
+- `insights` (future derived insight layer)
+- `healthSignals` (future operational memory health layer)
 
-## Notes on interpretation
+## 8. Retrieval model
 
-### dataSources
-Represents the system being operated against.
-Examples:
-- Convex deployment
-- SQLite DB
-- future Postgres source
+The standard retrieval stack should include:
+- relational lookup
+- lexical search
+- semantic retrieval
+- provenance-weighted ranking
+- lineage-aware context expansion
+- confidence / uncertainty annotations
 
-### deployments
-Environment-level instances of a source.
-Examples:
-- dev
-- staging
-- prod
+## 9. Integration requirements for OpenClaw
 
-### investigations
-Operator-friendly containers for reusable questions and workflows.
-Can reference one or more saved queries.
+The memory layer should be designed to support:
+- agent memory search
+- operator memory inspection
+- structured writeback / promotion flows
+- durable event and artifact references
+- health and diagnostic surfaces inside OpenClaw
+- future memory APIs and tooling contracts
 
-### activityEvents
-A unified operational feed for what happened recently.
+## 10. What counts as success
 
-### alerts
-The anomaly/attention layer surfaced across the UI.
-
----
-
-## 9. Convex-native architecture
-
-## Frontend
-- Next.js app router
-- React + TypeScript
-- dashboard-first UI
-- strong client responsiveness
-- selective client components for interactivity
-
-## Backend
-- Convex schema
-- Convex queries
-- Convex mutations
-- Convex actions for external/provider calls
-- Convex scheduled jobs where needed
-- Convex storage for stored artifacts/exports where relevant
-
-## Provider posture
-### Phase 1
-- Convex primary provider
-
-### Phase 2
-- SQLite secondary/local provider
-
-### Phase 3
-- optional Postgres and others if the product direction still justifies it
-
----
-
-## 10. What to preserve from OpenTrust
-
-Preserve:
-- dashboard composition
-- anomaly surfacing
-- saved investigations concept
-- artifact explorer concept
-- status strips
-- bento panel hierarchy
-- operator-first copy/flow
-- progressive disclosure patterns
-
-Do **not** preserve as backend foundation:
-- SQLite-first OpenTrust data model
-- trace/workflow schema as canonical product schema
-- ingestion-centric architecture as the primary app model
-
----
-
-## 11. MVP screens
-
-### Dashboard
-Must answer immediately:
-- is anything broken?
-- what changed recently?
-- what source/deployment is unhealthy?
-- what should I click next?
-
-### Investigations
-Must support:
-- list saved investigations
-- preview result sets
-- inspect underlying query text
-- eventually run/copy/export
-
-### Jobs
-Must support:
-- recent job runs
-- failures
-- filters by status/environment
-- detail drill-down
-
-### Artifacts
-Must support:
-- list artifacts
-- filter by type
-- sort by freshness
-- jump back to related sources/jobs/investigations later
-
-### Source detail
-Must support:
-- deployment/source summary
-- recent jobs
-- alerts
-- linked investigations
-- linked artifacts
-
----
-
-## 12. Success criteria for MVP
-
-The MVP is successful if a user can:
-1. connect/use a Convex-backed project
-2. land on a useful dashboard
-3. identify attention items quickly
-4. open a saved investigation and preview results
-5. inspect a job run and related artifact
-6. navigate without confusion
-
----
-
-## 13. UX requirements
-
-- dark glassmorphic UI
-- minimalist, high-signal layout
-- clear hierarchy
-- strong empty states
-- relative timestamps by default
-- readable tables and result previews
-- responsive layout for smaller screens
-- dashboard should feel fast and ambient, not verbose
-
----
-
-## 14. Build phases
-
-## Phase 1 — product scaffold
-- repo/app creation
-- Convex setup
-- route shell
-- dashboard shell
-- design system tokens/components
-
-## Phase 2 — source and deployment model
-- data source schema
-- deployment schema
-- source/deployment detail pages
-- source health cards
-
-## Phase 3 — investigations
-- saved investigations schema
-- list page
-- detail page
-- preview execution
-
-## Phase 4 — jobs and alerts
-- jobs/jobRuns schema
-- alerts schema
-- job list/detail
-- dashboard attention panel wired to real data
-
-## Phase 5 — artifacts and activity
-- artifact schema
-- artifact explorer
-- activity feed
-- quick linking between modules
-
-## Phase 6 — secondary provider support
-- SQLite provider support
-- provider abstraction hardening
-
----
-
-## 15. Immediate next step
-
-Create a new Convex-native repo and implement:
-1. app shell
-2. dashboard shell
-3. source/deployment schema
-4. saved investigations MVP
-
-That is the smallest coherent slice that proves the replacement direction.
+OpenTrust succeeds as the OpenClaw memory layer standard when:
+- agents can retrieve past evidence reliably
+- operators can verify what was retrieved and why
+- important events can be promoted into durable memory intentionally
+- freshness, drift, and degradation are visible
+- insights and metrics emerge from stored evidence without losing provenance
+- the system makes OpenClaw meaningfully more reliable, explainable, and useful over time

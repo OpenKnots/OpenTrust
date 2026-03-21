@@ -1,22 +1,85 @@
 # OpenTrust
 
-**OpenTrust** is a local-first traceability and intelligence layer for OpenClaw.
+**OpenTrust** is the proposed **official memory layer standard for OpenClaw**.
 
-It is designed to answer questions like:
-- what happened in this session?
-- which workflow step caused this outcome?
-- which skills or plugins influenced the trace?
-- what artifacts were produced?
-- what evidence supports this summary?
+It is a local-first, operator-grade memory and traceability system designed to make OpenClaw data:
+- reliably captured
+- durably stored
+- safely retrieved
+- richly linked
+- explainable
+- measurable
+- operationally useful
 
-## Current status
+OpenTrust is not just a search feature.
+It is the memory substrate that should let OpenClaw answer questions like:
+- what happened?
+- what evidence supports that answer?
+- what tool, workflow, or event caused the outcome?
+- what should be remembered long-term?
+- what changed over time?
+- what is stale, missing, uncertain, or risky?
+- what insights can be derived from the full event stream?
 
-OpenTrust now includes:
+## Product position
+
+OpenTrust should be treated as:
+- the **OpenClaw memory layer reference implementation**
+- the **architecture blueprint for storage + retrieval + traceability**
+- the **standard model for durable evidence, insights, lineage, and metrics**
+- the foundation for future OpenClaw memory APIs, operator UX, and agent-facing retrieval
+
+It should **not** be framed as a detached product thesis competing with OpenClaw.
+Its primary purpose is to strengthen OpenClaw itself.
+
+## Core standard goals
+
+The OpenClaw memory layer should provide:
+
+### 1. Reliable storage
+- append-safe ingestion of events and evidence
+- durable local system of record
+- schema evolution and migration support
+- reproducible IDs and stable references
+- auditable persistence
+
+### 2. Reliable retrieval
+- lexical retrieval for exact matches
+- semantic retrieval for fuzzy recall
+- structured SQL and relational joins for investigations
+- lineage-aware lookup across sessions, workflows, artifacts, and capabilities
+- ranking that prefers evidence over unsupported summaries
+
+### 3. Explainable traceability
+- event lineage
+- tool-call / tool-result pairing
+- workflow step attribution
+- artifact provenance
+- ingestion freshness and cursor state
+- clear distinction between observed evidence and inferred conclusions
+
+### 4. Dynamic intelligence
+- memory-aware search
+- derived summaries
+- anomaly surfacing
+- change detection
+- operator health views
+- metrics and insight generation over time
+
+### 5. OpenClaw integration
+- interoperable with OpenClaw session traces
+- interoperable with cron/workflow runs
+- compatible with future agent memory APIs
+- suitable for direct use by OpenClaw UI surfaces and agent tools
+- extensible toward official memory contracts and retrieval services
+
+## Current implementation status
+
+OpenTrust already includes:
 - polished dashboard-first UI shell
 - local SQLite runtime
 - explicit bootstrap / ingest / query architecture
-- real-data-only local evidence model
-- local OpenClaw session ingestion
+- OpenClaw session ingestion
 - cron/workflow ingestion
 - ingestion state tracking
 - FTS-backed investigation search
@@ -29,22 +92,28 @@ OpenTrust now includes:
 - sqlite-vec activation
 - secret-blocking pre-commit protection
 
+## Strategic direction
+
+The correct long-term direction is:
+
+- keep **OpenTrust’s memory model, evidence framing, lineage, and operator UX**
+- align all roadmap language around **OpenClaw memory infrastructure**
+- treat any future backend shifts as implementation choices, not product redefinitions
+
+That means:
+- SQLite-first local durability remains valuable
+- other runtimes or providers may be added later
+- but the governing idea is the **OpenClaw memory layer standard**
+
 ## Principles
 
-- **local-first**
+- **OpenClaw-first**
+- **local-first durability**
+- **evidence-backed answers**
 - **progressive disclosure**
-- **beginner-friendly default UX**
-- **real SQL, not toy query syntax**
-- **evidence-backed traceability**
-
-## Stack
-
-- Next.js 16
-- React 19
-- TypeScript
-- SQLite
-- sqlite-vec
-- FTS5
+- **traceability over vibes**
+- **operator-grade reliability**
+- **memory as infrastructure, not garnish**
 
 ## Development
 
@@ -75,4 +144,8 @@ pnpm run secrets:check
 - `docs/FIELD-MANUAL.md`
 - `docs/INGESTION.md`
 - `docs/PHASES.md`
+- `docs/CONVEX-PRODUCT-SPEC.md`
+- `docs/CONVEX-REPLACEMENT-BLUEPRINT.md`
+- `docs/MEMORY-LAYER-STANDARD.md`
+- `docs/DOCS-ALIGNMENT-NOTES.md`
 - `db/0001_init.sql`

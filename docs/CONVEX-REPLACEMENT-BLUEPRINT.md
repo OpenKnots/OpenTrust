@@ -1,325 +1,168 @@
-# OpenTrust → Convex-native Replacement Blueprint
+# OpenTrust → OpenClaw Integration Blueprint
 
 ## Executive summary
 
-If the goal is a **complete replacement** built around Convex's full suite of tools and templates, then OpenTrust should be treated as:
-- a **product prototype**
-- a **UX reference**
-- a **feature-priority map**
+OpenTrust should be integrated into OpenClaw as the **official memory layer reference implementation**.
 
-It should **not** be treated as the long-term technical base.
+This document replaces the earlier “replacement blueprint” framing with an integration blueprint.
+The central question is no longer:
+- should OpenTrust be discarded for a separate product?
 
-The replacement should be designed as a **Convex-native data operations and observability product** with:
-- realtime state
-- typed backend functions
-- saved investigations
-- anomaly surfacing
-- drill-down detail views
-- operator-first dashboard UX
+The central question is now:
+- how should OpenTrust evolve into OpenClaw’s standard memory infrastructure?
 
----
+## Strategic position
 
-## Product framing
+OpenTrust should serve four roles at once:
+- **reference implementation** for OpenClaw memory
+- **product UX model** for memory health, traceability, and investigations
+- **schema and retrieval blueprint** for durable evidence storage
+- **integration target** for future OpenClaw agent and operator memory APIs
 
-### Working product thesis
-Build a **database operations cockpit** for modern data systems with:
-- a dashboard-first operator experience
-- saved investigations
-- anomaly detection and surfacing
-- drill-downs into queries, jobs, collections/tables, and artifacts
-- local and remote data source support over time
+## What to preserve
 
-### Best positioning
-This product should not try to be:
-- a generic SQL GUI clone
-- phpMyAdmin with prettier glassmorphism
-
-It should be:
-- **investigation-first**
-- **operations-aware**
-- **developer-operator friendly**
-- **trust / observability oriented**
-
----
-
-## What to keep from OpenTrust
-
-### Keep the product ideas
+### Preserve as core standard ideas
 - dashboard-first information architecture
-- anomaly/attention panels
-- artifact explorer concept
+- local-first durable evidence storage
 - saved investigations concept
+- artifact explorer concept
 - trace/workflow drill-down patterns
-- status strip pattern
-- bento grid layout
-- local-first language where helpful
-- evidence/provenance framing
+- lineage and provenance framing
+- semantic + lexical + relational retrieval stack
+- operator-first health and attention surfaces
 
-### Keep the interaction patterns
-- summary → drill-down
-- operator quick actions
-- compact status pills
-- relative-time labels
-- search + investigations side by side
+### Preserve as integration qualities
+- stable IDs and durable references
+- incremental ingestion state
+- explainable retrieval
+- explicit distinction between raw evidence and derived insights
+- auditability and export potential
 
-### Keep the design direction
-- dark glassmorphic UI
-- minimalist cards
-- cockpit-like command center composition
-- low-noise, high-signal layout hierarchy
+## What to change from earlier framing
 
----
+### Remove the detached-product posture
+OpenTrust should not be framed as a separate data-ops product competing for scope with OpenClaw.
 
-## What to discard from OpenTrust as foundation
+### Remove the “prototype to discard” assumption
+OpenTrust should not be treated as a UX sketch whose technical model is irrelevant.
 
-### Do not keep as core architecture
-- SQLite-first system-of-record as the primary product substrate
-- ingestion-first internal architecture as the main app model
-- current trace/workflow schema as the canonical backend design
-- OpenTrust-specific entity naming where it does not fit the new product
+### Replace backend-driven narrative with standards-driven narrative
+Runtime choices may evolve.
+What must remain stable is:
+- the memory model
+- the retrieval contract
+- provenance expectations
+- operator trust guarantees
 
-### Why
-Those choices were right for a local OpenClaw traceability tool.
-They are not the cleanest foundation for a Convex-native replacement.
+## Integration layers
 
----
+### 1. Evidence ingestion layer
+Feeds OpenTrust from OpenClaw runtime evidence:
+- sessions
+- traces
+- workflows
+- tool calls/results
+- artifacts
+- future curated memory entries
 
-## Convex-native target architecture
+### 2. Storage layer
+Durable local system of record with:
+- schema migrations
+- append-safe ingestion behavior
+- stable references
+- lineage edges
+- freshness metadata
 
-## Frontend
-- Next.js app router
-- React + TypeScript
-- same dashboard-first UI style refined from OpenTrust
-- client components only where interaction requires it
-- server/client split aligned to Convex usage patterns
+### 3. Retrieval layer
+Supports OpenClaw-facing retrieval through:
+- SQL / relational lookup
+- FTS5 lexical recall
+- semantic search
+- ranking and provenance annotations
 
-## Backend
-- Convex as primary backend runtime
-- Convex schema for app entities
-- Convex queries for read models
-- Convex mutations for operator actions
-- Convex actions where external integrations are needed
-- Convex scheduler for jobs / refresh / anomaly recomputation
-- Convex file storage when artifact or export storage is needed
+### 4. Insight layer
+Supports derived outputs such as:
+- anomaly surfacing
+- drift detection
+- freshness summaries
+- evidence-backed insight cards
+- operator metrics
 
-## Auth and environments
-- use Convex’s recommended auth model
-- support role-based views later (operator/admin/read-only)
-- keep environment separation explicit:
-  - local dev
-  - preview/staging
-  - production
+### 5. API / interface layer
+Future OpenClaw integration should expose:
+- agent retrieval contracts
+- operator search contracts
+- writeback/promotion contracts
+- health and indexing status endpoints
+- reproducible artifact/reference handles
 
----
+## Recommended integration roadmap
 
-## Suggested core domain model
+### Phase A — Stabilize the reference implementation
+- keep current SQLite-based memory layer healthy
+- harden ingestion and indexing flows
+- improve docs, health views, and export safety
 
-## Top-level entities
-- `workspaces`
-- `projects`
-- `dataSources`
-- `deployments`
-- `collections` or `tables`
-- `queries`
-- `queryRuns`
-- `functions`
-- `jobs`
-- `artifacts`
-- `investigations`
-- `alerts`
-- `activityEvents`
+### Phase B — Define OpenClaw memory contracts
+- retrieval response shape
+- provenance metadata requirements
+- confidence / uncertainty fields
+- writeback and promotion contract
+- health signal contract
 
-## Recommended mental model
+### Phase C — Add curated memory and insight support
+- curated memory entries
+- retention classes
+- review metadata
+- derived insights with evidence links
+- metrics and anomaly surfaces
 
-### `workspaces`
-Boundary for an operator or team.
+### Phase D — Embed into OpenClaw UX and agent flows
+- integrate retrieval into OpenClaw memory search
+- integrate health and traceability surfaces into operator dashboards
+- expose memory writeback/promote flows where appropriate
 
-### `projects`
-Logical grouping within a workspace.
+## Proposed standards to formalize
 
-### `dataSources`
-Represents a system being operated against.
-Examples:
-- Convex deployment
-- local SQLite DB
-- Postgres connection
-- future remote providers
+### Retrieval response standard
+Every retrieval result should eventually include:
+- `id`
+- `sourceType`
+- `sourceRef`
+- `title` or summary
+- `snippet`
+- `provenance`
+- `confidence`
+- `freshness`
+- `whyMatched`
+- `relatedRefs`
 
-### `deployments`
-Environment-specific instances of a data source.
-Examples:
-- local
-- staging
-- prod
+### Memory writeback standard
+Every promoted memory item should eventually include:
+- origin reference(s)
+- author / system origin
+- promotion reason
+- retention class
+- confidence / review metadata
+- timestamps
 
-### `collections` / `tables`
-Schema-visible data containers.
+### Health signal standard
+Memory health should eventually track:
+- ingestion freshness
+- index freshness
+- retrieval degradation
+- source coverage
+- stale pipelines
+- failures and partial import state
 
-### `queries`
-Saved investigation/query definitions.
+## Decision
 
-### `queryRuns`
-Execution history for those investigations.
+OpenTrust should be advanced as the OpenClaw memory layer standard.
 
-### `functions`
-Application/backend callable logic relevant to the source.
-For Convex this could map naturally to Convex functions.
-
-### `jobs`
-Scheduled/async tasks, imports, maintenance jobs, backfills, watchers.
-
-### `artifacts`
-Exports, reports, snapshots, generated outputs, linked resources.
-
-### `investigations`
-Operator-friendly containers for saved queries, notes, findings, and maybe links to alerts/artifacts.
-
-### `alerts`
-Anomalies, failures, drift, staleness, suspicious trends.
-
-### `activityEvents`
-Unified feed for latest activity.
-This replaces some of OpenTrust’s trace-specific framing with a broader product event model.
-
----
-
-## Mapping OpenTrust concepts to the new product
-
-| OpenTrust concept | Convex-native replacement concept |
-|---|---|
-| traces | activity events / investigations / incidents |
-| workflows | jobs / runs |
-| artifacts | artifacts |
-| saved investigations | investigations + queries |
-| ingestion state | sync jobs / source health |
-| semantic chunks | query/index/search support layer |
-| capabilities | providers / integrations / tools |
-
----
-
-## Information architecture
-
-## Primary routes
-- `/` → dashboard
-- `/sources` → data sources
-- `/sources/[id]` → source detail
-- `/queries` → investigations + saved queries
-- `/queries/[id]` → query detail + run history
-- `/jobs` → background jobs / task status
-- `/artifacts` → artifact explorer
-- `/alerts` → anomalies / needs attention
-- `/activity` → recent event feed
-
-## Dashboard blocks
-Top-level dashboard should include:
-- source health
-- active alerts
-- query activity
-- latest job runs
-- artifact/export activity
-- saved investigations preview
-- recent activity pulse
-
-This keeps the best OpenTrust dashboard instincts while shifting the model toward data operations.
-
----
-
-## Provider strategy
-
-## Phase 1 provider strategy
-Start with:
-1. **Convex** (primary)
-2. **SQLite** (secondary local provider)
-
-Why:
-- Convex aligns to the strategic direction
-- SQLite preserves a local/offline story and internal testing value
-
-## Phase 2 providers
-Later add:
-- Postgres
-- Neon / Supabase if desired
-- maybe Redis or other operational stores if the product direction justifies it
-
----
-
-## Roadmap
-
-## Phase A — Replacement spec
-- lock product thesis
-- define entities and route map
-- define Convex schema
-- define which OpenTrust UX patterns survive
-
-## Phase B — New Convex-native scaffold
-- create new repo/app
-- install Convex and Next stack
-- define schema
-- build source/deployment model
-- add auth and environment strategy
-
-## Phase C — Dashboard core
-- dashboard homepage
-- source health cards
-- alerts panel
-- recent activity
-- quick actions
-
-## Phase D — Queries and investigations
-- saved investigations
-- run/read-only query flow
-- result preview tables
-- query history
-
-## Phase E — Jobs and artifacts
-- job runs
-- status tracking
-- artifact explorer
-- exports / reports
-
-## Phase F — Advanced product layer
-- anomaly heuristics
-- semantic search / indexing if needed
-- richer provider integrations
-- sharing / collaboration / saved views
-
----
-
-## Recommended implementation rules
-
-- keep UI **dashboard-first**
-- keep naming product-native; avoid importing OpenTrust-specific vocabulary where it no longer fits
-- preserve **progressive disclosure**
-- bias toward **operator speed** over explanatory prose
-- keep read-only and write-capable actions visibly distinct
-- add strong empty states and source health messaging early
-
----
-
-## Recommendation
-
-### Strong recommendation
-If replacement is the plan, start a **new Convex-native repo** and do not continue evolving OpenTrust as if it were the future foundation.
-
-### Best use of OpenTrust now
-Use it as:
-- product prototype
-- design reference
-- feature prioritization input
-- language and layout source
-
-### Do not do
-- force Convex into OpenTrust’s current backend architecture
-- keep stretching the SQLite-first traceability model into a different product category
-
-That would add avoidable architectural drag.
-
----
-
-## Immediate next step
-Create the new product spec/repo around this blueprint, then implement:
-1. dashboard shell
-2. source model
-3. Convex schema and functions
-4. saved investigations
-5. alerts + activity
+The priority is not to replace it with a separate product thesis.
+The priority is to:
+- align scope
+- formalize interfaces
+- deepen reliability
+- improve insight quality
+- make it directly useful to OpenClaw itself
