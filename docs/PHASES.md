@@ -78,6 +78,11 @@ They are the next phases required to turn the baseline into the full OpenClaw me
 ### Phase 9 — Memory writeback and curation
 Goal: support durable promotion from raw event streams to curated memory.
 
+Primary design docs:
+- `docs/MEMORY-API-CONTRACT.md`
+- `docs/CURATED-MEMORY-DESIGN.md`
+- `docs/PHASE-9-IMPLEMENTATION-PLAN.md`
+
 Includes:
 - [ ] curated memory entities and retention labels
 - [ ] promotion flows from traces/artifacts to long-term memory

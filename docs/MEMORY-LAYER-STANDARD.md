@@ -77,5 +77,8 @@ OpenTrust already provides:
 - `docs/ARCHITECTURE.md` — technical model
 - `docs/INGESTION.md` — ingestion model
 - `docs/PHASES.md` — roadmap
+- `docs/MEMORY-API-CONTRACT.md` — formal interface contract
+- `docs/CURATED-MEMORY-DESIGN.md` — Phase 9 implementation design
+- `docs/PHASE-9-IMPLEMENTATION-PLAN.md` — concrete build sequence
 - `docs/CONVEX-PRODUCT-SPEC.md` — product-level requirements
 - `docs/CONVEX-REPLACEMENT-BLUEPRINT.md` — integration blueprint

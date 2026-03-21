@@ -147,5 +147,8 @@ pnpm run secrets:check
 - `docs/CONVEX-PRODUCT-SPEC.md`
 - `docs/CONVEX-REPLACEMENT-BLUEPRINT.md`
 - `docs/MEMORY-LAYER-STANDARD.md`
+- `docs/MEMORY-API-CONTRACT.md`
+- `docs/CURATED-MEMORY-DESIGN.md`
+- `docs/PHASE-9-IMPLEMENTATION-PLAN.md`
 - `docs/DOCS-ALIGNMENT-NOTES.md`
 - `db/0001_init.sql`
