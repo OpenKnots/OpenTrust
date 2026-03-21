@@ -127,11 +127,15 @@ pnpm run index:semantic
 pnpm dev
 ```
 
+Optional environment variables are documented in `.env.example`.
+
 ## Safety
 
 This repo includes a pre-commit secret scan:
 - Husky pre-commit hook
 - Secretlint ruleset
+
+OpenTrust is intended for localhost-only use. The `/api/memory/*` routes are unauthenticated by design and should not be exposed to untrusted networks.
 
 Run manually with:
 
@@ -155,3 +159,4 @@ pnpm run secrets:check
 - `docs/PLUGIN-READY-REFACTOR-PLAN.md`
 - `docs/DOCS-ALIGNMENT-NOTES.md`
 - `db/0001_init.sql`
+- `SECURITY.md`

@@ -23,6 +23,7 @@ const MEMORY_SOURCE_TYPES: MemorySourceType[] = [
 const MEMORY_REVIEW_STATUSES: MemoryReviewStatus[] = ["draft", "reviewed", "approved", "rejected"];
 const MEMORY_RETENTION_CLASSES: MemoryRetentionClass[] = ["ephemeral", "working", "longTerm", "pinned"];
 const MEMORY_HEALTH_SCOPES: MemoryHealthScope[] = ["global", "ingestion", "retrieval", "indexing", "source"];
+const INTERNAL_ERROR_MESSAGE = "Unexpected server error";
 
 export class ApiValidationError extends Error {
   status: number;
@@ -55,11 +56,13 @@ export function fail(error: unknown) {
     };
   }
 
+  console.error("Unhandled API error", error);
+
   return {
     ok: false as const,
     error: {
       code: "internal_error",
-      message: error instanceof Error ? error.message : "Unexpected error",
+      message: INTERNAL_ERROR_MESSAGE,
       details: null,
     },
     status: 500,

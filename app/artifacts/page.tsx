@@ -14,7 +14,8 @@ export default async function ArtifactsPage({
 }) {
   const params = (await searchParams) ?? {};
   const kind = typeof params.kind === "string" ? params.kind : undefined;
-  const sort = params.sort === "kind" ? "kind" : "newest";
+  const sort = !kind && params.sort === "kind" ? "kind" : "newest";
+  const showSortOptions = !kind;
   const artifacts = getRecentArtifacts(200, { kind, sort });
   const kinds = ["url", "doc", "repo", "note"];
 
@@ -34,25 +35,29 @@ export default async function ArtifactsPage({
         {kinds.map((value) => (
           <Link
             key={value}
-            href={`/artifacts?kind=${value}&sort=${sort}`}
+            href={`/artifacts?kind=${value}`}
             className={`filter-chip${kind === value ? " filter-chip--active" : ""}`}
           >
             {value}
           </Link>
         ))}
-        <span className="filter-bar__divider" />
-        <Link
-          href={`/artifacts?${kind ? `kind=${kind}&` : ""}sort=newest`}
-          className={`filter-chip${sort === "newest" ? " filter-chip--active" : ""}`}
-        >
-          Newest
-        </Link>
-        <Link
-          href={`/artifacts?${kind ? `kind=${kind}&` : ""}sort=kind`}
-          className={`filter-chip${sort === "kind" ? " filter-chip--active" : ""}`}
-        >
-          By kind
-        </Link>
+        {showSortOptions ? (
+          <>
+            <span className="filter-bar__divider" />
+            <Link
+              href="/artifacts?sort=newest"
+              className={`filter-chip${sort === "newest" ? " filter-chip--active" : ""}`}
+            >
+              Newest
+            </Link>
+            <Link
+              href="/artifacts?sort=kind"
+              className={`filter-chip${sort === "kind" ? " filter-chip--active" : ""}`}
+            >
+              By kind
+            </Link>
+          </>
+        ) : null}
       </div>
 
       {artifacts.length > 0 ? (

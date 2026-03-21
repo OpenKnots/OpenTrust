@@ -13,7 +13,6 @@ import { formatRelativeTime } from "@/lib/opentrust/format";
 import { summarizeHealth } from "@/lib/opentrust/health";
 import { getOverview } from "@/lib/opentrust/overview";
 import { searchInvestigations } from "@/lib/opentrust/search";
-import { getImportedSessionTraces } from "@/lib/opentrust/session-traces";
 import { PageHeader } from "@/components/ui/page-header";
 import { Pill, StatusDot } from "@/components/ui/pill";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -30,7 +29,6 @@ export default async function HomePage({
   const params = (await searchParams) ?? {};
   const query = typeof params.q === "string" ? params.q : "";
   const investigationResults = query ? searchInvestigations(query) : [];
-  const importedSessionTraces = getImportedSessionTraces(6);
   const latestIngestion = overview.ingestionStates[0]?.last_run_at ?? "never";
   const health = summarizeHealth({
     traces: overview.recentTraces,
@@ -39,7 +37,7 @@ export default async function HomePage({
   });
 
   return (
-    <>
+    <div className="overview-page">
       <PageHeader
         title="Overview"
         subtitle="Operator-grade traceability for sessions, workflows, and artifacts."
@@ -80,8 +78,8 @@ export default async function HomePage({
         </div>
       </div>
 
-      <div className="two-col">
-        <div>
+      <div className="overview-grid">
+        <div className="overview-grid__column">
           <div className="section">
             <div className="section__header">
               <div className="section__icon">
@@ -141,9 +139,15 @@ export default async function HomePage({
               )}
             </div>
           </div>
+
+          <InvestigationSearchSection
+            className="section overview-search overview-search--desktop"
+            query={query}
+            results={investigationResults}
+          />
         </div>
 
-        <div>
+        <div className="overview-grid__column">
           <div className="section">
             <div className="section__header">
               <div className="section__icon">
@@ -244,51 +248,74 @@ export default async function HomePage({
             </Panel>
           )}
         </div>
-      </div>
 
-      {/* Investigation search */}
-      <div className="section" style={{ marginTop: 8 }}>
-        <div className="section__header">
-          <div className="section__icon">
-            <Search size={14} />
-            <span className="section__title">Investigation search</span>
-          </div>
-        </div>
-        <form method="GET">
-          <div className="search-input-wrap">
-            <Search size={14} />
-            <input
-              name="q"
-              defaultValue={query}
-              placeholder="Search traces, workflows, artifacts..."
-              className="search-input"
-            />
-            <button type="submit" className="btn btn--primary" style={{ padding: "4px 12px" }}>
-              Search
-            </button>
-          </div>
-        </form>
-        {query && (
-          <div className="search-results">
-            {investigationResults.length > 0 ? (
-              investigationResults.slice(0, 4).map((result) => (
-                <div key={`${result.source_id}:${result.title}`} className="search-result">
-                  <div className="search-result__meta">
-                    <Pill label={result.mode ?? "fts"} tone={result.mode === "semantic-fallback" ? "info" : result.mode === "memory-entry" ? "accent" : "neutral"} />
-                    {result.sourceType ? <Pill label={result.sourceType} tone={result.sourceType === "memory" ? "accent" : "neutral"} /> : null}
-                    <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>{result.source_id}</span>
-                  </div>
-                  <div className="search-result__title">{result.title}</div>
-                  <div className="search-result__snippet">{renderHighlightedSnippet(result.snippet)}</div>
-                </div>
-              ))
-            ) : (
-              <EmptyState message={`No matches for "${query}".`} />
-            )}
-          </div>
-        )}
+        <InvestigationSearchSection
+          className="section overview-search overview-search--mobile"
+          query={query}
+          results={investigationResults}
+        />
       </div>
-    </>
+    </div>
+  );
+}
+
+function InvestigationSearchSection({
+  className,
+  query,
+  results,
+}: {
+  className: string;
+  query: string;
+  results: Array<{
+    source_id: string;
+    title: string;
+    snippet: string;
+    mode?: string | null;
+    sourceType?: string | null;
+  }>;
+}) {
+  return (
+    <div className={className}>
+      <div className="section__header">
+        <div className="section__icon">
+          <Search size={14} />
+          <span className="section__title">Investigation search</span>
+        </div>
+      </div>
+      <form method="GET">
+        <div className="search-input-wrap">
+          <Search size={14} />
+          <input
+            name="q"
+            defaultValue={query}
+            placeholder="Search traces, workflows, artifacts..."
+            className="search-input"
+          />
+          <button type="submit" className="btn btn--primary" style={{ padding: "4px 12px" }}>
+            Search
+          </button>
+        </div>
+      </form>
+      {query && (
+        <div className="search-results">
+          {results.length > 0 ? (
+            results.slice(0, 4).map((result) => (
+              <div key={`${result.source_id}:${result.title}`} className="search-result">
+                <div className="search-result__meta">
+                  <Pill label={result.mode ?? "fts"} tone={result.mode === "semantic-fallback" ? "info" : result.mode === "memory-entry" ? "accent" : "neutral"} />
+                  {result.sourceType ? <Pill label={result.sourceType} tone={result.sourceType === "memory" ? "accent" : "neutral"} /> : null}
+                  <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>{result.source_id}</span>
+                </div>
+                <div className="search-result__title">{result.title}</div>
+                <div className="search-result__snippet">{renderHighlightedSnippet(result.snippet)}</div>
+              </div>
+            ))
+          ) : (
+            <EmptyState message={`No matches for "${query}".`} />
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 

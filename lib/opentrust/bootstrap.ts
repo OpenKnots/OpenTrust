@@ -57,10 +57,36 @@ function syncSystemBundleCapability() {
   });
 }
 
+let warnedAboutMissingBuiltinSkills = false;
+
+function getBuiltinSkillsDirectory() {
+  const executableDir = path.dirname(process.execPath);
+  const nodePrefix = path.dirname(executableDir);
+  const candidates = [
+    path.join(nodePrefix, "lib", "node_modules", "openclaw", "skills"),
+    path.join(executableDir, "node_modules", "openclaw", "skills"),
+    ...(process.env.APPDATA ? [path.join(process.env.APPDATA, "npm", "node_modules", "openclaw", "skills")] : []),
+  ];
+
+  for (const directory of candidates) {
+    if (existsSync(directory)) {
+      return directory;
+    }
+  }
+
+  return null;
+}
+
 export function ensureBootstrapped() {
   ensureMigrated();
   syncSkillsFromDirectory(path.join(process.env.HOME ?? "", ".openclaw", "workspace", "skills"), "workspace-skills");
-  syncSkillsFromDirectory(path.join(process.env.HOME ?? "", ".nvm", "versions", "node", "v24.13.0", "lib", "node_modules", "openclaw", "skills"), "builtin-skills");
+  const builtinSkillsDirectory = getBuiltinSkillsDirectory();
+  if (builtinSkillsDirectory) {
+    syncSkillsFromDirectory(builtinSkillsDirectory, "builtin-skills");
+  } else if (!warnedAboutMissingBuiltinSkills) {
+    warnedAboutMissingBuiltinSkills = true;
+    console.warn("OpenTrust could not locate builtin OpenClaw skills; skipping builtin skill sync.");
+  }
   syncPluginsFromConfig();
   syncSoulFromIdentity();
   syncSystemBundleCapability();

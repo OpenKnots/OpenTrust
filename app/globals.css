@@ -505,6 +505,29 @@ button {
   margin-bottom: 24px;
 }
 
+.overview-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.app-content:has(.overview-page) {
+  width: min(100%, 1480px);
+  padding: clamp(16px, 2.4vw, 28px) clamp(16px, 3vw, 36px);
+}
+
+.overview-page .page-header {
+  margin-bottom: 20px;
+}
+
+.overview-page .stats-row {
+  padding: 10px 0;
+  margin-bottom: 20px;
+}
+
+.overview-page .stats-row__item {
+  padding: 0 16px;
+}
+
 /* ── Section ── */
 
 .section {
@@ -623,12 +646,50 @@ button {
   border-bottom: none;
 }
 
-/* ── Two column layout ── */
+/* ── Overview layout ── */
 
-.two-col {
+.overview-page .section {
+  margin-bottom: 24px;
+}
+
+.overview-page .section__header {
+  margin-bottom: 10px;
+}
+
+.overview-page .list-item {
+  padding: 9px 12px;
+}
+
+.overview-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 1fr);
-  gap: 32px;
+  grid-template-columns: minmax(0, 1.55fr) minmax(320px, 0.95fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.overview-grid__column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
+.overview-grid__column > .section,
+.overview-grid__column > .panel {
+  margin-bottom: 0;
+}
+
+.overview-search {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.overview-page .overview-search {
+  margin-bottom: 0;
+}
+
+.overview-search--mobile {
+  display: none;
 }
 
 /* ── Panel (card-like section) ── */
@@ -658,6 +719,14 @@ button {
   color: var(--text-muted);
   display: flex;
   align-items: center;
+}
+
+.overview-page .panel {
+  padding: 16px;
+}
+
+.overview-page .panel__header {
+  margin-bottom: 12px;
 }
 
 /* ── Data table ── */
@@ -715,6 +784,10 @@ button {
   margin-bottom: 12px;
   color: var(--text-muted);
   opacity: 0.5;
+}
+
+.overview-page .empty-state {
+  padding: 28px 16px;
 }
 
 /* ── Filter bar ── */
@@ -1226,6 +1299,14 @@ mark {
   padding: 14px 16px;
 }
 
+.overview-page .search-results {
+  margin-top: 10px;
+}
+
+.overview-page .search-result {
+  padding: 12px 14px;
+}
+
 .search-result__meta {
   display: flex;
   align-items: center;
@@ -1361,9 +1442,26 @@ mark {
     margin-left: var(--sidebar-collapsed);
   }
 
-  .two-col {
+  .overview-grid {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 20px;
+  }
+
+  .overview-grid__column {
+    gap: 20px;
+  }
+
+  .overview-search {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .overview-search--desktop {
+    display: none;
+  }
+
+  .overview-search--mobile {
+    display: block;
   }
 }
 
@@ -1433,7 +1531,7 @@ mark {
     background: var(--surface);
   }
 
-  .two-col {
+  .overview-grid {
     grid-template-columns: 1fr;
   }
 
