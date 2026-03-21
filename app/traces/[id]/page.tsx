@@ -23,6 +23,11 @@ export default async function TraceDetailPage({ params }: { params: Promise<{ id
           { label: "Traces", href: "/" },
           { label: trace.title ?? trace.id },
         ]}
+        actions={
+          <a className="btn btn--primary" href={`/traces/${encodeURIComponent(trace.id)}/promote`}>
+            Promote to memory
+          </a>
+        }
       />
 
       <div className="metadata-bar">

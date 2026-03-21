@@ -2,6 +2,7 @@ import { getRecentArtifacts, type ArtifactRow } from "@/lib/opentrust/artifacts"
 import { ensureBootstrapped } from "@/lib/opentrust/bootstrap";
 import { queryJson, queryOne } from "@/lib/opentrust/db";
 import { getIngestionStates, type IngestionStateRow } from "@/lib/opentrust/ingestion-state";
+import { listMemoryEntries } from "@/lib/opentrust/memory-entries";
 import { getSemanticStatus, type SemanticStatus } from "@/lib/opentrust/semantic";
 
 export interface OverviewCounts {
@@ -10,6 +11,9 @@ export interface OverviewCounts {
   workflows: number;
   capabilities: number;
   artifacts: number;
+  memoryEntries: number;
+  memoryDrafts: number;
+  memoryApproved: number;
 }
 
 export interface RecentTrace {
@@ -40,6 +44,7 @@ export interface OpenTrustOverview {
   capabilityBreakdown: CapabilitySummary[];
   recentWorkflows: WorkflowSummary[];
   recentArtifacts: ArtifactRow[];
+  recentMemoryEntries: ReturnType<typeof listMemoryEntries>;
   ingestionStates: IngestionStateRow[];
   semanticStatus: SemanticStatus;
   localDatabasePath: string;
@@ -55,8 +60,20 @@ export function getOverview(): OpenTrustOverview {
         (SELECT COUNT(*) FROM traces) AS traces,
         (SELECT COUNT(*) FROM workflow_runs) AS workflows,
         (SELECT COUNT(*) FROM capabilities) AS capabilities,
-        (SELECT COUNT(*) FROM artifacts) AS artifacts;
-    `) ?? { sessions: 0, traces: 0, workflows: 0, capabilities: 0, artifacts: 0 };
+        (SELECT COUNT(*) FROM artifacts) AS artifacts,
+        (SELECT COUNT(*) FROM memory_entries) AS memoryEntries,
+        (SELECT COUNT(*) FROM memory_entries WHERE review_status = 'draft') AS memoryDrafts,
+        (SELECT COUNT(*) FROM memory_entries WHERE review_status = 'approved') AS memoryApproved;
+    `) ?? {
+      sessions: 0,
+      traces: 0,
+      workflows: 0,
+      capabilities: 0,
+      artifacts: 0,
+      memoryEntries: 0,
+      memoryDrafts: 0,
+      memoryApproved: 0,
+    };
 
   const recentTraces = queryJson<RecentTrace>(`
     SELECT
@@ -87,10 +104,13 @@ export function getOverview(): OpenTrustOverview {
   `);
 
   const recentArtifacts = getRecentArtifacts();
+  const recentMemoryEntries = listMemoryEntries({ limit: 6 });
   const ingestionStates = getIngestionStates();
   const semanticStatus = getSemanticStatus();
 
-  const dbInfo = queryOne<{ file: string }>(`PRAGMA database_list;`) ?? { file: "storage/opentrust.sqlite" };
+  const dbInfo = queryOne<{ file: string }>(`PRAGMA database_list;`) ?? {
+    file: "storage/opentrust.sqlite",
+  };
 
   return {
     counts,
@@ -98,6 +118,7 @@ export function getOverview(): OpenTrustOverview {
     capabilityBreakdown,
     recentWorkflows,
     recentArtifacts,
+    recentMemoryEntries,
     ingestionStates,
     semanticStatus,
     localDatabasePath: dbInfo.file,

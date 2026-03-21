@@ -70,6 +70,14 @@ export default async function HomePage({
           <span className="stats-row__label">Last ingest</span>
           <span className="stats-row__value">{formatRelativeTime(latestIngestion)}</span>
         </div>
+        <div className="stats-row__item">
+          <span className="stats-row__label">Memory</span>
+          <span className="stats-row__value">{overview.counts.memoryEntries}</span>
+        </div>
+        <div className="stats-row__item">
+          <span className="stats-row__label">Draft memory</span>
+          <span className="stats-row__value">{overview.counts.memoryDrafts}</span>
+        </div>
       </div>
 
       <div className="two-col">
