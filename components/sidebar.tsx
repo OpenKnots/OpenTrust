@@ -125,6 +125,22 @@ export function Sidebar({ latestIngest }: { latestIngest?: string }) {
           </div>
         </div>
       </aside>
+
+      <nav className="mobile-tabs" aria-label="Main navigation">
+        {NAV_ITEMS.map((item) => {
+          const Icon = item.icon;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`mobile-tabs__item${isActive(item) ? " mobile-tabs__item--active" : ""}`}
+            >
+              <Icon size={20} />
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
     </>
   );
 }

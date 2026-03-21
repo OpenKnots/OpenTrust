@@ -202,6 +202,35 @@ export default async function HomePage({
             </div>
           </div>
 
+          <div className="section">
+            <div className="section__header">
+              <div className="section__icon">
+                <Sparkles size={14} />
+                <span className="section__title">Recent memory</span>
+              </div>
+              <Link href="/memory" className="btn btn--ghost" style={{ fontSize: "0.75rem" }}>
+                Open memory <ChevronRight size={12} />
+              </Link>
+            </div>
+            <div className="list-group">
+              {overview.recentMemoryEntries.length > 0 ? (
+                overview.recentMemoryEntries.slice(0, 4).map((entry) => (
+                  <div key={entry.id} className="list-item" style={{ cursor: "default" }}>
+                    <div className="list-item__content">
+                      <span className="list-item__title">{entry.title}</span>
+                      <span className="list-item__subtitle">{entry.summary ?? entry.body.slice(0, 120)}</span>
+                    </div>
+                    <div className="list-item__meta">
+                      <Pill label={entry.review_status} tone={entry.review_status === "approved" ? "success" : entry.review_status === "reviewed" ? "accent" : "warning"} />
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <EmptyState message="No curated memory yet." />
+              )}
+            </div>
+          </div>
+
           {overview.capabilityBreakdown.length > 0 && (
             <Panel title="Capabilities" icon={<Sparkles size={14} />}>
               <div className="capability-list">

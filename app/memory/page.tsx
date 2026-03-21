@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { listMemoryEntries } from "@/lib/opentrust/memory-entries";
 import { formatRelativeTime } from "@/lib/opentrust/format";
 import { PageHeader } from "@/components/ui/page-header";
@@ -42,6 +43,16 @@ export default function MemoryPage() {
         subtitle="Curated memory entries promoted from raw evidence with provenance and review state."
         breadcrumbs={[{ label: "Overview", href: "/" }, { label: "Memory" }]}
       />
+
+      <div className="filter-bar">
+        <Link href="/memory" className="filter-chip">All</Link>
+        <Link href="/memory?review=draft" className="filter-chip">Draft</Link>
+        <Link href="/memory?review=approved" className="filter-chip">Approved</Link>
+        <Link href="/memory?retention=working" className="filter-chip">Working</Link>
+        <Link href="/memory?retention=longTerm" className="filter-chip">Long-term</Link>
+        <Link href="/memory/review" className="filter-chip">Review queue</Link>
+        <Link href="/memory/health" className="filter-chip">Health</Link>
+      </div>
 
       {entries.length > 0 ? (
         <div className="card-grid">
