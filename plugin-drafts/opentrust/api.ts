@@ -1,1 +1,1 @@
-export * from "openclaw/plugin-sdk/plugin-entry";
+export * from "./src/plugin-sdk.js";

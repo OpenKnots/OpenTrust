@@ -1,7 +1,7 @@
-import type { OpenTrustPluginConfig } from "./config.js";
+import type { ResolvedOpenTrustPluginConfig } from "./config.js";
 
 export class OpenTrustClient {
-  constructor(private readonly config: Required<OpenTrustPluginConfig>) {}
+  constructor(private readonly config: ResolvedOpenTrustPluginConfig) {}
 
   private buildUrl(path: string) {
     return `${this.config.service.baseUrl.replace(/\/$/, "")}${this.config.service.apiPrefix}${path}`;

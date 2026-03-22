@@ -151,4 +151,28 @@ export function ensureMigrated() {
   if (!hasReviewNotes) {
     runSql("ALTER TABLE memory_entries ADD COLUMN review_notes TEXT;");
   }
+
+  const hasArchivedAt = memoryEntryColumns.some((column) => column.name === "archived_at");
+  if (!hasArchivedAt) {
+    runSql("ALTER TABLE memory_entries ADD COLUMN archived_at TEXT;");
+  }
+
+  runSql(`
+    CREATE TABLE IF NOT EXISTS memory_entry_versions (
+      id TEXT NOT NULL,
+      version INTEGER NOT NULL,
+      title TEXT NOT NULL,
+      body TEXT NOT NULL,
+      summary TEXT,
+      retention_class TEXT NOT NULL,
+      review_status TEXT NOT NULL,
+      changed_by_type TEXT NOT NULL,
+      changed_by_id TEXT,
+      changed_at TEXT NOT NULL,
+      change_reason TEXT,
+      PRIMARY KEY (id, version)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_memory_entry_versions_id ON memory_entry_versions(id);
+  `);
 }

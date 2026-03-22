@@ -1,3 +1,7 @@
+import { getMemoryConfig } from '@/lib/opentrust/memory-config'
+import { memoryWorkingSnapshot, memoryPromote } from '@/lib/opentrust/memory-api'
+import type { MemoryPromoteRequest } from '@/lib/types'
+
 export const CODE_EDITOR_SESSION_KEY = 'agent:main:code-editor'
 
 export const CODE_EDITOR_SYSTEM_PROMPT = `You are KnotCode Agent, the coding assistant embedded inside Knot Code.
@@ -100,4 +104,80 @@ export function buildEditorContext(params: BuildEditorContextParams): string {
   }
 
   return `${blocks.join('\n\n')}\n`
+}
+
+// ---------------------------------------------------------------------------
+// Session Lifecycle Hooks
+// ---------------------------------------------------------------------------
+
+/**
+ * Load working memory into the session context at session start. Returns
+ * a context block that can be appended to the system prompt or injected
+ * alongside `buildEditorContext`.
+ */
+export function buildMemoryContext(): string {
+  const config = getMemoryConfig()
+  if (!config.lifecycle.onSessionStart) return ''
+
+  try {
+    const snapshot = memoryWorkingSnapshot()
+    if (snapshot.sections.length === 0) return ''
+
+    return [
+      '[Working Memory — curated knowledge available to this session]',
+      '',
+      snapshot.markdown,
+      '',
+      `[${snapshot.tokenEstimate} estimated tokens · generated ${snapshot.generatedAt}]`,
+    ].join('\n')
+  } catch {
+    return ''
+  }
+}
+
+export type SessionInsight = {
+  title: string
+  body: string
+  summary?: string
+  tags?: string[]
+}
+
+/**
+ * Promote session insights to memory as draft entries at session end.
+ * Each insight is stored as a `note` kind with `working` retention and
+ * `draft` review status so operators can review before approval.
+ */
+export function promoteSessionInsights(
+  insights: SessionInsight[],
+  sessionId?: string,
+): Array<{ id: string; title: string }> {
+  const config = getMemoryConfig()
+  if (!config.lifecycle.onSessionEnd) return []
+
+  const promoted: Array<{ id: string; title: string }> = []
+
+  for (const insight of insights) {
+    const request: MemoryPromoteRequest = {
+      kind: 'memoryEntry',
+      title: insight.title,
+      body: insight.body,
+      summary: insight.summary,
+      originRefs: sessionId
+        ? [{ type: 'trace', id: sessionId }]
+        : [],
+      retentionClass: 'working',
+      tags: insight.tags,
+      review: { status: 'draft' },
+      author: { type: 'agent', id: 'knotcode-session' },
+    }
+
+    try {
+      const result = memoryPromote(request)
+      promoted.push({ id: result.entry.id, title: insight.title })
+    } catch {
+      // Non-fatal: session end should not fail on promotion errors.
+    }
+  }
+
+  return promoted
 }

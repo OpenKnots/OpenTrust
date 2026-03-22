@@ -9,7 +9,18 @@ export interface OpenTrustPluginConfig {
   };
 }
 
-export function resolveOpenTrustConfig(input: unknown): Required<OpenTrustPluginConfig> {
+export interface ResolvedOpenTrustPluginConfig {
+  service: {
+    baseUrl: string;
+    apiPrefix: string;
+    timeoutMs: number;
+  };
+  defaults: {
+    retentionClass: "ephemeral" | "working" | "longTerm" | "pinned";
+  };
+}
+
+export function resolveOpenTrustConfig(input: unknown): ResolvedOpenTrustPluginConfig {
   const cfg = (input ?? {}) as OpenTrustPluginConfig;
   return {
     service: {

@@ -1,12 +1,14 @@
 import { randomUUID } from "node:crypto";
 import { ensureBootstrapped } from "@/lib/opentrust/bootstrap";
 import { execute, queryJson, queryOne } from "@/lib/opentrust/db";
+import { getMemoryConfig } from "@/lib/opentrust/memory-config";
 import type {
   MemoryEntry,
   MemoryEntryOrigin,
   MemoryEntryTag,
   MemoryPromoteRequest,
   MemoryPromoteResponse,
+  MemoryRetentionClass,
   MemoryReviewStatus,
 } from "@/lib/types";
 
@@ -196,7 +198,8 @@ export function getMemoryEntry(id: string): MemoryEntryWithOrigins | null {
         created_at,
         updated_at,
         reviewed_at,
-        reviewed_by
+        reviewed_by,
+        archived_at
       FROM memory_entries
       WHERE id = :id
       LIMIT 1;
@@ -252,7 +255,8 @@ export function listMemoryEntries(filters?: {
         created_at,
         updated_at,
         reviewed_at,
-        reviewed_by
+        reviewed_by,
+        archived_at
       FROM memory_entries
       ${where.length > 0 ? `WHERE ${where.join(" AND ")}` : ""}
       ORDER BY updated_at DESC
@@ -272,6 +276,141 @@ export function listMemoryReviewQueue(limit = 50): MemoryReviewQueueItem[] {
   return listMemoryEntries({ reviewStatus: "draft", limit });
 }
 
+// ---------------------------------------------------------------------------
+// Version Tracking
+// ---------------------------------------------------------------------------
+
+export interface MemoryEntryVersion {
+  id: string;
+  version: number;
+  title: string;
+  body: string;
+  summary: string | null;
+  retention_class: MemoryRetentionClass;
+  review_status: MemoryReviewStatus;
+  changed_by_type: string;
+  changed_by_id: string | null;
+  changed_at: string;
+  change_reason: string | null;
+}
+
+function getNextVersion(entryId: string): number {
+  const row = queryOne<{ max_version: number | null }>(
+    "SELECT MAX(version) as max_version FROM memory_entry_versions WHERE id = :id;",
+    { id: entryId },
+  );
+  return (row?.max_version ?? 0) + 1;
+}
+
+function snapshotVersion(
+  entry: MemoryEntry,
+  changedByType: string,
+  changedById: string | null,
+  changeReason: string | null,
+) {
+  const version = getNextVersion(entry.id);
+  execute(
+    `
+      INSERT INTO memory_entry_versions (
+        id, version, title, body, summary, retention_class,
+        review_status, changed_by_type, changed_by_id,
+        changed_at, change_reason
+      ) VALUES (
+        :id, :version, :title, :body, :summary, :retentionClass,
+        :reviewStatus, :changedByType, :changedById,
+        :changedAt, :changeReason
+      );
+    `,
+    {
+      id: entry.id,
+      version,
+      title: entry.title,
+      body: entry.body,
+      summary: entry.summary,
+      retentionClass: entry.retention_class,
+      reviewStatus: entry.review_status,
+      changedByType,
+      changedById,
+      changedAt: nowIso(),
+      changeReason,
+    },
+  );
+  return version;
+}
+
+export function listMemoryEntryVersions(entryId: string): MemoryEntryVersion[] {
+  ensureBootstrapped();
+  return queryJson<MemoryEntryVersion>(
+    `
+      SELECT id, version, title, body, summary, retention_class,
+             review_status, changed_by_type, changed_by_id,
+             changed_at, change_reason
+      FROM memory_entry_versions
+      WHERE id = :id
+      ORDER BY version DESC;
+    `,
+    { id: entryId },
+  );
+}
+
+export function getMemoryEntryVersion(entryId: string, version: number): MemoryEntryVersion | null {
+  ensureBootstrapped();
+  return queryOne<MemoryEntryVersion>(
+    `
+      SELECT id, version, title, body, summary, retention_class,
+             review_status, changed_by_type, changed_by_id,
+             changed_at, change_reason
+      FROM memory_entry_versions
+      WHERE id = :id AND version = :version;
+    `,
+    { id: entryId, version },
+  );
+}
+
+/**
+ * Revert a memory entry to a previous version. Creates a new version record
+ * for the rollback itself, preserving full audit trail.
+ */
+export function rollbackMemoryEntry(entryId: string, toVersion: number): MemoryEntryWithOrigins | null {
+  ensureBootstrapped();
+
+  const target = getMemoryEntryVersion(entryId, toVersion);
+  if (!target) return null;
+
+  const current = getMemoryEntry(entryId);
+  if (!current) return null;
+
+  snapshotVersion(current, "system", null, `Rollback to version ${toVersion}`);
+
+  execute(
+    `
+      UPDATE memory_entries
+      SET title = :title,
+          body = :body,
+          summary = :summary,
+          retention_class = :retentionClass,
+          review_status = :reviewStatus,
+          updated_at = :now
+      WHERE id = :id;
+    `,
+    {
+      id: entryId,
+      title: target.title,
+      body: target.body,
+      summary: target.summary,
+      retentionClass: target.retention_class,
+      reviewStatus: target.review_status,
+      now: nowIso(),
+    },
+  );
+
+  return getMemoryEntry(entryId);
+}
+
+// ---------------------------------------------------------------------------
+// Update Operations (with version tracking)
+// ---------------------------------------------------------------------------
+
 export function updateMemoryEntryReview(input: {
   id: string;
   reviewStatus: MemoryReviewStatus;
@@ -279,6 +418,16 @@ export function updateMemoryEntryReview(input: {
   reviewNotes?: string | null;
 }) {
   ensureBootstrapped();
+
+  const existing = getMemoryEntry(input.id);
+  if (existing) {
+    snapshotVersion(
+      existing,
+      input.reviewedBy ? "user" : "system",
+      normalizeOptional(input.reviewedBy),
+      `Review status changed to ${input.reviewStatus}`,
+    );
+  }
 
   const now = nowIso();
   execute(
@@ -313,11 +462,21 @@ export function updateMemoryEntry(input: {
   retentionClass?: MemoryEntry["retention_class"];
   uncertaintySummary?: string | null;
   reviewNotes?: string | null;
+  changedByType?: string;
+  changedById?: string;
+  changeReason?: string;
 }) {
   ensureBootstrapped();
 
   const existing = getMemoryEntry(input.id);
   if (!existing) return null;
+
+  snapshotVersion(
+    existing,
+    input.changedByType ?? existing.author_type,
+    input.changedById ?? existing.author_id,
+    input.changeReason ?? null,
+  );
 
   const now = nowIso();
   execute(
@@ -349,4 +508,155 @@ export function updateMemoryEntry(input: {
   );
 
   return getMemoryEntry(input.id);
+}
+
+// ---------------------------------------------------------------------------
+// Archive & Rotation
+// ---------------------------------------------------------------------------
+
+export interface ArchiveResult {
+  agedOut: number;
+  archived: number;
+  overflowPurged: number;
+}
+
+function daysAgo(days: number): string {
+  return new Date(Date.now() - days * 86_400_000).toISOString();
+}
+
+/**
+ * Age out ephemeral entries older than their configured threshold by marking
+ * them as rejected (soft-delete). Returns count of entries aged out.
+ */
+function ageOutEntries(): number {
+  const config = getMemoryConfig();
+  let total = 0;
+
+  for (const [retentionClass, policy] of Object.entries(config.retention) as [MemoryRetentionClass, typeof config.retention.ephemeral][]) {
+    if (policy.ageOutDays == null) continue;
+
+    const cutoff = daysAgo(policy.ageOutDays);
+    const result = execute(
+      `
+        UPDATE memory_entries
+        SET review_status = 'rejected',
+            review_notes = COALESCE(review_notes || ' | ', '') || 'Auto aged-out by retention policy',
+            updated_at = :now
+        WHERE retention_class = :retentionClass
+          AND review_status != 'rejected'
+          AND archived_at IS NULL
+          AND updated_at < :cutoff;
+      `,
+      { retentionClass, cutoff, now: nowIso() },
+    );
+    total += result.changes;
+  }
+
+  return total;
+}
+
+/**
+ * Mark entries as archived when they exceed their retention class's
+ * archiveAfterDays threshold. Archived entries remain queryable but are
+ * excluded from the working snapshot.
+ */
+function archiveStaleEntries(): number {
+  const config = getMemoryConfig();
+  let total = 0;
+
+  for (const [retentionClass, policy] of Object.entries(config.retention) as [MemoryRetentionClass, typeof config.retention.ephemeral][]) {
+    if (policy.archiveAfterDays == null) continue;
+
+    const cutoff = daysAgo(policy.archiveAfterDays);
+    const result = execute(
+      `
+        UPDATE memory_entries
+        SET archived_at = :now,
+            updated_at = :now
+        WHERE retention_class = :retentionClass
+          AND archived_at IS NULL
+          AND review_status IN ('approved', 'reviewed')
+          AND updated_at < :cutoff;
+      `,
+      { retentionClass, cutoff, now: nowIso() },
+    );
+    total += result.changes;
+  }
+
+  return total;
+}
+
+/**
+ * Enforce max entry limits per retention class by archiving the oldest
+ * entries that exceed the cap.
+ */
+function purgeOverflowEntries(): number {
+  const config = getMemoryConfig();
+  let total = 0;
+
+  for (const [retentionClass, policy] of Object.entries(config.retention) as [MemoryRetentionClass, typeof config.retention.ephemeral][]) {
+    const overflowRows = queryJson<{ id: string }>(
+      `
+        SELECT id FROM memory_entries
+        WHERE retention_class = :retentionClass
+          AND archived_at IS NULL
+          AND review_status != 'rejected'
+        ORDER BY updated_at DESC
+        LIMIT -1 OFFSET :maxEntries;
+      `,
+      { retentionClass, maxEntries: policy.maxEntries },
+    );
+
+    for (const row of overflowRows) {
+      execute(
+        `
+          UPDATE memory_entries
+          SET archived_at = :now,
+              updated_at = :now
+          WHERE id = :id;
+        `,
+        { id: row.id, now: nowIso() },
+      );
+    }
+    total += overflowRows.length;
+  }
+
+  return total;
+}
+
+/**
+ * Run the full archive maintenance cycle: age-out, archive stale entries,
+ * and purge overflow. Call from a cron job or manual trigger.
+ */
+export function archiveMemory(): ArchiveResult {
+  ensureBootstrapped();
+
+  const agedOut = ageOutEntries();
+  const archived = archiveStaleEntries();
+  const overflowPurged = purgeOverflowEntries();
+
+  return { agedOut, archived, overflowPurged };
+}
+
+/**
+ * Return archive health metrics for the health API.
+ */
+export function getArchiveStats() {
+  ensureBootstrapped();
+
+  const totalArchived = queryOne<{ count: number }>(
+    "SELECT COUNT(*) as count FROM memory_entries WHERE archived_at IS NOT NULL;",
+  );
+  const totalActive = queryOne<{ count: number }>(
+    "SELECT COUNT(*) as count FROM memory_entries WHERE archived_at IS NULL AND review_status != 'rejected';",
+  );
+  const oldestUnarchived = queryOne<{ oldest: string | null }>(
+    "SELECT MIN(created_at) as oldest FROM memory_entries WHERE archived_at IS NULL AND review_status != 'rejected';",
+  );
+
+  return {
+    archivedCount: totalArchived?.count ?? 0,
+    activeCount: totalActive?.count ?? 0,
+    oldestUnarchived: oldestUnarchived?.oldest ?? null,
+  };
 }

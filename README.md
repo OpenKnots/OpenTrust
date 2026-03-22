@@ -3,6 +3,7 @@
 **OpenTrust** is the proposed **official memory layer standard for OpenClaw**.
 
 It is a local-first, operator-grade memory and traceability system designed to make OpenClaw data:
+
 - reliably captured
 - durably stored
 - safely retrieved
@@ -13,6 +14,7 @@ It is a local-first, operator-grade memory and traceability system designed to m
 
 OpenTrust is not just a search feature.
 It is the memory substrate that should let OpenClaw answer questions like:
+
 - what happened?
 - what evidence supports that answer?
 - what tool, workflow, or event caused the outcome?
@@ -24,6 +26,7 @@ It is the memory substrate that should let OpenClaw answer questions like:
 ## Product position
 
 OpenTrust should be treated as:
+
 - the **OpenClaw memory layer reference implementation**
 - the **architecture blueprint for storage + retrieval + traceability**
 - the **standard model for durable evidence, insights, lineage, and metrics**
@@ -37,6 +40,7 @@ Its primary purpose is to strengthen OpenClaw itself.
 The OpenClaw memory layer should provide:
 
 ### 1. Reliable storage
+
 - append-safe ingestion of events and evidence
 - durable local system of record
 - schema evolution and migration support
@@ -44,6 +48,7 @@ The OpenClaw memory layer should provide:
 - auditable persistence
 
 ### 2. Reliable retrieval
+
 - lexical retrieval for exact matches
 - semantic retrieval for fuzzy recall
 - structured SQL and relational joins for investigations
@@ -51,14 +56,16 @@ The OpenClaw memory layer should provide:
 - ranking that prefers evidence over unsupported summaries
 
 ### 3. Explainable traceability
+
 - event lineage
 - tool-call / tool-result pairing
-- workflow step attribution
+- workflow step attribution≠
 - artifact provenance
 - ingestion freshness and cursor state
 - clear distinction between observed evidence and inferred conclusions
 
 ### 4. Dynamic intelligence
+
 - memory-aware search
 - derived summaries
 - anomaly surfacing
@@ -67,6 +74,7 @@ The OpenClaw memory layer should provide:
 - metrics and insight generation over time
 
 ### 5. OpenClaw integration
+
 - interoperable with OpenClaw session traces
 - interoperable with cron/workflow runs
 - compatible with future agent memory APIs
@@ -77,6 +85,7 @@ The OpenClaw memory layer should provide:
 ## Current implementation status
 
 OpenTrust already includes:
+
 - polished dashboard-first UI shell
 - local SQLite runtime
 - explicit bootstrap / ingest / query architecture
@@ -102,6 +111,7 @@ The correct long-term direction is:
 - treat any future backend shifts as implementation choices, not product redefinitions
 
 That means:
+
 - SQLite-first local durability remains valuable
 - other runtimes or providers may be added later
 - but the governing idea is the **OpenClaw memory layer standard**
@@ -111,12 +121,14 @@ That means:
 OpenTrust is currently in a **pre-prerequisite holding pattern**.
 
 The upstream priority order for memory-layer work is:
+
 1. persistence
 2. reliable run completion
 
 Desktop application packaging (Tauri) can proceed in parallel — see `docs/DESKTOP-APPLICATION-PLAN.md`.
 
 Until persistence and run completion are dependable, memory-layer expansion should focus on:
+
 - docs alignment
 - scope guardrails
 - low-risk cleanup
@@ -166,14 +178,16 @@ pnpm dev                      # start the dev server on localhost:3000
 
 Optional overrides are documented in `.env.example`.
 
-| Variable | Purpose |
-|----------|---------|
-| `OPENTRUST_AUTH_MODE` | Auth mode for the app surface: `token`, `password`, or `none`. |
-| `OPENTRUST_AUTH_TOKEN` | Shared credential used when `OPENTRUST_AUTH_MODE=token`. |
-| `OPENTRUST_AUTH_PASSWORD` | Shared credential used when `OPENTRUST_AUTH_MODE=password`. |
+
+| Variable                           | Purpose                                                                                    |
+| ---------------------------------- | ------------------------------------------------------------------------------------------ |
+| `OPENTRUST_AUTH_MODE`              | Auth mode for the app surface: `token`, `password`, or `none`.                             |
+| `OPENTRUST_AUTH_TOKEN`             | Shared credential used when `OPENTRUST_AUTH_MODE=token`.                                   |
+| `OPENTRUST_AUTH_PASSWORD`          | Shared credential used when `OPENTRUST_AUTH_MODE=password`.                                |
 | `OPENTRUST_ALLOW_LOCALHOST_BYPASS` | Allow bypass on `localhost` / `127.0.0.1` / `::1`. Set `false` for strict auth everywhere. |
-| `OPENTRUST_APP_URL` | Canonical app URL used for metadata / Open Graph resolution. |
-| `OPENTRUST_SQLITE_VEC_PATH` | Override path to the sqlite-vec extension. Leave unset unless auto-detection fails. |
+| `OPENTRUST_APP_URL`                | Canonical app URL used for metadata / Open Graph resolution.                               |
+| `OPENTRUST_SQLITE_VEC_PATH`        | Override path to the sqlite-vec extension. Leave unset unless auto-detection fails.        |
+
 
 ### Security modes
 
@@ -189,23 +203,26 @@ Auth endpoints also enforce same-origin checks for POST requests, and the auth c
 
 ### Available scripts
 
-| Command | Description |
-|---------|-------------|
-| `pnpm dev` | Start the Next.js dev server |
-| `pnpm run db:init` | Create/migrate the SQLite database |
-| `pnpm run ingest:openclaw` | Import recent OpenClaw sessions |
-| `pnpm run ingest:cron` | Import cron workflow run history |
-| `pnpm run index:semantic` | Rebuild semantic chunks + vector index |
-| `pnpm run typecheck` | Run `tsc --noEmit` |
-| `pnpm run secrets:check` | Scan the repo for leaked secrets |
+
+| Command                    | Description                            |
+| -------------------------- | -------------------------------------- |
+| `pnpm dev`                 | Start the Next.js dev server           |
+| `pnpm run db:init`         | Create/migrate the SQLite database     |
+| `pnpm run ingest:openclaw` | Import recent OpenClaw sessions        |
+| `pnpm run ingest:cron`     | Import cron workflow run history       |
+| `pnpm run index:semantic`  | Rebuild semantic chunks + vector index |
+| `pnpm run typecheck`       | Run `tsc --noEmit`                     |
+| `pnpm run secrets:check`   | Scan the repo for leaked secrets       |
+
 
 ## Safety
 
 This repo includes a pre-commit secret scan:
+
 - Husky pre-commit hook
 - Secretlint ruleset
 
-OpenTrust is intended for localhost-only use. The `/api/memory/*` routes are unauthenticated by design and should not be exposed to untrusted networks.
+OpenTrust is intended for localhost-only use. The `/api/memory/`* routes are unauthenticated by design and should not be exposed to untrusted networks.
 
 Run manually with:
 
@@ -242,3 +259,4 @@ pnpm run secrets:check
 - `docs/DOCS-ALIGNMENT-NOTES.md`
 - `db/0001_init.sql`
 - `SECURITY.md`
+

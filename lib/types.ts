@@ -82,6 +82,7 @@ export interface MemoryEntry {
   updated_at: string;
   reviewed_at: string | null;
   reviewed_by: string | null;
+  archived_at: string | null;
 }
 
 export interface MemoryPromoteRequest {

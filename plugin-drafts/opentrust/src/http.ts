@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { OpenTrustClient } from "./client.js";
-import type { OpenTrustPluginConfig } from "./config.js";
+import type { ResolvedOpenTrustPluginConfig } from "./config.js";
 
 const PREFIX = "/plugins/opentrust";
 
@@ -20,7 +20,7 @@ function sendJson(res: ServerResponse, statusCode: number, body: unknown) {
   res.end(JSON.stringify(body));
 }
 
-export function createOpenTrustHttpHandler(config: Required<OpenTrustPluginConfig>) {
+export function createOpenTrustHttpHandler(config: ResolvedOpenTrustPluginConfig) {
   const client = new OpenTrustClient(config);
 
   return async (req: IncomingMessage, res: ServerResponse): Promise<boolean> => {

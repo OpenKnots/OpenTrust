@@ -1,4 +1,4 @@
-import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
+import { definePluginEntry } from "./src/plugin-sdk.js";
 import { resolveOpenTrustConfig } from "./src/config.js";
 import { createOpenTrustHttpHandler } from "./src/http.js";
 import { createOpenTrustTools } from "./src/tools.js";
