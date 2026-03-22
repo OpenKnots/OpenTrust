@@ -65,22 +65,6 @@ const HEALTH_CODE = `{
   "stats": { "stalePipelines": 0 }
 }`;
 
-const HERO_CODE = `memory_search("deployment regression after queue changes")
-  ↳ 3 evidence-backed matches
-  ↳ confidence: 0.93
-  ↳ lineage attached
-
-memory_inspect("mem_queue_regression")
-  ↳ trace_queue_abc → workflow_run_42 → artifact_diff
-  ↳ raw evidence + provenance loaded
-
-memory_promote("Queue backlog regression")
-  ↳ review: draft
-  ↳ retention: longTerm
-
-memory_health()
-  ↳ ingestion fresh · stalePipelines: 0`;
-
 const PLUGIN_CODE = `export default definePluginEntry({
   id: "opentrust",
   name: "OpenTrust",
@@ -99,17 +83,6 @@ const PLUGIN_CODE = `export default definePluginEntry({
     })
   },
 })`;
-
-const heroHighlights: CodeHighlight[] = [
-  { line: 1, variant: "search", start: 2, width: 72, label: "query" },
-  { line: 2, variant: "search", start: 16, width: 44, label: "evidence" },
-  { line: 6, variant: "inspect", start: 2, width: 56, label: "inspect" },
-  { line: 7, variant: "inspect", start: 8, width: 76, label: "lineage" },
-  { line: 10, variant: "promote", start: 2, width: 58, label: "writeback" },
-  { line: 11, variant: "promote", start: 16, width: 28, label: "review" },
-  { line: 14, variant: "health", start: 2, width: 36, label: "health" },
-  { line: 15, variant: "health", start: 10, width: 54, label: "fresh" },
-];
 
 const searchHighlights: CodeHighlight[] = [
   { line: 2, variant: "search", start: 16, width: 56, label: "query" },
@@ -168,78 +141,29 @@ export default function LandingPage() {
 
       <section className="landing-hero">
         <div className="landing-hero__glow" />
-        <div className="landing-hero__glow landing-hero__glow--secondary" />
-        <div className="landing-hero__grid">
-          <div className="landing-hero__copy">
-            <div className="landing-hero__badge">
-              <img src={MOLTY_ICON} alt="Molty" className="landing-molty landing-molty--inline" />
-              <Plug size={12} />
-              Official OpenClaw Memory Plugin
-            </div>
-            <h1 className="landing-hero__title">
-              The <span>Memory Layer</span> that makes every OpenClaw answer feel earned
-            </h1>
-            <p className="landing-hero__subtitle">
-              OpenTrust turns raw sessions, workflows, and artifacts into evidence-backed memory with
-              inspectable lineage, retrieval you can defend, and operator-grade trust signals built for OpenClaw.
-            </p>
-            <div className="landing-hero__actions">
-              <Link href="/dashboard" className="landing-btn landing-btn--primary">
-                Open Dashboard <ArrowRight size={16} />
-              </Link>
-              <a href="#api" className="landing-btn">
-                Explore Memory API <ChevronRight size={16} />
-              </a>
-            </div>
-            <div className="landing-proof-strip">
-              <ProofPill title="Evidence first" value="Traces • artifacts • lineage" />
-              <ProofPill title="Retrieval" value="FTS5 + sqlite-vec hybrid" />
-              <ProofPill title="Operator trust" value="Health, review, provenance" />
-            </div>
-          </div>
-
-          <div className="landing-hero__stage">
-            <BorderGlow className="landing-surface-card landing-surface-card--hero" active>
-              <div className="landing-console__topline">
-                <div>
-                  <div className="landing-console__eyebrow">Live retrieval choreography</div>
-                  <div className="landing-console__title">Watch the system find signal, inspect lineage, and prove freshness</div>
-                </div>
-                <div className="landing-console__live">
-                  <span className="landing-console__dot" />
-                  Active memory substrate
-                </div>
-              </div>
-              <div className="landing-console__query">“Why did the deployment regress after the queue change?”</div>
-              <CodeBlock
-                language="bash"
-                filename="memory.runtime"
-                code={HERO_CODE}
-                showLineNumbers={false}
-                highlights={heroHighlights}
-              />
-              <div className="landing-console__signals">
-                <SignalChip tone="search" label="Hybrid retrieval" value="semantic + lexical" />
-                <SignalChip tone="inspect" label="Evidence graph" value="trace → workflow → artifact" />
-                <SignalChip tone="promote" label="Writeback" value="review + retention" />
-                <SignalChip tone="health" label="Health" value="fresh pipelines" />
-              </div>
-            </BorderGlow>
-
-            <div className="landing-stage-grid">
-              <BorderGlow className="landing-surface-card landing-surface-card--compact" active>
-                <div className="landing-surface-card__eyebrow">Why it feels trustworthy</div>
-                <ul className="landing-trust-list">
-                  <li><span /> Answers link back to source evidence</li>
-                  <li><span /> Retrieval explains why results surfaced</li>
-                  <li><span /> Memory promotion stays reviewable</li>
-                </ul>
-              </BorderGlow>
-              <div className="landing-code-demo">
-                <CodeDemo />
-              </div>
-            </div>
-          </div>
+        <div className="landing-hero__badge">
+          <img src={MOLTY_ICON} alt="Molty" className="landing-molty landing-molty--inline" />
+          <Plug size={12} />
+          Official OpenClaw Memory Plugin
+        </div>
+        <h1 className="landing-hero__title">
+          The <span>Memory Layer</span> for OpenClaw
+        </h1>
+        <p className="landing-hero__subtitle">
+          Local-first, operator-grade memory and traceability.
+          Evidence-backed answers. Explainable retrieval.
+          Built for agents, inspectable by operators.
+        </p>
+        <div className="landing-hero__actions">
+          <Link href="/dashboard" className="landing-btn landing-btn--primary">
+            Open Dashboard <ArrowRight size={16} />
+          </Link>
+          <a href="#api" className="landing-btn">
+            Explore Memory API <ChevronRight size={16} />
+          </a>
+        </div>
+        <div className="landing-hero__demo">
+          <CodeDemo />
         </div>
       </section>
 
@@ -251,11 +175,12 @@ export default function LandingPage() {
           Why OpenTrust
         </div>
         <h2 className="landing-section__title">
-          What becomes possible when memory is inspectable?
+          What can OpenTrust answer?
         </h2>
         <p className="landing-section__desc">
-          OpenTrust turns raw OpenClaw sessions, workflows, and events into a structured memory layer
-          with provenance, lineage, and operator-grade explainability — so answers are attributable, reviewable, and useful.
+          OpenTrust turns raw OpenClaw sessions, workflows, and events
+          into a structured memory layer with provenance, lineage, and
+          operator-grade explainability.
         </p>
         <CardGrid tone="accent" storageKey="landing-values" className="landing-values-wrap">
           <ValueCard
@@ -429,7 +354,7 @@ export default function LandingPage() {
         </h2>
         <p className="landing-section__desc">
           The Memory API contract provides evidence-backed retrieval, inspectable
-          lineage, explicit writeback, and operational health — all with stable
+          lineage, explicit writeback, and operational health &mdash; all with stable
           envelopes safe for agent consumption.
         </p>
         <CardGrid tone="accent" storageKey="landing-api" className="landing-api-wrap">
@@ -616,7 +541,7 @@ export default function LandingPage() {
             <div className="landing-start__step">
               <span className="landing-start__step-num">2</span>
               <div className="landing-start__step-text">
-                <div className="landing-start__step-title">Initialize durable storage</div>
+                <div className="landing-start__step-title">Initialize the database</div>
                 <div className="landing-start__step-desc">
                   Creates the SQLite database with all schema migrations
                   under the <code>storage/</code> directory.
@@ -636,7 +561,7 @@ export default function LandingPage() {
             <div className="landing-start__step">
               <span className="landing-start__step-num">4</span>
               <div className="landing-start__step-text">
-                <div className="landing-start__step-title">Open the operator dashboard</div>
+                <div className="landing-start__step-title">Launch the dashboard</div>
                 <div className="landing-start__step-desc">
                   Start the Next.js dev server and open the operator dashboard
                   at localhost.
@@ -693,30 +618,6 @@ pnpm dev`} />
           </Link>
         </div>
       </footer>
-    </div>
-  );
-}
-
-function ProofPill({ title, value }: { title: string; value: string }) {
-  return (
-    <div className="landing-proof-pill">
-      <img src={MOLTY_ICON} alt="Molty" className="landing-molty landing-molty--proof" />
-      <div className="landing-proof-pill__copy">
-        <span className="landing-proof-pill__title">{title}</span>
-        <span className="landing-proof-pill__value">{value}</span>
-      </div>
-    </div>
-  );
-}
-
-function SignalChip({ label, value, tone }: { label: string; value: string; tone: "search" | "inspect" | "promote" | "health" }) {
-  return (
-    <div className={`landing-signal-chip landing-signal-chip--${tone}`}>
-      <img src={MOLTY_ICON} alt="Molty" className="landing-molty landing-molty--signal" />
-      <div className="landing-signal-chip__copy">
-        <span className="landing-signal-chip__label">{label}</span>
-        <span className="landing-signal-chip__value">{value}</span>
-      </div>
     </div>
   );
 }

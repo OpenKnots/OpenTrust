@@ -17,6 +17,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.15",
     "better-sqlite3": "^12.8.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.511.0",
