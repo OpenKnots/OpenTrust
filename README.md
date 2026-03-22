@@ -133,18 +133,53 @@ It should **not** pretend to outrank runtime reliability work.
 - **operator-grade reliability**
 - **memory as infrastructure, not garnish**
 
-## Development
+## Getting started
+
+The fastest way to set up OpenTrust is the interactive setup script. It walks through every step, explains what each one does, detects prior work, and lets you skip anything:
 
 ```bash
-pnpm install
-pnpm run db:init
-pnpm run ingest:openclaw
-pnpm run ingest:cron
-pnpm run index:semantic
-pnpm dev
+./scripts/setup.sh
 ```
 
-Optional environment variables are documented in `.env.example`.
+### Prerequisites
+
+- **Node.js 18+**
+- **pnpm** — install with `npm install -g pnpm` or see [pnpm.io](https://pnpm.io/installation)
+- **git** — required for Husky pre-commit hooks
+
+### Manual setup
+
+If you prefer to run each step yourself:
+
+```bash
+pnpm install                  # install deps + set up Husky hooks
+cp .env.example .env          # create local env (optional overrides)
+pnpm run db:init              # create/migrate SQLite database
+pnpm run ingest:openclaw      # import OpenClaw session transcripts
+pnpm run ingest:cron          # import cron/workflow run history
+pnpm run index:semantic       # build semantic chunk + vector index
+pnpm dev                      # start the dev server on localhost:3000
+```
+
+### Environment variables
+
+Optional overrides are documented in `.env.example`. The only current variable is:
+
+| Variable | Purpose |
+|----------|---------|
+| `OPENTRUST_SQLITE_VEC_PATH` | Override path to the sqlite-vec extension. Leave unset unless auto-detection fails. |
+
+### Available scripts
+
+| Command | Description |
+|---------|-------------|
+| `pnpm dev` | Start the Next.js dev server |
+| `pnpm run db:init` | Create/migrate the SQLite database |
+| `pnpm run ingest:openclaw` | Import recent OpenClaw sessions |
+| `pnpm run ingest:cron` | Import cron workflow run history |
+| `pnpm run index:semantic` | Rebuild semantic chunks + vector index |
+| `pnpm run typecheck` | Run `tsc --noEmit` |
+| `pnpm run secrets:check` | Scan the repo for leaked secrets |
 
 ## Safety
 

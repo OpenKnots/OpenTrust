@@ -1,3 +1,6 @@
+"use client";
+
+import React from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -53,35 +56,41 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="landing-hero">
-        <div className="landing-hero__stats">
-          <div className="landing-hero__stat">4 API endpoints</div>
-          <div className="landing-hero__stat">Evidence-backed</div>
-          <div className="landing-hero__stat">Plugin-ready</div>
+      {/* Hero - Nexflow Split Layout */}
+      <section className="landing-hero-split">
+        <div className="landing-hero-split__left">
+          <div className="landing-hero-split__badge">
+            The Memory Layer
+          </div>
+
+          <h1 className="landing-hero-split__title">
+            Build trust into every answer
+          </h1>
+
+          <p className="landing-hero-split__subtitle">
+            Evidence-backed retrieval, inspectable lineage, and operator-grade memory.
+            Built for agents, designed for trust.
+          </p>
+
+          <div className="landing-hero-split__actions">
+            <Link href="/dashboard" className="landing-btn landing-btn--primary landing-btn--lg">
+              Open Dashboard
+              <ArrowRight size={18} />
+            </Link>
+            <a href="#api" className="landing-btn landing-btn--lg">
+              Explore API
+            </a>
+          </div>
+
+          <div className="landing-hero-split__logos">
+            <span className="landing-hero-split__logo">4 API endpoints</span>
+            <span className="landing-hero-split__logo">Evidence-backed retrieval</span>
+            <span className="landing-hero-split__logo">Plugin-ready</span>
+          </div>
         </div>
 
-        <h1 className="landing-hero__title">
-          Build trust into every answer
-        </h1>
-
-        <p className="landing-hero__subtitle">
-          The Memory Layer for OpenClaw. Evidence-backed retrieval, inspectable lineage,
-          and operator-grade memory. Built for agents, designed for trust.
-        </p>
-
-        <div className="landing-hero__actions">
-          <Link href="/dashboard" className="landing-btn landing-btn--primary">
-            Open Dashboard
-            <ArrowRight size={16} />
-          </Link>
-          <a href="#api" className="landing-btn">
-            Explore API
-          </a>
-        </div>
-
-        <div className="landing-hero__preview">
-          <CodeDemo />
+        <div className="landing-hero-split__right">
+          <ProductPreviewCard />
         </div>
       </section>
 
@@ -231,23 +240,18 @@ export default function LandingPage() {
 
       <hr className="landing-divider" />
 
-      {/* Testimonial */}
+      {/* Testimonial - Nexflow Split Layout */}
       <section className="landing-section">
-        <div className="landing-testimonial">
-          <div className="landing-testimonial__quote">
-            "Finally, a memory layer I can trust. The lineage tracking alone is worth it —
-            I know exactly where every answer came from."
-          </div>
-          <div className="landing-testimonial__author">
-            <div className="landing-testimonial__avatar">
-              <Sparkles size={18} />
-            </div>
-            <div className="landing-testimonial__meta">
-              <div className="landing-testimonial__name">OpenClaw Operator</div>
-              <div className="landing-testimonial__title">Production Deployment</div>
-            </div>
-          </div>
-        </div>
+        <div className="landing-section__eyebrow">Customer Impact</div>
+        <TestimonialSection />
+      </section>
+
+      <hr className="landing-divider" />
+
+      {/* FAQ - Nexflow Split Layout */}
+      <section className="landing-section">
+        <div className="landing-section__eyebrow">FAQs</div>
+        <FAQSection />
       </section>
 
       <hr className="landing-divider" />
@@ -273,20 +277,63 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="landing-footer">
-        <div className="landing-footer__brand">
-          <img src={MOLTY_ICON} alt="Molty" className="landing-footer__icon" />
-          <span>OpenTrust by OpenKnots</span>
+      {/* Footer - Nexflow 4-Column Layout */}
+      <footer>
+        <div className="footer-grid">
+          <div className="footer-col">
+            <div className="landing-footer__brand">
+              <img src={MOLTY_ICON} alt="OpenTrust" style={{ width: 24, height: 24, borderRadius: 4 }} />
+              <span style={{ fontSize: "0.9375rem", fontWeight: 600, color: "rgba(255,255,255,0.9)" }}>OpenTrust</span>
+            </div>
+            <div className="footer-col__tagline">
+              The memory layer for OpenClaw. Evidence-backed retrieval and operator-grade traceability.
+            </div>
+          </div>
+
+          <div className="footer-col">
+            <div className="footer-col__title">Social</div>
+            <div className="footer-col__links">
+              <a href="https://github.com/OpenKnots/OpenTrust" target="_blank" rel="noopener noreferrer" className="footer-col__link">
+                GitHub
+              </a>
+              <a href="https://x.com/OpenKnot" target="_blank" rel="noopener noreferrer" className="footer-col__link">
+                Twitter
+              </a>
+              <a href="https://discord.gg/openknot" target="_blank" rel="noopener noreferrer" className="footer-col__link">
+                Discord
+              </a>
+            </div>
+          </div>
+
+          <div className="footer-col">
+            <div className="footer-col__title">Quick Menu</div>
+            <div className="footer-col__links">
+              <Link href="/dashboard" className="footer-col__link">Dashboard</Link>
+              <a href="#features" className="footer-col__link">Features</a>
+              <a href="#how-it-works" className="footer-col__link">How it Works</a>
+              <a href="#comparison" className="footer-col__link">Comparison</a>
+            </div>
+          </div>
+
+          <div className="footer-col">
+            <div className="footer-col__title">Information</div>
+            <div className="footer-col__links">
+              <a href="https://docs.openclaw.ai/plugins" target="_blank" rel="noopener noreferrer" className="footer-col__link">
+                Documentation
+              </a>
+              <a href="https://github.com/OpenKnots/OpenTrust#readme" target="_blank" rel="noopener noreferrer" className="footer-col__link">
+                README
+              </a>
+              <a href="https://github.com/OpenKnots/OpenTrust/issues" target="_blank" rel="noopener noreferrer" className="footer-col__link">
+                Support
+              </a>
+            </div>
+          </div>
         </div>
-        <div className="landing-footer__links">
-          <a href="https://github.com/OpenKnots/OpenTrust" target="_blank" rel="noopener noreferrer">
-            GitHub
-          </a>
-          <a href="https://docs.openclaw.ai/plugins" target="_blank" rel="noopener noreferrer">
-            Plugins
-          </a>
-          <Link href="/dashboard">Dashboard</Link>
+
+        <div className="footer-bottom">
+          <span>© 2026 OpenKnot. All rights reserved.</span>
+          <span>Threaded by <a href="https://openknot.ai" style={{ color: "rgba(255,255,255,0.5)" }}>OpenKnot</a></span>
         </div>
       </footer>
     </div>
@@ -406,6 +453,214 @@ function HealthVisual() {
         <span>All pipelines healthy</span>
       </div>
       <div className="visual-health__metric">Last ingest: 1h ago</div>
+    </div>
+  );
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Nexflow-Inspired Components
+// ──────────────────────────────────────────────────────────────────────────────
+
+function ProductPreviewCard() {
+  return (
+    <div className="product-preview texture-diagonal">
+      <div className="product-preview__breadcrumb">
+        <span>OpenTrust</span>
+        <span className="product-preview__breadcrumb-sep">/</span>
+        <span>Memory</span>
+        <span className="product-preview__breadcrumb-sep">/</span>
+        <span>Evidence</span>
+      </div>
+
+      <div className="product-preview__tabs">
+        <div className="product-preview__tab product-preview__tab--active">
+          Traces <span style={{ opacity: 0.5 }}>12</span>
+        </div>
+        <div className="product-preview__tab">
+          Memory <span style={{ opacity: 0.5 }}>8</span>
+        </div>
+        <div className="product-preview__tab">Health</div>
+        <div className="product-preview__tab">API</div>
+      </div>
+
+      <div className="product-preview__table-row">
+        <div className="product-preview__status-badge product-preview__status-badge--completed">
+          Completed
+        </div>
+        <div className="product-preview__name">session_deploy_prod_v2</div>
+        <div className="product-preview__progress">
+          <div className="product-preview__progress-dot product-preview__progress-dot--active" />
+          <div className="product-preview__progress-line" />
+          <div className="product-preview__progress-dot product-preview__progress-dot--active" />
+          <div className="product-preview__progress-line" />
+          <div className="product-preview__progress-dot product-preview__progress-dot--active" />
+        </div>
+        <div className="product-preview__meta">operator</div>
+        <div className="product-preview__meta">2m 14s</div>
+      </div>
+
+      <div className="product-preview__table-row">
+        <div className="product-preview__status-badge product-preview__status-badge--running">
+          Running
+        </div>
+        <div className="product-preview__name">workflow_memory_sync</div>
+        <div className="product-preview__progress">
+          <div className="product-preview__progress-dot product-preview__progress-dot--active" />
+          <div className="product-preview__progress-line" />
+          <div className="product-preview__progress-dot product-preview__progress-dot--active" />
+          <div className="product-preview__progress-line" />
+          <div className="product-preview__progress-dot" />
+        </div>
+        <div className="product-preview__meta">system</div>
+        <div className="product-preview__meta">1m 32s</div>
+      </div>
+
+      <div className="product-preview__table-row">
+        <div className="product-preview__status-badge product-preview__status-badge--completed">
+          Completed
+        </div>
+        <div className="product-preview__name">trace_config_validation</div>
+        <div className="product-preview__progress">
+          <div className="product-preview__progress-dot product-preview__progress-dot--active" />
+          <div className="product-preview__progress-line" />
+          <div className="product-preview__progress-dot product-preview__progress-dot--active" />
+          <div className="product-preview__progress-line" />
+          <div className="product-preview__progress-dot product-preview__progress-dot--active" />
+        </div>
+        <div className="product-preview__meta">agent</div>
+        <div className="product-preview__meta">45s</div>
+      </div>
+
+      <div className="product-preview__table-row">
+        <div className="product-preview__status-badge product-preview__status-badge--failed">
+          Failed
+        </div>
+        <div className="product-preview__name">artifact_ingestion_retry</div>
+        <div className="product-preview__progress">
+          <div className="product-preview__progress-dot product-preview__progress-dot--active" />
+          <div className="product-preview__progress-line" />
+          <div className="product-preview__progress-dot" />
+          <div className="product-preview__progress-line" />
+          <div className="product-preview__progress-dot" />
+        </div>
+        <div className="product-preview__meta">system</div>
+        <div className="product-preview__meta">—</div>
+      </div>
+    </div>
+  );
+}
+
+function TestimonialSection() {
+  return (
+    <div className="testimonial-split">
+      <div className="testimonial-split__image">
+        <div className="testimonial-split__play">
+          <Sparkles size={24} />
+        </div>
+      </div>
+
+      <div>
+        <div className="testimonial-split__quote">
+          "Finally, a memory layer I can trust. <mark>The lineage tracking alone is worth it</mark> — I know exactly where every answer came from."
+        </div>
+
+        <div className="testimonial-split__author">
+          <div className="testimonial-split__author-info">
+            <div className="testimonial-split__author-name">OpenClaw Operator</div>
+            <div className="testimonial-split__author-title">Production Deployment</div>
+          </div>
+          <div className="testimonial-split__logo">
+            <img src={MOLTY_ICON} alt="OpenClaw" style={{ width: 32, height: 32, opacity: 0.6 }} />
+          </div>
+        </div>
+
+        <div className="testimonial-split__stats">
+          <div className="testimonial-stat">
+            <div className="testimonial-stat__value">4</div>
+            <div className="testimonial-stat__label">API endpoints</div>
+          </div>
+          <div className="testimonial-stat">
+            <div className="testimonial-stat__value">100%</div>
+            <div className="testimonial-stat__label">Evidence-backed retrieval</div>
+          </div>
+          <div className="testimonial-stat">
+            <div className="testimonial-stat__value">8</div>
+            <div className="testimonial-stat__label">Hours saved per release</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FAQSection() {
+  return (
+    <div className="faq-grid">
+      <div>
+        <h2 className="faq-left__title">Got questions? We've got answers.</h2>
+        <p className="faq-left__subtitle">
+          Still have questions? Contact us at support@openknot.ai
+        </p>
+        <Link href="mailto:support@openknot.ai" className="landing-btn landing-btn--primary">
+          Contact Us
+        </Link>
+      </div>
+
+      <div className="faq-accordion">
+        <FAQItem
+          number="01"
+          question="What is OpenTrust?"
+          answer="OpenTrust is a memory layer for OpenClaw that provides evidence-backed retrieval, inspectable lineage, and operator-grade memory management. It ensures every answer can be traced back to its source."
+        />
+        <FAQItem
+          number="02"
+          question="How does evidence-backed memory work?"
+          answer="Every memory entry in OpenTrust includes full lineage tracking back to the original source sessions, artifacts, and tool calls. This means you can always verify where information came from and how it was derived."
+        />
+        <FAQItem
+          number="03"
+          question="Can I use OpenTrust with existing agents?"
+          answer="Yes! OpenTrust integrates seamlessly with OpenClaw and provides a plugin architecture. You can also use the standalone dashboard to inspect and manage memory independently."
+        />
+        <FAQItem
+          number="04"
+          question="What's the difference between traces and memory?"
+          answer="Traces are raw session records imported from OpenClaw. Memory entries are curated, operator-approved knowledge promoted from traces with explicit retention policies and review workflows."
+        />
+        <FAQItem
+          number="05"
+          question="Is my data stored locally?"
+          answer="Yes. OpenTrust uses local SQLite storage with append-safe guarantees. All data stays on your machine unless you explicitly configure remote backups."
+        />
+        <FAQItem
+          number="06"
+          question="How do I get started?"
+          answer="Clone the repository, run pnpm install, initialize the database with pnpm run db:init, and start ingesting OpenClaw sessions with pnpm run ingest:openclaw. The dashboard launches with pnpm dev."
+        />
+      </div>
+    </div>
+  );
+}
+
+function FAQItem({ number, question, answer }: { number: string; question: string; answer: string }) {
+  const [isOpen, setIsOpen] = React.useState(false);
+
+  return (
+    <div className={`faq-item ${isOpen ? "faq-item--open" : ""}`}>
+      <button
+        className="faq-item__trigger"
+        onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
+      >
+        <span className="faq-item__number">{number}</span>
+        <span className="faq-item__question">{question}</span>
+        <X size={20} className="faq-item__icon" />
+      </button>
+      {isOpen && (
+        <div className="faq-item__answer">
+          {answer}
+        </div>
+      )}
     </div>
   );
 }

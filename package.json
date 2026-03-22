@@ -4,6 +4,7 @@
   "private": true,
   "description": "Local-first OpenClaw traceability, workflows, and capability intelligence.",
   "scripts": {
+    "bdev": "next build && next dev",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
