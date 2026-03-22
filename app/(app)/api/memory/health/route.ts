@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requireApiAuth } from "@/lib/opentrust/auth";
 import { memoryHealth } from "@/lib/opentrust/memory-api";
 import { fail, ok, parseHealthQuery, parseHealthRequest, readJson } from "@/lib/opentrust/api-contract";
 
@@ -15,6 +16,9 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const unauthorized = await requireApiAuth();
+  if (unauthorized) return unauthorized;
+
   try {
     const body = await readJson(request);
     return NextResponse.json(ok(memoryHealth(parseHealthRequest(body))));

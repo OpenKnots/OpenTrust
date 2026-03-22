@@ -6,6 +6,7 @@ import { getOverview } from "@/lib/opentrust/overview";
 import { PageHeader } from "@/components/ui/page-header";
 import { Pill } from "@/components/ui/pill";
 import { EmptyState } from "@/components/ui/empty-state";
+import { PiiSafe } from "@/components/pii-safe";
 
 export const dynamic = "force-dynamic";
 
@@ -75,7 +76,7 @@ export default async function MemoryHealthPage() {
             <div key={`${signal.kind}:${index}`} className="list-item" style={{ cursor: "default" }}>
               <div className="list-item__content">
                 <span className="list-item__title">{signal.kind}</span>
-                <span className="list-item__subtitle">{signal.summary}</span>
+                <span className="list-item__subtitle"><PiiSafe>{signal.summary}</PiiSafe></span>
               </div>
               <div className="list-item__meta">
                 <Pill label={signal.status} tone={tone(signal.status)} />

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requireApiAuth } from "@/lib/opentrust/auth";
 import { memorySearch } from "@/lib/opentrust/memory-api";
 import {
   fail,
@@ -12,6 +13,9 @@ import {
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
+  const unauthorized = await requireApiAuth();
+  if (unauthorized) return unauthorized;
+
   try {
     const url = new URL(request.url);
     const parsed = parseSearchQuery(url);
@@ -28,6 +32,9 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const unauthorized = await requireApiAuth();
+  if (unauthorized) return unauthorized;
+
   try {
     const body = await readJson(request);
     return NextResponse.json(ok(memorySearch(parseSearchRequest(body))));

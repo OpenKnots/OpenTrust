@@ -1,5 +1,6 @@
 "use server";
 
+import { isAuthenticatedRequest } from "@/lib/opentrust/auth";
 import { runReadOnlySql } from "@/lib/opentrust/sql-runner";
 
 export async function executeInvestigationSql(sql: string): Promise<{
@@ -8,6 +9,15 @@ export async function executeInvestigationSql(sql: string): Promise<{
   error?: string;
   rowCount: number;
 }> {
+  if (!(await isAuthenticatedRequest())) {
+    return {
+      columns: [],
+      rows: [],
+      error: "Unauthorized",
+      rowCount: 0,
+    };
+  }
+
   try {
     const rows = runReadOnlySql(sql);
     const columns = Object.keys(rows[0] ?? {});

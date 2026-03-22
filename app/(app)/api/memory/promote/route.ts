@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
+import { requireApiAuth } from "@/lib/opentrust/auth";
 import { memoryPromote } from "@/lib/opentrust/memory-api";
 import { fail, ok, parsePromoteRequest, readJson } from "@/lib/opentrust/api-contract";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
+  const unauthorized = await requireApiAuth();
+  if (unauthorized) return unauthorized;
+
   try {
     const body = await readJson(request);
     return NextResponse.json(ok(memoryPromote(parsePromoteRequest(body))));

@@ -5,6 +5,7 @@ import { memoryPromote } from "@/lib/opentrust/memory-api";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PromoteButton } from "@/components/promote-button";
+import { PiiSafe } from "@/components/pii-safe";
 
 export const dynamic = "force-dynamic";
 
@@ -72,8 +73,8 @@ export default async function PromoteTraceMemoryPage({
           <span className="section__description">This will create a draft memory entry with this trace as its origin reference.</span>
         </div>
         <div className="artifact-card">
-          <div className="artifact-card__title">{detail.title ?? detail.id}</div>
-          <div className="list-item__subtitle">{detail.summary ?? "No summary available."}</div>
+          <div className="artifact-card__title"><PiiSafe>{detail.title ?? detail.id}</PiiSafe></div>
+          <div className="list-item__subtitle"><PiiSafe>{detail.summary ?? "No summary available."}</PiiSafe></div>
           <div style={{ marginTop: 16 }}>
             <PromoteButton
               href={`/traces/${encodeURIComponent(detail.id)}/promote?create=1`}

@@ -11,6 +11,8 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Pill } from "@/components/ui/pill";
 import { MetricInline } from "@/components/ui/metric";
 import { EmptyState } from "@/components/ui/empty-state";
+import { PiiSafe } from "@/components/pii-safe";
+import { MarkdownPreview } from "@/components/markdown-preview";
 import { Link2, Tag } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -183,7 +185,7 @@ export default async function MemoryDetailPage({ params }: { params: Promise<{ i
           <div className="artifact-card">
             <div className="artifact-card__kind"><Pill label={entry.confidence_score != null ? `${entry.confidence_score}` : "unknown"} tone="neutral" /></div>
             <div className="artifact-card__title">Confidence</div>
-            <div className="list-item__subtitle">{entry.confidence_reason ?? "No confidence note recorded."}</div>
+            <div className="list-item__subtitle"><PiiSafe>{entry.confidence_reason ?? "No confidence note recorded."}</PiiSafe></div>
           </div>
         </CardGrid>
       </div>
@@ -194,7 +196,7 @@ export default async function MemoryDetailPage({ params }: { params: Promise<{ i
           <span className="section__description">The actual curated memory content.</span>
         </div>
         <div className="memory-body-card">
-          {entry.body}
+          <MarkdownPreview content={entry.body} />
         </div>
       </div>
 
@@ -206,7 +208,7 @@ export default async function MemoryDetailPage({ params }: { params: Promise<{ i
         <CardGrid tone="warning" storageKey="memory-uncertainty">
           <div className="artifact-card">
             <div className="artifact-card__title">Uncertainty summary</div>
-            <div className="list-item__subtitle">{entry.uncertainty_summary ?? "No uncertainty summary recorded."}</div>
+            <div className="list-item__subtitle"><PiiSafe>{entry.uncertainty_summary ?? "No uncertainty summary recorded."}</PiiSafe></div>
           </div>
           <div className="artifact-card">
             <div className="artifact-card__title">Author</div>
@@ -214,7 +216,7 @@ export default async function MemoryDetailPage({ params }: { params: Promise<{ i
           </div>
           <div className="artifact-card">
             <div className="artifact-card__title">Review notes</div>
-            <div className="list-item__subtitle">{entry.review_notes ?? "No review notes recorded."}</div>
+            <div className="list-item__subtitle"><PiiSafe>{entry.review_notes ?? "No review notes recorded."}</PiiSafe></div>
           </div>
         </CardGrid>
       </div>
@@ -265,9 +267,9 @@ export default async function MemoryDetailPage({ params }: { params: Promise<{ i
               return (
                 <div key={`${origin.origin_type}:${origin.origin_id}:${index}`} className={`list-item ${href ? "provenance-link" : ""}`} style={{ cursor: href ? "pointer" : "default", alignItems: "flex-start" }}>
                   <div className="list-item__content">
-                    <span className="list-item__title">{resolved?.label ?? `${origin.origin_type}:${origin.origin_id}`}</span>
+                    <span className="list-item__title"><PiiSafe>{resolved?.label ?? `${origin.origin_type}:${origin.origin_id}`}</PiiSafe></span>
                     <span className="list-item__subtitle">
-                      {resolved?.summary ?? `relationship: ${origin.relationship}`}
+                      <PiiSafe>{resolved?.summary ?? `relationship: ${origin.relationship}`}</PiiSafe>
                     </span>
                     <span className="list-item__subtitle" style={{ fontSize: "0.75rem" }}>
                       {origin.origin_type}:{origin.origin_id} · {origin.relationship}{resolved?.meta ? ` · ${resolved.meta}` : ""}

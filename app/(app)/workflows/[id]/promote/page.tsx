@@ -5,6 +5,7 @@ import { memoryPromote } from "@/lib/opentrust/memory-api";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PromoteButton } from "@/components/promote-button";
+import { PiiSafe } from "@/components/pii-safe";
 
 export const dynamic = "force-dynamic";
 
@@ -66,8 +67,8 @@ export default async function PromoteWorkflowPage({
           <span className="section__description">This creates a draft memory entry with this workflow as its origin reference.</span>
         </div>
         <div className="artifact-card">
-          <div className="artifact-card__title">{workflow.name}</div>
-          <div className="list-item__subtitle">{workflow.summary ?? `${workflow.status} workflow run`}</div>
+          <div className="artifact-card__title"><PiiSafe>{workflow.name}</PiiSafe></div>
+          <div className="list-item__subtitle"><PiiSafe>{workflow.summary ?? `${workflow.status} workflow run`}</PiiSafe></div>
           <div style={{ marginTop: 16 }}>
             <PromoteButton
               href="?create=1"

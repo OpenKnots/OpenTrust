@@ -9,6 +9,7 @@ import { Pill, StatusDot } from "@/components/ui/pill";
 import { EmptyState } from "@/components/ui/empty-state";
 import { GlassCard } from "@/components/ui/glass-card";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { PiiSafe } from "@/components/pii-safe";
 import {
   PreviewCard,
   PreviewCardTrigger,
@@ -38,9 +39,9 @@ function TraceList({ traces }: { traces: SessionTraceGroup["traces"] }) {
                   }
                 />
                 <div className="list-item__content">
-                  <span className="list-item__title">{trace.title ?? trace.id}</span>
+                  <span className="list-item__title"><PiiSafe>{trace.title ?? trace.id}</PiiSafe></span>
                   {trace.summary && (
-                    <span className="list-item__subtitle">{trace.summary}</span>
+                    <span className="list-item__subtitle"><PiiSafe>{trace.summary}</PiiSafe></span>
                   )}
                 </div>
                 <div className="list-item__meta">
@@ -61,8 +62,8 @@ function TraceList({ traces }: { traces: SessionTraceGroup["traces"] }) {
             }
           />
           <PreviewCardPanel side="right" sideOffset={12} align="start">
-            <div className="preview-card__title">{trace.title ?? trace.id}</div>
-            <div className="preview-card__text">{trace.summary ?? "No summary available."}</div>
+            <div className="preview-card__title"><PiiSafe>{trace.title ?? trace.id}</PiiSafe></div>
+            <div className="preview-card__text"><PiiSafe>{trace.summary ?? "No summary available."}</PiiSafe></div>
             <div className="preview-card__meta">
               <StatusBadge
                 label={trace.status}

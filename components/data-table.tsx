@@ -50,6 +50,7 @@ import {
 } from "@tanstack/react-table";
 import { z } from "zod";
 
+import { PiiSafe } from "@/components/pii-safe";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -149,7 +150,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     accessorKey: "header",
     header: "Name",
     cell: ({ row }) => (
-      <span className="font-medium">{row.getValue("header")}</span>
+      <span className="font-medium"><PiiSafe>{row.getValue("header")}</PiiSafe></span>
     ),
     enableHiding: false,
   },

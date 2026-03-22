@@ -296,10 +296,17 @@ export function Onboarding01() {
                                 <p className="mt-2 text-pretty text-muted-foreground text-sm sm:max-w-64 md:max-w-xs">
                                   {step.description}
                                 </p>
-                                <Button className="mt-3" onClick={(e) => {
-                                                                                      e.stopPropagation();
-                                                                                      handleStepAction(step);
-                                                                                    }} size="sm" render={<a href={step.actionHref} />} nativeButton={false}>{step.actionLabel}</Button>
+                                <Button asChild className="mt-3" size="sm">
+                                  <a
+                                    href={step.actionHref}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleStepAction(step);
+                                    }}
+                                  >
+                                    {step.actionLabel}
+                                  </a>
+                                </Button>
                               </CollapsibleContent>
                             </Collapsible>
                           </div>

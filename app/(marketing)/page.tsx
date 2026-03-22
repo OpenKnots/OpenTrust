@@ -18,6 +18,7 @@ import {
   Zap,
 } from "lucide-react";
 import { CodeBlock } from "@/components/code-block";
+import { MeshGradientBg, NeuroNoiseBg } from "@/components/shader-background";
 
 const MOLTY_ICON = "https://openclaw.ai/favicon.svg";
 
@@ -56,6 +57,11 @@ export default function LandingPage() {
 
       {/* Hero - Nexflow Split Layout */}
       <section className="landing-hero-split">
+        <MeshGradientBg
+          colors={["#0a0a0a", "#1a0808", "#0a0a1a", "#111111"]}
+          speed={0.3}
+          className="landing-shader landing-shader--hero"
+        />
         <div className="landing-hero-split__left">
           <div className="landing-hero-split__badge">
             The Memory Layer
@@ -93,7 +99,14 @@ export default function LandingPage() {
       </section>
 
       {/* Feature Showcase */}
-      <section className="landing-section">
+      <section className="landing-section landing-section--shader">
+        <NeuroNoiseBg
+          colorBack="#0a0a0a"
+          colorMid="#150a0a"
+          colorFront="#201010"
+          speed={0.2}
+          className="landing-shader landing-shader--features"
+        />
         <div className="landing-showcase">
           <FeatureShowcase
             label="Traces"
@@ -247,7 +260,12 @@ export default function LandingPage() {
       <hr className="landing-divider" />
 
       {/* Final CTA */}
-      <section className="landing-section landing-cta-final">
+      <section className="landing-section landing-cta-final landing-section--shader">
+        <MeshGradientBg
+          colors={["#0a0a0a", "#180a0a", "#0a0a18", "#0f0f0f"]}
+          speed={0.25}
+          className="landing-shader landing-shader--cta"
+        />
         <div className="landing-cta-final__content">
           <h2 className="landing-cta-final__title">
             Ready to build trust into your agent?

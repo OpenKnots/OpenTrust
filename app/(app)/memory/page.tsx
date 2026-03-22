@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Pill } from "@/components/ui/pill";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { PiiSafe } from "@/components/pii-safe";
 import {
   PreviewCard,
   PreviewCardTrigger,
@@ -111,9 +112,9 @@ export default async function MemoryPage({
                         {formatRelativeTime(entry.updated_at)}
                       </span>
                     </div>
-                    <div className="artifact-card__title">{entry.title}</div>
+                    <div className="artifact-card__title"><PiiSafe>{entry.title}</PiiSafe></div>
                     <div className="list-item__subtitle" style={{ marginBottom: 10 }}>
-                      {entry.summary ?? entry.body.slice(0, 220)}
+                      <PiiSafe>{entry.summary ?? entry.body.slice(0, 220)}</PiiSafe>
                     </div>
                     <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: "0.75rem", color: "var(--text-muted)" }}>
                       <div>{entry.origins.length} origin reference{entry.origins.length === 1 ? "" : "s"}</div>
@@ -129,8 +130,8 @@ export default async function MemoryPage({
                 }
               />
               <PreviewCardPanel side="right" sideOffset={12} align="start">
-                <div className="preview-card__title">{entry.title}</div>
-                <div className="preview-card__text">{entry.body.slice(0, 400)}</div>
+                <div className="preview-card__title"><PiiSafe>{entry.title}</PiiSafe></div>
+                <div className="preview-card__text"><PiiSafe>{entry.body.slice(0, 400)}</PiiSafe></div>
                 <div className="preview-card__divider" />
                 <div className="preview-card__meta">
                   <Pill label={entry.review_status} tone={reviewTone(entry.review_status)} />

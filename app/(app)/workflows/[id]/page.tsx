@@ -5,6 +5,7 @@ import { truncatePath } from "@/lib/opentrust/format";
 import { Pill } from "@/components/ui/pill";
 import { MetricInline } from "@/components/ui/metric";
 import { EmptyState } from "@/components/ui/empty-state";
+import { PiiSafe } from "@/components/pii-safe";
 
 export const dynamic = "force-dynamic";
 
@@ -51,7 +52,7 @@ export default async function WorkflowDetailPage({ params }: { params: Promise<{
                     label={step.status}
                     tone={step.status === "error" || step.status === "attention" ? "danger" : step.status === "active" ? "info" : "neutral"}
                   />
-                  <span className="list-item__title detail-stack__title">{step.label ?? step.step_key}</span>
+                  <span className="list-item__title detail-stack__title"><PiiSafe>{step.label ?? step.step_key}</PiiSafe></span>
                   <span className="detail-stack__timestamp">
                     {step.updated_at ?? step.started_at ?? step.id}
                   </span>

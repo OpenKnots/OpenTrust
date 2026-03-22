@@ -2,19 +2,27 @@
 
 ## Deployment Model
 
-OpenTrust is designed for local-first, localhost-only use.
+OpenTrust is designed for local-first use with a protected app boundary.
 
 - Data is stored in a local SQLite database under `storage/`
-- The `/api/memory/*` routes are unauthenticated by design
-- Do not expose this app directly to untrusted networks or the public internet
+- Protected app routes and memory APIs require app authentication when auth is enabled
+- Authentication is enforced at the OpenTrust web/app layer, not at the SQLite file itself
+- Do not expose this app directly to untrusted networks or the public internet without auth, transport security, and network restrictions
 
-If you need remote access, add authentication, transport security, rate limiting, and network restrictions before deployment.
+Recommended posture for remote or shared access:
+
+- `OPENTRUST_AUTH_MODE=password`
+- `OPENTRUST_ALLOW_LOCALHOST_BYPASS=false`
+- HTTPS and private-network exposure only
+- reverse-proxy or network ACL restrictions where possible
+- review `storage/audit/auth.log` for login activity
 
 ## Secrets And Private Data
 
 - `.env`, `.env.local`, and local database files are ignored by git
 - Pre-commit secret scanning runs with `pnpm run secrets:check`
-- `.env.example` documents the optional `OPENTRUST_SQLITE_VEC_PATH` variable
+- `.env.example` documents auth and sqlite-vec environment variables
+- Authentication events are logged to `storage/audit/auth.log`
 
 Before sharing a dataset or demo, review any ingested OpenClaw session, workflow, and artifact data for private content that should remain local.
 

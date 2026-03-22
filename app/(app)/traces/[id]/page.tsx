@@ -6,6 +6,7 @@ import { Pill } from "@/components/ui/pill";
 import { MetricInline } from "@/components/ui/metric";
 import { EmptyState } from "@/components/ui/empty-state";
 import { CodeBlock } from "@/components/code-block";
+import { PiiSafe } from "@/components/pii-safe";
 import { Wrench, Package, Clock } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -73,7 +74,7 @@ export default async function TraceDetailPage({ params }: { params: Promise<{ id
                     <span className="detail-stack__timestamp">{tool.started_at}</span>
                   </div>
                   <div className="detail-stack__body">
-                    {tool.error_text ?? (tool.finished_at ? "Completed successfully." : "Awaiting paired result.")}
+                    <PiiSafe>{tool.error_text ?? (tool.finished_at ? "Completed successfully." : "Awaiting paired result.")}</PiiSafe>
                   </div>
                   {(tool.result_json || tool.finished_at) && (
                     <details className="expandable" style={{ marginTop: 8 }}>
@@ -147,7 +148,7 @@ export default async function TraceDetailPage({ params }: { params: Promise<{ id
                 <div className="timeline__item-kind">
                   <Pill label={event.kind} tone="neutral" />
                 </div>
-                <div className="timeline__item-text">{event.text_preview ?? "No preview available."}</div>
+                <div className="timeline__item-text"><PiiSafe>{event.text_preview ?? "No preview available."}</PiiSafe></div>
               </div>
             ))}
           </div>

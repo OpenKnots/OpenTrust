@@ -6,6 +6,7 @@ import { truncatePath } from "@/lib/opentrust/format";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PromoteButton } from "@/components/promote-button";
+import { PiiSafe } from "@/components/pii-safe";
 
 export const dynamic = "force-dynamic";
 
@@ -57,7 +58,7 @@ export default async function PromoteArtifactPage({
           {artifacts.map((artifact) => (
             <div key={artifact.id} className="list-item" style={{ cursor: "default" }}>
               <div className="list-item__content">
-                <span className="list-item__title">{artifact.title ?? artifact.id}</span>
+                <span className="list-item__title"><PiiSafe>{artifact.title ?? artifact.id}</PiiSafe></span>
                 <span className="list-item__subtitle">{artifact.kind} · {truncatePath(artifact.uri)}</span>
               </div>
               <div className="list-item__meta">

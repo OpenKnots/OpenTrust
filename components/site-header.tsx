@@ -6,9 +6,20 @@ import {
   BreadcrumbPage,
   BreadcrumbList,
 } from "@/components/ui/breadcrumb";
+import { AuthControls } from "@/components/auth-controls";
 import { DemoModeBanner } from "@/components/demo-mode-banner";
 
-export function SiteHeader({ demo, title }: { demo?: boolean; title?: string }) {
+export function SiteHeader({
+  demo,
+  title,
+  authMode,
+  allowLocalhostBypass,
+}: {
+  demo?: boolean;
+  title?: string;
+  authMode?: "none" | "token" | "password";
+  allowLocalhostBypass?: boolean;
+}) {
   return (
     <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
       <div className="flex w-full items-center gap-2 px-4">
@@ -22,6 +33,7 @@ export function SiteHeader({ demo, title }: { demo?: boolean; title?: string }) 
           </BreadcrumbList>
         </Breadcrumb>
         <div className="ml-auto flex items-center gap-2">
+          {authMode ? <AuthControls mode={authMode} localBypass={!!allowLocalhostBypass} /> : null}
           {demo && <DemoModeBanner />}
         </div>
       </div>

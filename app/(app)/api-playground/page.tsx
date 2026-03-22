@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { CodeBlock } from "@/components/code-block";
 import type {
   MemorySearchRequest,
@@ -240,6 +240,17 @@ export default function ApiPlaygroundPage() {
     [selectedEndpoint]
   );
 
+  const handleExport = useCallback(() => {
+    if (!response) return;
+    const blob = new Blob([response], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${selectedEndpoint}-response.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [response, selectedEndpoint]);
+
   const handleEndpointChange = (endpointId: EndpointId) => {
     const endpoint = ENDPOINTS.find((e) => e.id === endpointId);
     if (endpoint) {
@@ -366,17 +377,31 @@ export default function ApiPlaygroundPage() {
         <div className="api-playground__panel api-playground__panel--response">
           <div className="api-playground__panel-header">
             <h2 className="api-playground__panel-title">Response</h2>
-            {responseTime !== null && statusCode !== null && (
-              <div className="api-playground__response-meta">
-                <span
-                  className={`api-playground__status api-playground__status--${statusCode === 200 ? "success" : "error"}`}
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              {responseTime !== null && statusCode !== null && (
+                <div className="api-playground__response-meta">
+                  <span
+                    className={`api-playground__status api-playground__status--${statusCode === 200 ? "success" : "error"}`}
+                  >
+                    {statusCode}
+                  </span>
+                  <span className="api-playground__response-time">{responseTime}ms</span>
+                  <span className="api-playground__content-type">application/json</span>
+                </div>
+              )}
+              {response !== null && (
+                <button
+                  type="button"
+                  className="api-playground__export-btn"
+                  onClick={handleExport}
                 >
-                  {statusCode}
-                </span>
-                <span className="api-playground__response-time">{responseTime}ms</span>
-                <span className="api-playground__content-type">application/json</span>
-              </div>
-            )}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M8 1a.75.75 0 0 1 .75.75v6.69l1.72-1.72a.75.75 0 1 1 1.06 1.06l-3 3a.75.75 0 0 1-1.06 0l-3-3a.75.75 0 0 1 1.06-1.06l1.72 1.72V1.75A.75.75 0 0 1 8 1ZM2.75 11a.75.75 0 0 1 .75.75v1.5h9v-1.5a.75.75 0 0 1 1.5 0v1.5A1.5 1.5 0 0 1 12.5 14.75h-9A1.5 1.5 0 0 1 2 13.25v-1.5a.75.75 0 0 1 .75-.75Z"/>
+                  </svg>
+                  Export
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="api-playground__response-content">

@@ -6,6 +6,7 @@ import { memoryPromote } from "@/lib/opentrust/memory-api";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PromoteButton } from "@/components/promote-button";
+import { PiiSafe } from "@/components/pii-safe";
 
 export const dynamic = "force-dynamic";
 
@@ -72,8 +73,8 @@ export default async function PromoteInvestigationPage({
           {investigations.map((investigation: SavedInvestigationRow) => (
             <div key={investigation.id} className="list-item" style={{ cursor: "default" }}>
               <div className="list-item__content">
-                <span className="list-item__title">{investigation.title}</span>
-                <span className="list-item__subtitle">{investigation.description ?? investigation.sql_text.slice(0, 180)}</span>
+                <span className="list-item__title"><PiiSafe>{investigation.title}</PiiSafe></span>
+                <span className="list-item__subtitle"><PiiSafe>{investigation.description ?? investigation.sql_text.slice(0, 180)}</PiiSafe></span>
               </div>
               <div className="list-item__meta">
                 <PromoteButton

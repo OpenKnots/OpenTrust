@@ -99,8 +99,9 @@ const user = {
 
 export function AppSidebar({
   latestIngest,
+  authLabel,
   ...props
-}: { latestIngest?: string } & React.ComponentProps<typeof Sidebar>) {
+}: { latestIngest?: string; authLabel?: string } & React.ComponentProps<typeof Sidebar>) {
   const handleSearchClick = React.useCallback(() => {
     const event = new KeyboardEvent("keydown", {
       key: "k",
@@ -123,7 +124,7 @@ export function AppSidebar({
         <NavSecondary items={secondaryWithSearch} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={user} latestIngest={latestIngest} />
+        <NavUser user={user} latestIngest={latestIngest} authLabel={authLabel} />
       </SidebarFooter>
     </Sidebar>
   );

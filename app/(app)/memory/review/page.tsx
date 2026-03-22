@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Pill } from "@/components/ui/pill";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ReviewActions } from "@/components/review-actions";
+import { PiiSafe } from "@/components/pii-safe";
 
 export const dynamic = "force-dynamic";
 
@@ -55,8 +56,8 @@ export default async function MemoryReviewPage() {
                   <Pill label={entry.retention_class} tone="info" />
                   <Pill label={entry.review_status} tone="warning" />
                 </div>
-                <span className="list-item__title">{entry.title}</span>
-                <span className="list-item__subtitle">{entry.summary ?? entry.body.slice(0, 260)}</span>
+                <span className="list-item__title"><PiiSafe>{entry.title}</PiiSafe></span>
+                <span className="list-item__subtitle"><PiiSafe>{entry.summary ?? entry.body.slice(0, 260)}</PiiSafe></span>
                 <div style={{ marginTop: 8, fontSize: "0.75rem", color: "var(--text-muted)" }}>
                   {entry.origins.length} origin reference{entry.origins.length === 1 ? "" : "s"}
                 </div>

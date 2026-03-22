@@ -163,11 +163,28 @@ pnpm dev                      # start the dev server on localhost:3000
 
 ### Environment variables
 
-Optional overrides are documented in `.env.example`. The only current variable is:
+Optional overrides are documented in `.env.example`.
 
 | Variable | Purpose |
 |----------|---------|
+| `OPENTRUST_AUTH_MODE` | Auth mode for the app surface: `token`, `password`, or `none`. |
+| `OPENTRUST_AUTH_TOKEN` | Shared credential used when `OPENTRUST_AUTH_MODE=token`. |
+| `OPENTRUST_AUTH_PASSWORD` | Shared credential used when `OPENTRUST_AUTH_MODE=password`. |
+| `OPENTRUST_ALLOW_LOCALHOST_BYPASS` | Allow bypass on `localhost` / `127.0.0.1` / `::1`. Set `false` for strict auth everywhere. |
+| `OPENTRUST_APP_URL` | Canonical app URL used for metadata / Open Graph resolution. |
 | `OPENTRUST_SQLITE_VEC_PATH` | Override path to the sqlite-vec extension. Leave unset unless auto-detection fails. |
+
+### Security modes
+
+Recommended defaults:
+
+- **Local-only development:** `OPENTRUST_AUTH_MODE=token` with `OPENTRUST_ALLOW_LOCALHOST_BYPASS=true`
+- **Strict protected mode:** `OPENTRUST_AUTH_MODE=password` with `OPENTRUST_ALLOW_LOCALHOST_BYPASS=false`
+- **Unprotected mode:** `OPENTRUST_AUTH_MODE=none` only for isolated localhost experimentation
+
+OpenTrust authenticates at the **app/server boundary** before protected evidence is rendered. The browser does not authenticate directly to SQLite.
+
+Auth endpoints also enforce same-origin checks for POST requests, and the auth cookie is issued as an httpOnly, `SameSite=Strict`, time-bounded session.
 
 ### Available scripts
 

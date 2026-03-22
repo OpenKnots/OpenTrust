@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   IconDotsVertical,
   IconInfoCircle,
+  IconLock,
   IconMoon,
   IconPlayerPlay,
   IconPlayerStop,
@@ -60,9 +61,11 @@ function applyTheme(resolved: "light" | "dark") {
 export function NavUser({
   user,
   latestIngest,
+  authLabel,
 }: {
   user: { name: string; avatar: string };
   latestIngest?: string;
+  authLabel?: string;
 }) {
   const { isMobile } = useSidebar();
   const router = useRouter();
@@ -134,25 +137,33 @@ export function NavUser({
             align="end"
             sideOffset={4}
           >
-            <DropdownMenuLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">OT</AvatarFallback>
-                </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
-                  <span className="flex items-center gap-1.5 truncate text-xs text-muted-foreground">
-                    <span
-                      className={`inline-block h-2 w-2 rounded-full ${
-                        hasIngestion ? "bg-green-500" : "bg-orange-500"
-                      }`}
-                    />
-                    {hasIngestion ? `Ingested ${latestIngest}` : "No ingestion"}
-                  </span>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="p-0 font-normal">
+                <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                  <Avatar className="h-8 w-8 rounded-lg">
+                    <AvatarImage src={user.avatar} alt={user.name} />
+                    <AvatarFallback className="rounded-lg">OT</AvatarFallback>
+                  </Avatar>
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-medium">{user.name}</span>
+                    <span className="flex items-center gap-1.5 truncate text-xs text-muted-foreground">
+                      <span
+                        className={`inline-block h-2 w-2 rounded-full ${
+                          hasIngestion ? "bg-green-500" : "bg-orange-500"
+                        }`}
+                      />
+                      {hasIngestion ? `Ingested ${latestIngest}` : "No ingestion"}
+                    </span>
+                    {authLabel ? (
+                      <span className="mt-0.5 flex items-center gap-1.5 truncate text-xs text-muted-foreground">
+                        <IconLock className="size-3" />
+                        {authLabel}
+                      </span>
+                    ) : null}
+                  </div>
                 </div>
-              </div>
-            </DropdownMenuLabel>
+              </DropdownMenuLabel>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem onClick={toggleDemo}>
