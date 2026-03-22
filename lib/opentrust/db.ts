@@ -7,7 +7,9 @@ const storageDir = path.join(repoRoot, "storage");
 const dbPath = path.join(storageDir, "opentrust.sqlite");
 const migrationPath = path.join(repoRoot, "db", "0001_init.sql");
 
-let database: Database.Database | null = null;
+const globalForDb = globalThis as unknown as {
+  __opentrustDb: Database.Database | undefined;
+};
 
 function ensureStorageDir() {
   if (!existsSync(storageDir)) {
@@ -21,13 +23,14 @@ export function getDatabasePath() {
 }
 
 export function getDb() {
-  if (database) return database;
+  if (globalForDb.__opentrustDb) return globalForDb.__opentrustDb;
 
   ensureStorageDir();
-  database = new Database(dbPath);
-  database.exec("PRAGMA journal_mode=WAL;");
-  database.exec("PRAGMA foreign_keys=ON;");
-  return database;
+  const db = new Database(dbPath);
+  db.exec("PRAGMA journal_mode=WAL;");
+  db.exec("PRAGMA foreign_keys=ON;");
+  globalForDb.__opentrustDb = db;
+  return db;
 }
 
 export function runSql(sql: string) {

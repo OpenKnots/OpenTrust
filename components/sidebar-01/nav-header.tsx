@@ -15,7 +15,7 @@ export function NavHeader() {
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton size="lg" render={<Link href="/" />}>
-            <div className="brand-ring flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-br from-[var(--brand)] to-[#FF6F61]">
+            <div className="brand-ring flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-br from-[var(--brand)] to-[#b71c1c]">
               <Image
                 src="https://openclaw.ai/favicon.svg"
                 alt="OpenTrust"

@@ -84,6 +84,7 @@ export async function POST(request: Request) {
   const credential = typeof (body as { credential?: unknown })?.credential === "string"
     ? (body as { credential: string }).credential
     : "";
+  const rememberMe = !!(body as { rememberMe?: unknown })?.rememberMe;
 
   if (!credential || !verifyCredential(credential, config)) {
     const failure = recordLoginFailure(meta.ip);
@@ -115,13 +116,15 @@ export async function POST(request: Request) {
     detail: config.mode,
   });
 
+  const maxAge = rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 12;
+
   const response = NextResponse.json({ ok: true, mode: config.mode });
   response.cookies.set(OPENTRUST_AUTH_COOKIE, sessionValue, {
     httpOnly: true,
     sameSite: "strict",
     secure: process.env.NODE_ENV === "production",
     path: "/",
-    maxAge: 60 * 60 * 12,
+    maxAge,
   });
   return response;
 }

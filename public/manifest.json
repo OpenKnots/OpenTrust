@@ -4,8 +4,8 @@
   "description": "Local-first OpenClaw traceability, workflows, skills, plugins, and investigations.",
   "start_url": "/dashboard",
   "display": "standalone",
-  "background_color": "#050816",
-  "theme_color": "#050816",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
   "orientation": "any",
   "icons": [
     {

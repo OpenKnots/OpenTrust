@@ -63,7 +63,7 @@ export default function LandingPage() {
 
       <section className="landing-hero-minimal">
         <MeshGradientBg
-          colors={["#000000", "#060812", "#080412", "#040608"]}
+          colors={["#000000", "#0a0000", "#100000", "#050000"]}
           speed={0.15}
           className="landing-shader landing-shader--hero"
         />
@@ -96,8 +96,8 @@ export default function LandingPage() {
       <section className="landing-section landing-section--shader">
         <NeuroNoiseBg
           colorBack="#000000"
-          colorMid="#080612"
-          colorFront="#0c0818"
+          colorMid="#0c0000"
+          colorFront="#120000"
           speed={0.2}
           className="landing-shader landing-shader--features"
         />
@@ -155,8 +155,8 @@ export default function LandingPage() {
       <section id="comparison" className="landing-section landing-section--shader">
         <NeuroNoiseBg
           colorBack="#000000"
-          colorMid="#060410"
-          colorFront="#0a0616"
+          colorMid="#0a0000"
+          colorFront="#100000"
           speed={0.12}
           className="landing-shader landing-shader--comparison"
         />
@@ -302,7 +302,7 @@ export default function LandingPage() {
 
       <section className="landing-section landing-cta-final landing-section--shader">
         <MeshGradientBg
-          colors={["#000000", "#060412", "#040810", "#020204"]}
+          colors={["#000000", "#0a0000", "#080000", "#030000"]}
           speed={0.25}
           className="landing-shader landing-shader--cta"
         />

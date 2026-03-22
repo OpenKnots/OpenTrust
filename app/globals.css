@@ -5059,7 +5059,7 @@ mark {
 }
 
 .landing-hero-minimal__title-gradient {
-  background: linear-gradient(90deg, #7dd3fc, #c4b5fd, #f9a8d4);
+  background: linear-gradient(90deg, #ff4d4d, #E53935, #b71c1c);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -6516,7 +6516,7 @@ select:focus {
 /* ── Brand accents ── */
 
 .brand-gradient {
-  background: linear-gradient(135deg, #E53935 0%, #FF6F61 50%, #E53935 100%);
+  background: linear-gradient(135deg, #E53935 0%, #ff3d2e 50%, #b71c1c 100%);
 }
 
 .brand-gradient-subtle {
@@ -6552,9 +6552,9 @@ select:focus {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(229, 57, 53, 0.06) 25%,
-    rgba(229, 57, 53, 0.12) 50%,
-    rgba(229, 57, 53, 0.06) 75%,
+    rgba(229, 57, 53, 0.08) 25%,
+    rgba(229, 57, 53, 0.14) 50%,
+    rgba(229, 57, 53, 0.08) 75%,
     transparent 100%
   );
   background-size: 200% 100%;
@@ -6565,9 +6565,9 @@ select:focus {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(229, 57, 53, 0.04) 25%,
-    rgba(229, 57, 53, 0.08) 50%,
-    rgba(229, 57, 53, 0.04) 75%,
+    rgba(229, 57, 53, 0.05) 25%,
+    rgba(229, 57, 53, 0.10) 50%,
+    rgba(229, 57, 53, 0.05) 75%,
     transparent 100%
   );
   background-size: 200% 100%;

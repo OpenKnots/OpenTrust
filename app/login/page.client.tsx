@@ -23,6 +23,12 @@ import { Pill } from "@/components/ui/pill";
 export default function LoginClient({ nextPath }: { nextPath: string }) {
   const router = useRouter();
   const [credential, setCredential] = useState("");
+  const [rememberMe, setRememberMe] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("opentrust.remember") === "1";
+    }
+    return false;
+  });
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [retryAfter, setRetryAfter] = useState<number | null>(null);
@@ -33,11 +39,17 @@ export default function LoginClient({ nextPath }: { nextPath: string }) {
     setError(null);
     setRetryAfter(null);
 
+    if (rememberMe) {
+      localStorage.setItem("opentrust.remember", "1");
+    } else {
+      localStorage.removeItem("opentrust.remember");
+    }
+
     try {
       const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ credential }),
+        body: JSON.stringify({ credential, rememberMe }),
       });
 
       const data = (await response.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
@@ -63,7 +75,7 @@ export default function LoginClient({ nextPath }: { nextPath: string }) {
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_top,rgba(107,114,255,0.22),transparent_26%),radial-gradient(circle_at_80%_18%,rgba(59,130,246,0.2),transparent_24%),radial-gradient(circle_at_bottom_left,rgba(14,165,233,0.12),transparent_24%),linear-gradient(180deg,#050816_0%,#070b18_42%,#05070f_100%)] px-6 py-10 lg:px-10">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_top,rgba(229,57,53,0.18),transparent_26%),radial-gradient(circle_at_80%_18%,rgba(183,28,28,0.16),transparent_24%),radial-gradient(circle_at_bottom_left,rgba(229,57,53,0.08),transparent_24%),linear-gradient(180deg,#0a0a0a_0%,#0c0808_42%,#080606_100%)] px-6 py-10 lg:px-10">
       <div className="pointer-events-none absolute inset-0 opacity-60">
         <div className="absolute left-[8%] top-[10%] h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
         <div className="absolute bottom-[8%] right-[10%] h-80 w-80 rounded-full bg-sky-500/10 blur-3xl" />
@@ -156,6 +168,16 @@ export default function LoginClient({ nextPath }: { nextPath: string }) {
                   className="h-12 rounded-2xl border-white/10 bg-black/20 px-4"
                 />
               </div>
+
+              <label className="flex cursor-pointer items-center gap-2.5 text-sm text-muted-foreground select-none">
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="size-4 rounded border-white/20 bg-black/20 accent-primary"
+                />
+                Remember me for 30 days
+              </label>
 
               {error ? (
                 <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">

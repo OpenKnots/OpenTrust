@@ -21,7 +21,7 @@ async function main() {
   const padding = Math.round(512 * 0.1);
   const inner = 512 - padding * 2;
   const maskableBg = Buffer.from(
-    `<svg width="512" height="512"><rect width="512" height="512" rx="0" fill="#050816"/></svg>`
+    `<svg width="512" height="512"><rect width="512" height="512" rx="0" fill="#0a0a0a"/></svg>`
   );
 
   await sharp(maskableBg)
