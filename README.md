@@ -106,6 +106,23 @@ That means:
 - other runtimes or providers may be added later
 - but the governing idea is the **OpenClaw memory layer standard**
 
+## Current execution priority
+
+OpenTrust is currently in a **pre-prerequisite holding pattern**.
+
+The upstream priority order is:
+1. Tauri
+2. persistence
+3. reliable run completion
+
+Until those are dependable, OpenTrust should focus on:
+- docs alignment
+- scope guardrails
+- low-risk cleanup
+- preserving a truthful baseline
+
+It should **not** pretend to outrank runtime reliability work.
+
 ## Principles
 
 - **OpenClaw-first**
@@ -160,6 +177,7 @@ pnpm run secrets:check
 - `docs/OPENCLAW-PLUGIN-PACKAGING.md`
 - `docs/PLUGIN-READY-REFACTOR-PLAN.md`
 - `docs/OPENCLAW-PLUGIN-DRAFT-ARTIFACTS.md`
+- `docs/POST-PREREQUISITE-PR-BACKLOG.md`
 - `plugin-drafts/opentrust/`
 - `docs/PLUGIN-DRAFT-RUNTIME-MAP.md`
 - `docs/PLUGIN-PROMOTION-CHECKLIST.md`

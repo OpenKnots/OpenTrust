@@ -26,6 +26,22 @@ OpenTrust should be refactored so it can be packaged as:
 
 This plan is about getting there **without losing the current memory standard**.
 
+## Prerequisite ordering
+
+This refactor plan is **post-prerequisite work**.
+
+OpenTrust packaging/refactor work should not outrank the upstream sequence:
+1. Tauri
+2. persistence
+3. reliable run completion
+
+Until those are dependable, this plan should mainly guide:
+- architecture clarification
+- docs alignment
+- low-risk prep
+
+Not deep extraction or packaging execution.
+
 ---
 
 # Refactor objective

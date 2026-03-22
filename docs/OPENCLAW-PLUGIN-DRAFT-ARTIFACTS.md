@@ -92,7 +92,14 @@ See also:
 
 ## Recommended next step
 
-When ready to move into the real OpenClaw repo, promote these draft files into:
+These draft artifacts should remain **drafts during the pre-prerequisite window**.
+
+OpenTrust should only move them into the real OpenClaw repo after the upstream sequence is dependable:
+1. Tauri
+2. persistence
+3. reliable run completion
+
+When that is true, promote these draft files into:
 
 - `extensions/opentrust/`
 

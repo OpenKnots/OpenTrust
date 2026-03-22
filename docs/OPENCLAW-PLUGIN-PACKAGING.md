@@ -95,6 +95,11 @@ The durable requirement is that OpenTrust be installable/discoverable as a prope
 OpenTrust does not need to start inside `extensions/opentrust` immediately.
 The concrete refactor sequence is captured in `docs/PLUGIN-READY-REFACTOR-PLAN.md`.
 
+This migration path is **post-prerequisite work** and should follow the upstream order:
+1. Tauri
+2. persistence
+3. reliable run completion
+
 A sane path is:
 
 ### Stage 1 — Reference implementation (current)
