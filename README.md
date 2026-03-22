@@ -149,6 +149,8 @@ pnpm run secrets:check
 - `docs/FIELD-MANUAL.md`
 - `docs/INGESTION.md`
 - `docs/PHASES.md`
+- `docs/EXECUTION-PIPELINE.md`
+- `docs/SCOPE-GUARDRAILS.md`
 - `docs/CONVEX-PRODUCT-SPEC.md`
 - `docs/CONVEX-REPLACEMENT-BLUEPRINT.md`
 - `docs/MEMORY-LAYER-STANDARD.md`
@@ -157,6 +159,7 @@ pnpm run secrets:check
 - `docs/PHASE-9-IMPLEMENTATION-PLAN.md`
 - `docs/OPENCLAW-PLUGIN-PACKAGING.md`
 - `docs/PLUGIN-READY-REFACTOR-PLAN.md`
+- `docs/OPENCLAW-PLUGIN-DRAFT-ARTIFACTS.md`
 - `docs/DOCS-ALIGNMENT-NOTES.md`
 - `db/0001_init.sql`
 - `SECURITY.md`

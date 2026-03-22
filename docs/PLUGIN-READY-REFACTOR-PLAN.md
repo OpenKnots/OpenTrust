@@ -309,6 +309,7 @@ A draft manifest and package shape.
 - draft `openclaw.plugin.json` example in docs
 - config schema draft
 - plugin route/tool ownership map
+- `docs/OPENCLAW-PLUGIN-DRAFT-ARTIFACTS.md`
 
 ## Code planning stubs
 - plugin entrypoint draft

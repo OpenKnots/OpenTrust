@@ -75,6 +75,14 @@ The aligned plan is:
 These are no longer “misc optional ideas.”
 They are the next phases required to turn the baseline into the full OpenClaw memory standard.
 
+However, they should be treated as **post-prerequisite execution work**.
+The current upstream priority order is:
+1. Tauri
+2. persistence
+3. reliable run completion
+
+Until those are dependable, OpenTrust should prioritize alignment, scope control, and baseline preservation over aggressive expansion.
+
 ### Phase 9 — Memory writeback and curation
 Goal: support durable promotion from raw event streams to curated memory.
 
@@ -137,6 +145,7 @@ Primary design docs:
 - `docs/MEMORY-API-CONTRACT.md`
 - `docs/OPENCLAW-PLUGIN-PACKAGING.md`
 - `docs/PLUGIN-READY-REFACTOR-PLAN.md`
+- `docs/OPENCLAW-PLUGIN-DRAFT-ARTIFACTS.md`
 
 Includes:
 - [ ] stable memory API contracts for OpenClaw retrieval
@@ -161,6 +170,14 @@ Includes:
 - Insight and metrics should be first-class derived products of the memory substrate.
 - Memory health, export, and auditability must improve for operator trust.
 - Integration contracts with OpenClaw should become explicit so this can serve as the official standard rather than only an internal prototype.
+
+## Delivery discipline
+
+The roadmap should now be executed under two companion documents:
+- `docs/EXECUTION-PIPELINE.md` — defines the recommended PR sequence, prerequisite ordering, verification discipline, and delivery posture
+- `docs/SCOPE-GUARDRAILS.md` — defines what is in scope, what is out of scope for now, and how to recognize scope creep
+
+These documents exist to keep the roadmap professionally executable instead of conceptually expansive.
 
 ## Decision
 

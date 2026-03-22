@@ -83,7 +83,7 @@ export function ensureBootstrapped() {
   const builtinSkillsDirectory = getBuiltinSkillsDirectory();
   if (builtinSkillsDirectory) {
     syncSkillsFromDirectory(builtinSkillsDirectory, "builtin-skills");
-  } else if (!warnedAboutMissingBuiltinSkills) {
+  } else if (process.env.NODE_ENV !== "production" && !warnedAboutMissingBuiltinSkills) {
     warnedAboutMissingBuiltinSkills = true;
     console.warn("OpenTrust could not locate builtin OpenClaw skills; skipping builtin skill sync.");
   }

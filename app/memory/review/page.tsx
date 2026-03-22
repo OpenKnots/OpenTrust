@@ -7,19 +7,25 @@ import { EmptyState } from "@/components/ui/empty-state";
 
 export const dynamic = "force-dynamic";
 
-export default async function MemoryReviewPage({
-  searchParams,
-}: {
-  searchParams?: Promise<{ id?: string; action?: string }>;
-}) {
-  const params = (await searchParams) ?? {};
+export default function MemoryReviewPage() {
+  async function updateReviewAction(formData: FormData) {
+    "use server";
 
-  if (params.id && params.action && ["approved", "reviewed", "rejected"].includes(params.action)) {
-    updateMemoryEntryReview({
-      id: params.id,
-      reviewStatus: params.action as "approved" | "reviewed" | "rejected",
-      reviewedBy: "operator",
-    });
+    const id = formData.get("id");
+    const action = formData.get("action");
+
+    if (typeof id !== "string") {
+      redirect("/memory/review");
+    }
+
+    if (action === "approved" || action === "reviewed" || action === "rejected") {
+      updateMemoryEntryReview({
+        id,
+        reviewStatus: action,
+        reviewedBy: "operator",
+      });
+    }
+
     redirect("/memory/review");
   }
 
@@ -29,7 +35,7 @@ export default async function MemoryReviewPage({
     <>
       <PageHeader
         title="Memory review"
-        subtitle="Draft curated memory entries awaiting operator review."
+        subtitle="Draft curated memory entries awaiting operator review. Review actions are explicit POST submissions, not query-string side effects."
         breadcrumbs={[{ label: "Overview", href: "/" }, { label: "Memory", href: "/memory" }, { label: "Review" }]}
       />
 
@@ -51,15 +57,18 @@ export default async function MemoryReviewPage({
               </div>
               <div className="list-item__meta" style={{ alignItems: "flex-end", gap: 8 }}>
                 <span>{formatRelativeTime(entry.updated_at)}</span>
-                <a className="btn btn--ghost" href={`/memory/review?id=${encodeURIComponent(entry.id)}&action=reviewed`}>
-                  Mark reviewed
-                </a>
-                <a className="btn btn--primary" href={`/memory/review?id=${encodeURIComponent(entry.id)}&action=approved`}>
-                  Approve
-                </a>
-                <a className="btn btn--ghost" href={`/memory/review?id=${encodeURIComponent(entry.id)}&action=rejected`}>
-                  Reject
-                </a>
+                <form action={updateReviewAction} style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "stretch" }}>
+                  <input type="hidden" name="id" value={entry.id} />
+                  <button className="btn btn--ghost" type="submit" name="action" value="reviewed">
+                    Mark reviewed
+                  </button>
+                  <button className="btn btn--primary" type="submit" name="action" value="approved">
+                    Approve
+                  </button>
+                  <button className="btn btn--ghost" type="submit" name="action" value="rejected">
+                    Reject
+                  </button>
+                </form>
               </div>
             </div>
           ))}
