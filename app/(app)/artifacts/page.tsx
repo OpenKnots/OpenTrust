@@ -20,7 +20,7 @@ function ArtifactCard({
     <div className="artifact-card">
       <div className="artifact-card__kind">
         <Pill label={artifact.kind} tone="neutral" />
-        <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)", marginLeft: 8 }}>
+        <span style={{ fontSize: "0.6875rem", color: "var(--muted-foreground)", marginLeft: 8 }}>
           {formatRelativeTime(artifact.created_at)}
         </span>
       </div>
@@ -105,7 +105,7 @@ export default async function ArtifactsPage({
               <details key={kindKey} className="expandable" style={{ marginBottom: 12 }}>
                 <summary>
                   {kindKey}
-                  <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)", fontWeight: 400, marginLeft: "auto" }}>
+                  <span style={{ fontSize: "0.6875rem", color: "var(--muted-foreground)", fontWeight: 400, marginLeft: "auto" }}>
                     {items.length} artifact{items.length !== 1 ? "s" : ""}
                   </span>
                 </summary>
@@ -124,10 +124,10 @@ export default async function ArtifactsPage({
             <details key={group.key} className="expandable" style={{ marginBottom: 12 }} open>
               <summary>
                 <span>{group.label}</span>
-                <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontWeight: 400, marginLeft: 10 }}>
+                <span style={{ fontSize: "0.75rem", color: "var(--muted-foreground)", fontWeight: 400, marginLeft: 10 }}>
                   {group.description}
                 </span>
-                <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)", fontWeight: 400, marginLeft: "auto" }}>
+                <span style={{ fontSize: "0.6875rem", color: "var(--muted-foreground)", fontWeight: 400, marginLeft: "auto" }}>
                   {group.items.length} artifact{group.items.length !== 1 ? "s" : ""}
                 </span>
               </summary>

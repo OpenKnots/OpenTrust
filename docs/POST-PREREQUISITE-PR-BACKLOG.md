@@ -11,14 +11,15 @@ It should be read alongside:
 
 ## Current rule
 
-OpenTrust is **not** the current top delivery priority.
+OpenTrust is **not** the current top delivery priority for memory-layer expansion.
 
-Upstream prerequisite order remains:
-1. Tauri
-2. persistence
-3. reliable run completion
+Upstream prerequisite order for memory-layer work remains:
+1. persistence
+2. reliable run completion
 
-Until those are dependable, OpenTrust work should stay limited to:
+Desktop application work (Tauri) can proceed independently — see `docs/DESKTOP-APPLICATION-PLAN.md`.
+
+Until persistence and reliable run completion are dependable, memory-layer work should stay limited to:
 - docs alignment
 - scope control
 - low-risk cleanup
@@ -46,9 +47,68 @@ Until those are dependable, OpenTrust work should stay limited to:
 
 ---
 
+## Desktop application PRs (can proceed now)
+
+These PRs are independent of persistence and run completion. See `docs/DESKTOP-APPLICATION-PLAN.md`.
+
+### PR D1 — Tauri v2 project scaffold
+**Goal:** initialize the desktop application shell.
+
+#### Scope
+- [ ] Tauri v2 project scaffold (`src-tauri/`)
+- [ ] Next.js static export configuration
+- [ ] Tauri window configuration (title, size, platform targets)
+- [ ] `pnpm tauri dev` opens the app in a native window
+
+#### Done when
+- [ ] the existing app loads inside a Tauri window in dev mode
+
+---
+
+### PR D2 — Sidecar runtime and database paths
+**Goal:** make the memory runtime work in a desktop context.
+
+#### Scope
+- [ ] sidecar Node process for memory runtime
+- [ ] platform-appropriate database path resolution
+- [ ] ingestion and search work in the desktop app
+
+#### Done when
+- [ ] memory operations are identical in desktop and localhost contexts
+
+---
+
+### PR D3 — Platform builds
+**Goal:** produce distributable installers for all platforms.
+
+#### Scope
+- [ ] macOS `.dmg` build
+- [ ] Windows `.msi` / `.exe` build
+- [ ] Linux `.AppImage` / `.deb` build
+- [ ] basic CI pipeline for cross-platform builds
+
+#### Done when
+- [ ] a working installer exists for each major platform
+
+---
+
+### PR D4 — Native integrations
+**Goal:** make the desktop app feel native.
+
+#### Scope
+- [ ] system tray icon with health status indicator
+- [ ] tray menu (open dashboard, run ingestion, check health, quit)
+- [ ] native OS notifications for ingestion and health events
+- [ ] global keyboard shortcut to open the app
+
+#### Done when
+- [ ] the desktop app provides native interactions beyond a framed browser window
+
+---
+
 ## Post-prerequisite main sequence
 
-When Tauri, persistence, and reliable run completion are dependable, execute in this order.
+When persistence and reliable run completion are dependable, execute in this order.
 
 ### PR 1 — Review queue completion
 **Goal:** complete the memory review workflow.
@@ -148,6 +208,7 @@ If a proposed OpenTrust change does **not** clearly improve one of these:
 - curation workflow
 - memory health
 - plugin-readiness
+- desktop application packaging
 - documentation alignment during the pre-prerequisite window
 
 …it probably should wait.

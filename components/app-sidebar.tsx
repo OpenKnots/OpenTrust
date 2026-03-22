@@ -25,6 +25,7 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
+  SidebarSeparator,
 } from "@/components/ui/sidebar";
 
 const navMainItems = [
@@ -57,28 +58,39 @@ const navMainItems = [
   },
 ];
 
-const memoryToolItems = [
-  {
-    name: "Memory",
-    url: "/memory",
-    icon: IconBook,
-  },
-  {
-    name: "Calendar",
-    url: "/calendar",
-    icon: IconCalendarMonth,
-  },
-  {
-    name: "Investigations",
-    url: "/investigations",
-    icon: IconFileSearch,
-  },
-  {
-    name: "API",
-    url: "/api-playground",
-    icon: IconApi,
-  },
-];
+function buildMemoryToolItems(memoryCount?: number, draftCount?: number) {
+  return [
+    {
+      name: "Memory",
+      url: "/memory",
+      icon: IconBook,
+      badge: typeof memoryCount === "number" ? String(memoryCount) : undefined,
+    },
+    {
+      name: "Calendar",
+      url: "/calendar",
+      icon: IconCalendarMonth,
+    },
+    {
+      name: "Investigations",
+      url: "/investigations",
+      icon: IconFileSearch,
+    },
+    {
+      name: "API",
+      url: "/api-playground",
+      icon: IconApi,
+    },
+    ...(typeof draftCount === "number" && draftCount > 0
+      ? [{
+          name: "Review queue",
+          url: "/memory/review",
+          icon: IconSearch,
+          badge: String(draftCount),
+        }]
+      : []),
+  ];
+}
 
 const navSecondaryItems = [
   {
@@ -106,8 +118,10 @@ const user = {
 export function AppSidebar({
   latestIngest,
   authLabel,
+  memoryCount,
+  draftCount,
   ...props
-}: { latestIngest?: string; authLabel?: string } & React.ComponentProps<typeof Sidebar>) {
+}: { latestIngest?: string; authLabel?: string; memoryCount?: number; draftCount?: number } & React.ComponentProps<typeof Sidebar>) {
   const handleSearchClick = React.useCallback(() => {
     const event = new KeyboardEvent("keydown", {
       key: "k",
@@ -126,10 +140,16 @@ export function AppSidebar({
       <NavHeader />
       <SidebarContent>
         <NavMain items={navMainItems} onSearchClick={handleSearchClick} />
-        <NavDocuments items={memoryToolItems} />
+        <NavDocuments items={buildMemoryToolItems(memoryCount, draftCount)} />
         <NavSecondary items={secondaryWithSearch} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
+        <div className="px-3 pb-1 group-data-[collapsible=icon]:hidden">
+          <SidebarSeparator className="mb-2" />
+          <p className="text-[10px] font-medium tracking-wider text-muted-foreground/50 uppercase">
+            Powered by OpenClaw
+          </p>
+        </div>
         <NavUser user={user} latestIngest={latestIngest} authLabel={authLabel} />
       </SidebarFooter>
     </Sidebar>

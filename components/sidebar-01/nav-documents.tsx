@@ -34,6 +34,7 @@ export function NavDocuments({
     name: string;
     url: string;
     icon: Icon;
+    badge?: string;
   }[];
 }) {
   const { isMobile } = useSidebar();
@@ -51,6 +52,7 @@ export function NavDocuments({
             >
               <item.icon />
               <span>{item.name}</span>
+              {item.badge ? <span className="ml-auto rounded-md bg-sidebar-accent px-1.5 py-0.5 text-[10px] font-medium text-sidebar-accent-foreground">{item.badge}</span> : null}
             </SidebarMenuButton>
             <DropdownMenu>
               <DropdownMenuTrigger render={<SidebarMenuAction showOnHover />}>

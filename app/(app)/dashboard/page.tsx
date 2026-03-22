@@ -78,6 +78,30 @@ export default async function DashboardPage() {
 
   return (
     <>
+      <div className="brand-shimmer relative overflow-hidden rounded-xl border border-border/50 px-5 py-4 mx-4 lg:mx-0">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[var(--brand)] to-[#FF6F61]">
+              <IconSparkles className="size-4 text-white" />
+            </div>
+            <div className="min-w-0">
+              <h2 className="text-sm font-semibold tracking-tight text-foreground">
+                Mission Control
+              </h2>
+              <p className="truncate text-xs text-muted-foreground">
+                {overview.counts.traces} traces &middot; {overview.counts.workflows} workflows &middot; {overview.counts.memoryEntries} memories tracked
+              </p>
+            </div>
+          </div>
+          <div className="hidden items-center gap-2 sm:flex">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-background/80 px-2.5 py-1 text-[11px] font-medium text-muted-foreground backdrop-blur-sm">
+              <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              Operational
+            </span>
+          </div>
+        </div>
+      </div>
+
       <SectionCards
         sessions={overview.counts.sessions}
         traces={overview.counts.traces}

@@ -70,14 +70,34 @@ The aligned plan is:
 - [x] semantic indexing command
 - [x] vector-backed fallback search path
 
+### Phase 8.5 — Desktop application scaffold
+Goal: wrap OpenTrust in a native desktop application using Tauri v2.
+
+Primary design doc:
+- `docs/DESKTOP-APPLICATION-PLAN.md`
+
+Includes:
+- [ ] Tauri v2 project scaffold (`src-tauri/`)
+- [ ] Next.js static export configuration
+- [ ] Tauri window and platform configuration
+- [ ] sidecar Node process for the memory runtime
+- [ ] desktop-appropriate database path resolution (`$APPDATA` / `~/Library/Application Support`)
+- [ ] basic macOS / Windows / Linux distributable builds
+- [ ] system tray integration with health status
+- [ ] native OS notifications for ingestion and health events
+
+This phase can proceed in parallel with Phases 9–14 since the Tauri scaffold is independent of memory-layer hardening.
+
 ## Next aligned roadmap
 
 These are no longer “misc optional ideas.”
 They are the next phases required to turn the baseline into the full OpenClaw memory standard.
 
-However, they should be treated as **post-prerequisite execution work**.
+Desktop application packaging (Phase 8.5) can proceed in parallel with the phases below, since the Tauri scaffold is independent of memory-layer hardening.
+
+However, memory-layer expansion phases should be treated as **post-prerequisite execution work**.
 The current upstream priority order is:
-1. Tauri
+1. desktop application scaffold (Tauri — see Phase 8.5 and `docs/DESKTOP-APPLICATION-PLAN.md`)
 2. persistence
 3. reliable run completion
 
@@ -155,6 +175,24 @@ Includes:
 - [ ] plugin-ready packaging plan under OpenClaw plugin conventions
 - [ ] clear standards for source metadata, provenance, and retrieval response shape
 - [ ] eventual first-class packaging as an OpenClaw plugin
+
+### Phase 15 — Desktop distribution and native experience
+Goal: make the desktop application production-grade and fully distributable.
+
+Primary design doc:
+- `docs/DESKTOP-APPLICATION-PLAN.md`
+
+Includes:
+- [ ] auto-update via `tauri-plugin-updater`
+- [ ] code signing for macOS (Developer ID) and Windows (Authenticode)
+- [ ] macOS notarization
+- [ ] CI pipeline for cross-platform builds (GitHub Actions)
+- [ ] first-run onboarding flow (database setup, OpenClaw path detection)
+- [ ] background ingestion service (tray-resident)
+- [ ] scheduled ingestion (hourly/daily)
+- [ ] native menu bar with keyboard shortcuts
+- [ ] multi-window support (detach views)
+- [ ] graceful migration path from localhost usage to desktop app
 
 ## Evaluation
 

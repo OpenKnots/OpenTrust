@@ -51,6 +51,14 @@ OpenTrust should directly own and improve:
 - config schema
 - official integration conventions
 
+### 7. Desktop application packaging
+- Tauri v2 native shell
+- cross-platform distributable builds (macOS, Windows, Linux)
+- system tray and native OS integration
+- auto-update distribution
+- desktop-appropriate database and storage paths
+- first-run onboarding and setup flow
+
 ---
 
 ## Out of scope for now
@@ -98,6 +106,7 @@ A proposed feature is in scope if it clearly improves one or more of these:
 - provenance and lineage
 - memory health and trust
 - OpenClaw-native integration
+- desktop application packaging and distribution
 
 A proposed feature is likely out of scope if it is primarily about:
 - generic team collaboration
@@ -110,14 +119,16 @@ A proposed feature is likely out of scope if it is primarily about:
 
 ## Guardrails for the current pre-prerequisite window
 
-Until Tauri, persistence, and reliable run completion are dependable, prefer work that improves:
+Until persistence and reliable run completion are dependable, prefer memory-layer work that improves:
 - documentation alignment
 - scope clarity
 - baseline stability
 - architecture clarity
 - low-risk cleanup that keeps the current implementation honest
 
-Defer work that primarily adds:
+Desktop scaffold work (Tauri) can proceed independently during this window.
+
+Defer memory-layer work that primarily adds:
 - broad new entity types
 - expansive new product surfaces
 - major backend swaps
@@ -148,7 +159,7 @@ Work counts as scope creep when it:
 - introduces new categories of product behavior before core trust gaps are closed
 - mixes multiple unfinished bets into one milestone
 - increases conceptual breadth while reducing operational clarity
-- ignores the prerequisite ordering of Tauri → persistence → reliable run completion
+- ignores the prerequisite ordering of persistence → reliable run completion (desktop scaffold is independent)
 
 If a change makes the roadmap feel bigger but the system feel less trustworthy, that is scope creep.
 

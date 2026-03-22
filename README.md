@@ -110,18 +110,19 @@ That means:
 
 OpenTrust is currently in a **pre-prerequisite holding pattern**.
 
-The upstream priority order is:
-1. Tauri
-2. persistence
-3. reliable run completion
+The upstream priority order for memory-layer work is:
+1. persistence
+2. reliable run completion
 
-Until those are dependable, OpenTrust should focus on:
+Desktop application packaging (Tauri) can proceed in parallel — see `docs/DESKTOP-APPLICATION-PLAN.md`.
+
+Until persistence and run completion are dependable, memory-layer expansion should focus on:
 - docs alignment
 - scope guardrails
 - low-risk cleanup
 - preserving a truthful baseline
 
-It should **not** pretend to outrank runtime reliability work.
+Memory-layer expansion should **not** pretend to outrank runtime reliability work.
 
 ## Principles
 
@@ -226,6 +227,7 @@ pnpm run secrets:check
 - `docs/MEMORY-API-CONTRACT.md`
 - `docs/CURATED-MEMORY-DESIGN.md`
 - `docs/PHASE-9-IMPLEMENTATION-PLAN.md`
+- `docs/DESKTOP-APPLICATION-PLAN.md`
 - `docs/OPENCLAW-PLUGIN-PACKAGING.md`
 - `docs/PLUGIN-READY-REFACTOR-PLAN.md`
 - `docs/OPENCLAW-PLUGIN-DRAFT-ARTIFACTS.md`

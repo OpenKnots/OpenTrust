@@ -84,6 +84,17 @@ The standard should assume all three retrieval modes are necessary:
 - insight and metrics surfaces
 - expandable raw evidence panes
 
+### 6. Desktop application shell
+- Tauri v2 native wrapper around the Next.js frontend
+- sidecar Node process for the memory runtime (migration path to native Rust runtime)
+- platform-appropriate database path resolution
+- system tray with health status and quick actions
+- native OS notifications for ingestion and health events
+- auto-update distribution via `tauri-plugin-updater`
+- cross-platform builds: macOS `.dmg`, Windows `.msi`/`.exe`, Linux `.AppImage`/`.deb`
+
+See `docs/DESKTOP-APPLICATION-PLAN.md` for the full plan.
+
 ## Current schema domains
 
 - `sessions`
@@ -170,6 +181,20 @@ The OpenClaw memory layer must:
 - make uncertainty visible
 - keep local durability a first-class concern
 - support future backends without discarding the memory model
+
+## Desktop application architecture
+
+OpenTrust is designed to run as a **native desktop application** via Tauri v2.
+
+The architecture supports two runtime strategies:
+
+### Sidecar strategy (initial)
+The existing Node.js memory runtime runs as a sidecar process launched by Tauri. The frontend communicates with it via localhost HTTP, preserving the existing API route contracts. This requires no changes to the memory layer.
+
+### Native Rust strategy (future)
+The SQLite access layer is rewritten in Rust using `rusqlite`. Memory operations are exposed as Tauri IPC commands. The frontend calls `invoke()` instead of `fetch()`. This eliminates the Node dependency and reduces bundle size.
+
+The sidecar strategy should ship first. The native Rust strategy is an optimization to evaluate once the desktop app is proven.
 
 ## Architectural position on future backends
 

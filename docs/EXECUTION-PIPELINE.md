@@ -34,22 +34,43 @@ OpenTrust should be run like infrastructure, not like an endless concept lab.
 
 ## 2. Current recommended operating sequence
 
-## Stage 0 — Upstream prerequisites
-Goal: wait for the host substrate to become dependable enough that memory-layer hardening will compound instead of churn.
+## Stage 0 — Upstream prerequisites and desktop scaffold
+Goal: wait for the host substrate to become dependable enough that memory-layer hardening will compound instead of churn — while simultaneously building the desktop application shell.
 
 The prerequisites are:
-1. **Tauri**
+1. **Tauri desktop scaffold** — can proceed now (see `docs/DESKTOP-APPLICATION-PLAN.md`)
 2. **persistence**
 3. **reliable run completion**
 
-Until these are in a trustworthy state, OpenTrust should bias toward:
+The Tauri desktop scaffold is no longer a blocking prerequisite — it is **active work** that can proceed in parallel with persistence and run completion. The desktop shell wraps the existing app without changing the memory runtime.
+
+Until persistence and reliable run completion are in a trustworthy state, memory-layer expansion should bias toward:
 - doc alignment
 - scope control
 - low-risk cleanup
 - architecture clarification
 - preserving the current V1-capable baseline
 
-OpenTrust should not try to outrun the runtime it depends on.
+OpenTrust should not try to outrun the runtime it depends on — but it can build the desktop container around it.
+
+## Stage 0.5 — Desktop application scaffold
+Goal: wrap the existing Next.js app in a Tauri v2 native shell.
+
+This stage runs **in parallel** with Stage A and can begin immediately.
+
+Required outcomes:
+- Tauri v2 project scaffolded (`src-tauri/`)
+- Next.js static export configured and working
+- Sidecar Node process hosts the memory runtime
+- Desktop-appropriate database paths configured
+- Basic macOS `.dmg` build succeeds
+- Basic Windows `.msi` / `.exe` build succeeds
+- Basic Linux `.AppImage` / `.deb` build succeeds
+
+This stage does not require changes to the memory layer.
+It wraps the existing app as-is inside a native window.
+
+See `docs/DESKTOP-APPLICATION-PLAN.md` for the full plan.
 
 ## Stage A — Stabilize the baseline
 Goal: preserve the current V1-capable state while prerequisites are still being finished upstream.
@@ -105,6 +126,20 @@ Required outcomes:
 - contracts hold under E2E verification
 - operator UX remains evidence-first
 
+## Stage E — Desktop distribution and native experience
+Goal: make the desktop application production-grade.
+
+Required outcomes:
+- auto-update delivers new versions without manual reinstallation
+- builds are code-signed and notarized for macOS
+- system tray provides health status and quick actions
+- background ingestion runs without the main window open
+- CI pipeline produces cross-platform builds automatically
+- first-run onboarding guides users through setup
+- native OS notifications surface health alerts and ingestion events
+
+This stage follows the desktop scaffold (Stage 0.5) and can run in parallel with Stages B–D.
+
 ---
 
 ## 3. Pipeline rules
@@ -120,6 +155,7 @@ Every implementation PR should fit one of these buckets:
 - plugin extraction
 - contract definition
 - operator UX completion
+- desktop application scaffold or native integration
 
 If a proposed change does not clearly fit one bucket, it is probably too broad.
 
@@ -161,19 +197,21 @@ OpenTrust wins by being:
 Not by generating prettier but less defensible summaries.
 
 ## Rule 6 — Respect prerequisite ordering
-If a proposed OpenTrust change assumes stable Tauri behavior, durable persistence, or dependable run completion, it belongs in the **post-prerequisite** sequence unless it is strictly preparatory.
+If a proposed OpenTrust change assumes durable persistence or dependable run completion, it belongs in the **post-prerequisite** sequence unless it is strictly preparatory. Desktop scaffold work (Tauri) can proceed independently.
 
 ---
 
 ## 4. Recommended PR sequence from here
 
-## Pre-prerequisite PRs only
-Until Tauri, persistence, and reliable run completion are dependable, OpenTrust PRs should stay limited to:
+## Pre-prerequisite PRs
+Until persistence and reliable run completion are dependable, memory-layer PRs should stay limited to:
 - docs alignment
 - scope clarification
 - low-risk cleanup
 - preserving green build/typecheck status
 - small prep work that does not assume the host substrate is stable
+
+Desktop scaffold PRs can proceed now — they do not depend on persistence or run completion.
 
 Recommended pre-prerequisite PR examples:
 
@@ -194,8 +232,50 @@ Target:
 - remove ambiguity, dead wording, or misleading placeholders
 - keep the current implementation stable and honest
 
+## Desktop scaffold PRs (can proceed now)
+These PRs build the Tauri desktop shell around the existing app. See `docs/DESKTOP-APPLICATION-PLAN.md`.
+
+### PR D1 — Tauri v2 project scaffold
+Target:
+- initialize `src-tauri/` with Tauri v2
+- configure `tauri.conf.json` for window title, size, platform targets
+- configure Next.js static export (`output: 'export'`)
+- verify the app loads in a Tauri dev window
+
+Done when:
+- `pnpm tauri dev` opens the OpenTrust dashboard in a native window
+
+### PR D2 — Sidecar runtime and database paths
+Target:
+- configure sidecar Node process for the memory runtime
+- resolve database path to platform-appropriate location
+- ensure ingestion and search work in the desktop context
+
+Done when:
+- memory operations work identically in the desktop app and localhost
+
+### PR D3 — Platform builds
+Target:
+- macOS `.dmg` build
+- Windows `.msi` / `.exe` build
+- Linux `.AppImage` / `.deb` build
+- basic CI configuration for cross-platform builds
+
+Done when:
+- a distributable installer can be produced for each platform
+
+### PR D4 — Native integrations
+Target:
+- system tray icon with health status
+- tray menu (open, ingest, check health, quit)
+- native OS notifications
+- global keyboard shortcut
+
+Done when:
+- the desktop app feels native, not like a framed browser tab
+
 ## Post-prerequisite main sequence
-Once Tauri, persistence, and reliable run completion are solid, the recommended sequence is:
+Once persistence and reliable run completion are solid, the recommended sequence is:
 
 ### PR 1 — Review queue completion
 Target:
@@ -273,7 +353,7 @@ If two or more answers are "no", defer it.
 ## 6. Anti-patterns to avoid
 
 Avoid these common failure modes:
-- adding speculative platform features before runtime prerequisites are dependable
+- adding speculative platform features before runtime prerequisites are dependable (desktop scaffold is explicitly not speculative)
 - bundling plugin packaging, UX redesign, and schema changes into one move
 - writing roadmap language broader than the implementation can support
 - building new surfaces before provenance and health are clear
