@@ -178,6 +178,7 @@ pnpm run secrets:check
 - `docs/PLUGIN-READY-REFACTOR-PLAN.md`
 - `docs/OPENCLAW-PLUGIN-DRAFT-ARTIFACTS.md`
 - `docs/POST-PREREQUISITE-PR-BACKLOG.md`
+- `docs/UI-UX-REVAMP-PLAN.md`
 - `plugin-drafts/opentrust/`
 - `docs/PLUGIN-DRAFT-RUNTIME-MAP.md`
 - `docs/PLUGIN-PROMOTION-CHECKLIST.md`
