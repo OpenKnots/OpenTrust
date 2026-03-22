@@ -26,7 +26,8 @@
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "shiki": "^4.0.2",
-    "sqlite-vec": "^0.1.7"
+    "sqlite-vec": "^0.1.7",
+    "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
     "@secretlint/core": "^11.4.0",
