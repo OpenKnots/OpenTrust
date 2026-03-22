@@ -86,7 +86,7 @@ export default async function HomePage({
                 <Telescope size={14} />
                 <span className="section__title">Recent traces</span>
               </div>
-              <Link href="/traces" className="btn btn--ghost" style={{ fontSize: "0.75rem" }}>
+              <Link href="/traces" className="btn btn--ghost btn--sm">
                 View all <ChevronRight size={12} />
               </Link>
             </div>
@@ -212,7 +212,7 @@ export default async function HomePage({
                 <Sparkles size={14} />
                 <span className="section__title">Recent memory</span>
               </div>
-              <Link href="/memory" className="btn btn--ghost" style={{ fontSize: "0.75rem" }}>
+              <Link href="/memory" className="btn btn--ghost btn--sm">
                 Open memory <ChevronRight size={12} />
               </Link>
             </div>
@@ -291,7 +291,7 @@ function InvestigationSearchSection({
             placeholder="Search traces, workflows, artifacts..."
             className="search-input"
           />
-          <button type="submit" className="btn btn--primary" style={{ padding: "4px 12px" }}>
+          <button type="submit" className="btn btn--primary btn--sm">
             Search
           </button>
         </div>

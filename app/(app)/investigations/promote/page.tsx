@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
-import { listSavedInvestigations } from "@/lib/opentrust/search";
+import { ArrowUpCircle, Database } from "lucide-react";
+import { getSavedInvestigations, type SavedInvestigationRow } from "@/lib/opentrust/investigations";
 import { memoryPromote } from "@/lib/opentrust/memory-api";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -12,8 +13,10 @@ export default async function PromoteInvestigationPage({
   searchParams?: Promise<{ id?: string; create?: string }>;
 }) {
   const params = (await searchParams) ?? {};
-  const investigations = listSavedInvestigations();
-  const selected = params.id ? investigations.find((item) => item.id === params.id) : null;
+  const investigations = getSavedInvestigations();
+  const selected = params.id
+    ? investigations.find((item: SavedInvestigationRow) => item.id === params.id) ?? null
+    : null;
 
   if (params.create === "1" && selected) {
     memoryPromote({
@@ -27,7 +30,8 @@ export default async function PromoteInvestigationPage({
       review: { status: "draft" },
       author: { type: "system", id: "investigation-promote-route" },
       confidence: { score: 0.52, reason: "Promoted from a saved investigation definition." },
-      uncertaintySummary: "Investigation-based memory should be reviewed to confirm that the saved query still represents durable knowledge.",
+      uncertaintySummary:
+        "Investigation-based memory should be reviewed to confirm that the saved query still represents durable knowledge.",
     });
     redirect("/memory/review");
   }
@@ -40,9 +44,21 @@ export default async function PromoteInvestigationPage({
         breadcrumbs={[{ label: "Overview", href: "/" }, { label: "Investigations", href: "/investigations" }, { label: "Promote" }]}
       />
 
+      <div className="panel" style={{ marginBottom: 24 }}>
+        <div className="panel__header">
+          <span className="panel__icon"><Database size={15} /></span>
+          <span className="panel__title">How promotion works</span>
+        </div>
+        <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", lineHeight: 1.6, margin: 0 }}>
+          Promoting a saved investigation creates a <strong style={{ color: "var(--text)" }}>draft memory entry</strong> that
+          preserves the query, description, and provenance. The draft goes to the review queue where it can be
+          approved, edited, or rejected before becoming durable memory.
+        </p>
+      </div>
+
       {investigations.length > 0 ? (
         <div className="list-group">
-          {investigations.map((investigation) => (
+          {investigations.map((investigation: SavedInvestigationRow) => (
             <div key={investigation.id} className="list-item" style={{ cursor: "default" }}>
               <div className="list-item__content">
                 <span className="list-item__title">{investigation.title}</span>
@@ -50,7 +66,8 @@ export default async function PromoteInvestigationPage({
               </div>
               <div className="list-item__meta">
                 <a className="btn btn--primary" href={`/investigations/promote?id=${encodeURIComponent(investigation.id)}&create=1`}>
-                  Promote
+                  <ArrowUpCircle size={14} />
+                  Promote to memory
                 </a>
               </div>
             </div>

@@ -134,15 +134,13 @@ export function Sidebar({ latestIngest }: { latestIngest?: string }) {
         </nav>
 
         <div className="sidebar__footer">
-          <div className="sidebar__status">
-            <span className={`sidebar__status-dot${latestIngest === "never" ? " sidebar__status-dot--stale" : ""}`} />
-            <span>{latestIngest && latestIngest !== "never" ? `Ingested ${latestIngest}` : "No ingestion"}</span>
-          </div>
-          {!collapsed && (
-            <div style={{ marginTop: 10 }}>
-              <ThemeModeToggle />
+          <div className="sidebar__footer-row">
+            <div className="sidebar__status">
+              <span className={`sidebar__status-dot${latestIngest === "never" ? " sidebar__status-dot--stale" : ""}`} />
+              <span>{latestIngest && latestIngest !== "never" ? `Ingested ${latestIngest}` : "No ingestion"}</span>
             </div>
-          )}
+            {!collapsed && <ThemeModeToggle />}
+          </div>
         </div>
       </aside>
 

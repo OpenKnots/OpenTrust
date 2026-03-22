@@ -1,3 +1,9 @@
+export function truncatePath(uri: string, levels = 4): string {
+  const segments = uri.split("/").filter(Boolean);
+  if (segments.length <= levels) return uri;
+  return `…/${segments.slice(-levels).join("/")}`;
+}
+
 export function formatRelativeTime(input: string | null | undefined) {
   if (!input) return "unknown";
   const value = new Date(input).getTime();

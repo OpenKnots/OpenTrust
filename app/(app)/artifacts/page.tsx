@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getRecentArtifacts } from "@/lib/opentrust/artifacts";
-import { formatRelativeTime } from "@/lib/opentrust/format";
+import { formatRelativeTime, truncatePath } from "@/lib/opentrust/format";
 import { CardGrid } from "@/components/ui/card-grid";
 import { PageHeader } from "@/components/ui/page-header";
 import { Pill } from "@/components/ui/pill";
@@ -89,7 +89,7 @@ export default async function ArtifactsPage({
                           </span>
                         </div>
                         <div className="artifact-card__title">{artifact.title ?? artifact.id}</div>
-                        <div className="artifact-card__uri">{artifact.uri}</div>
+                        <div className="artifact-card__uri">{truncatePath(artifact.uri)}</div>
                       </div>
                     ))}
                   </CardGrid>

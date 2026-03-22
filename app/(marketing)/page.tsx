@@ -19,7 +19,6 @@ import {
 import { BorderGlow } from "@/components/border-glow";
 import { CardGrid } from "@/components/ui/card-grid";
 import { CodeBlock, type CodeHighlight } from "@/components/code-block";
-import { GitHubStars } from "@/components/github-stars";
 
 const MOLTY_ICON = "https://openclaw.ai/favicon.svg";
 
@@ -256,12 +255,11 @@ export default function LandingPage() {
           Why OpenTrust
         </div>
         <h2 className="landing-section__title">
-          What can OpenTrust answer?
+          What becomes possible when memory is inspectable?
         </h2>
         <p className="landing-section__desc">
-          OpenTrust turns raw OpenClaw sessions, workflows, and events
-          into a structured memory layer with provenance, lineage, and
-          operator-grade explainability.
+          OpenTrust turns raw OpenClaw sessions, workflows, and events into a structured memory layer
+          with provenance, lineage, and operator-grade explainability — so answers are attributable, reviewable, and useful.
         </p>
         <CardGrid tone="accent" storageKey="landing-values" className="landing-values-wrap">
           <ValueCard
