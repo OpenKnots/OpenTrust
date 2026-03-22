@@ -7,6 +7,7 @@ import { CardGrid } from "@/components/ui/card-grid";
 import { PageHeader } from "@/components/ui/page-header";
 import { Pill } from "@/components/ui/pill";
 import { EmptyState } from "@/components/ui/empty-state";
+import { StatusBadge } from "@/components/ui/status-badge";
 import {
   PreviewCard,
   PreviewCardTrigger,
@@ -90,8 +91,22 @@ export default async function MemoryPage({
                   <Link href={`/memory/${encodeURIComponent(entry.id)}`} className="artifact-card" style={{ textDecoration: "none" }}>
                     <div className="artifact-card__kind" style={{ flexWrap: "wrap", gap: 8 }}>
                       <Pill label={entry.kind} tone="neutral" />
-                      <Pill label={entry.retention_class} tone={retentionTone(entry.retention_class)} />
-                      <Pill label={entry.review_status} tone={reviewTone(entry.review_status)} />
+                      <StatusBadge
+                        label={entry.retention_class}
+                        tone={retentionTone(entry.retention_class)}
+                      />
+                      <StatusBadge
+                        label={entry.review_status}
+                        status={
+                          entry.review_status === "approved"
+                            ? "healthy"
+                            : entry.review_status === "reviewed"
+                              ? "active"
+                              : entry.review_status === "rejected"
+                                ? "degraded"
+                                : "attention"
+                        }
+                      />
                       <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
                         {formatRelativeTime(entry.updated_at)}
                       </span>

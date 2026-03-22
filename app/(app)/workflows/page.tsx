@@ -7,6 +7,8 @@ import { getGroupedWorkflows } from "@/lib/opentrust/workflow-list";
 import { PageHeader } from "@/components/ui/page-header";
 import { Pill, StatusDot } from "@/components/ui/pill";
 import { EmptyState } from "@/components/ui/empty-state";
+import { GlassCard } from "@/components/ui/glass-card";
+import { StatusBadge } from "@/components/ui/status-badge";
 import {
   PreviewCard,
   PreviewCardTrigger,
@@ -31,8 +33,8 @@ export default async function WorkflowsPage() {
       {groups.length === 0 ? (
         <EmptyState message="No workflows tracked yet." />
       ) : (
-        <div className="section">
-          <div className="section__header">
+        <GlassCard variant="raised">
+          <div className="section__header" style={{ marginBottom: 16 }}>
             <div className="section__icon">
               <Workflow size={14} />
               <span className="section__title">Workflow types</span>
@@ -88,12 +90,14 @@ export default async function WorkflowsPage() {
                                 )}
                               </div>
                               <div className="list-item__meta">
-                                <Pill
+                                <StatusBadge
                                   label={run.status}
-                                  tone={
+                                  status={
                                     run.status === "error" || run.status === "attention"
-                                      ? "danger"
-                                      : "neutral"
+                                      ? "degraded"
+                                      : run.status === "active"
+                                        ? "active"
+                                        : "healthy"
                                   }
                                 />
                                 {run.source_kind && (
@@ -109,12 +113,14 @@ export default async function WorkflowsPage() {
                           <div className="preview-card__title">{run.name}</div>
                           <div className="preview-card__text">{run.summary ?? "No summary available."}</div>
                           <div className="preview-card__meta">
-                            <Pill
+                            <StatusBadge
                               label={run.status}
-                              tone={
+                              status={
                                 run.status === "error" || run.status === "attention"
-                                  ? "danger"
-                                  : "neutral"
+                                  ? "degraded"
+                                  : run.status === "active"
+                                    ? "active"
+                                    : "healthy"
                               }
                             />
                             {run.source_kind && (
@@ -130,7 +136,7 @@ export default async function WorkflowsPage() {
               </details>
             ))}
           </div>
-        </div>
+        </GlassCard>
       )}
     </>
   );

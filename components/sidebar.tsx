@@ -14,6 +14,7 @@ import {
   Telescope,
   Workflow,
   X,
+  Zap,
 } from "lucide-react";
 import { ThemeModeToggle } from "@/components/theme-toggle";
 import { DemoModeToggle } from "@/components/demo-mode-toggle";
@@ -25,6 +26,7 @@ const NAV_ITEMS = [
   { label: "Artifacts", href: "/artifacts", icon: Layers3 },
   { label: "Memory", href: "/memory", icon: BookOpen },
   { label: "Investigations", href: "/investigations", icon: FileSearch },
+  { label: "API", href: "/api-playground", icon: Zap },
 ];
 
 export function Sidebar({ latestIngest }: { latestIngest?: string }) {

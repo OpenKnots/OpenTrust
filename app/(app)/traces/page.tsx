@@ -7,6 +7,8 @@ import { getGroupedTraces, type SessionTraceGroup } from "@/lib/opentrust/trace-
 import { PageHeader } from "@/components/ui/page-header";
 import { Pill, StatusDot } from "@/components/ui/pill";
 import { EmptyState } from "@/components/ui/empty-state";
+import { GlassCard } from "@/components/ui/glass-card";
+import { StatusBadge } from "@/components/ui/status-badge";
 import {
   PreviewCard,
   PreviewCardTrigger,
@@ -42,14 +44,14 @@ function TraceList({ traces }: { traces: SessionTraceGroup["traces"] }) {
                   )}
                 </div>
                 <div className="list-item__meta">
-                  <Pill
+                  <StatusBadge
                     label={trace.status}
-                    tone={
+                    status={
                       trace.status === "attention"
-                        ? "danger"
+                        ? "degraded"
                         : trace.status === "streaming"
-                          ? "info"
-                          : "neutral"
+                          ? "active"
+                          : "healthy"
                     }
                   />
                   <span>{formatRelativeTime(trace.updated_at)}</span>
@@ -62,14 +64,14 @@ function TraceList({ traces }: { traces: SessionTraceGroup["traces"] }) {
             <div className="preview-card__title">{trace.title ?? trace.id}</div>
             <div className="preview-card__text">{trace.summary ?? "No summary available."}</div>
             <div className="preview-card__meta">
-              <Pill
+              <StatusBadge
                 label={trace.status}
-                tone={
+                status={
                   trace.status === "attention"
-                    ? "danger"
+                    ? "degraded"
                     : trace.status === "streaming"
-                      ? "info"
-                      : "neutral"
+                      ? "active"
+                      : "healthy"
                 }
               />
               <span>{formatRelativeTime(trace.updated_at)}</span>
@@ -134,8 +136,8 @@ export default async function TracesPage() {
       {groups.length === 0 ? (
         <EmptyState message="No traces imported yet." />
       ) : (
-        <div className="section">
-          <div className="section__header">
+        <GlassCard variant="raised">
+          <div className="section__header" style={{ marginBottom: 16 }}>
             <div className="section__icon">
               <Telescope size={14} />
               <span className="section__title">Session groups</span>
@@ -187,7 +189,7 @@ export default async function TracesPage() {
               );
             })}
           </div>
-        </div>
+        </GlassCard>
       )}
     </>
   );

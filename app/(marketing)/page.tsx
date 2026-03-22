@@ -2,6 +2,7 @@ import Link from "next/link";
 import {
   ArrowRight,
   BookOpen,
+  CheckCircle2,
   ChevronRight,
   Database,
   FileSearch,
@@ -13,13 +14,18 @@ import {
   Search,
   Sparkles,
   Telescope,
+  TrendingUp,
+  TrendingDown,
   Workflow,
   Zap,
 } from "lucide-react";
-import { BorderGlow } from "@/components/border-glow";
 import { CardGrid } from "@/components/ui/card-grid";
 import { CodeBlock, type CodeHighlight } from "@/components/code-block";
 import { CodeDemo } from "@/components/code-demo";
+import { CodeTabs } from "@/components/animate-ui/components/animate/code-tabs";
+import { DemoSection } from "@/components/ui/demo-section";
+import { GlassCard } from "@/components/ui/glass-card";
+import { StatusBadge } from "@/components/ui/status-badge";
 
 const MOLTY_ICON = "https://openclaw.ai/favicon.svg";
 
@@ -110,12 +116,43 @@ const healthHighlights: CodeHighlight[] = [
   { line: 8, variant: "health", start: 13, width: 34, label: "trust signal" },
 ];
 
-const pluginHighlights: CodeHighlight[] = [
-  { line: 1, variant: "plugin", start: 34, width: 28, label: "entry" },
-  { line: 6, variant: "plugin", start: 38, width: 26, label: "tools" },
-  { line: 10, variant: "plugin", start: 42, width: 24, label: "route" },
-  { line: 11, variant: "plugin", start: 70, width: 16, label: "path" },
-];
+const PLUGIN_MANIFEST = `{
+  "name": "opentrust",
+  "version": "1.0.0",
+  "displayName": "OpenTrust Memory",
+  "description": "Evidence-backed memory layer for OpenClaw",
+  "entry": "./index.ts",
+  "slots": { "memory": "exclusive" },
+  "config": {
+    "storagePath": { "type": "string", "default": "./storage" },
+    "enableSemantic": { "type": "boolean", "default": true },
+    "retentionDefault": { "type": "string", "default": "longTerm" },
+    "healthThreshold": { "type": "number", "default": 24 }
+  }
+}`;
+
+const PLUGIN_CONFIG = `{
+  "plugins": {
+    "opentrust": {
+      "enabled": true,
+      "config": {
+        "storagePath": "./storage/opentrust.db",
+        "enableSemantic": true,
+        "retentionDefault": "longTerm",
+        "healthThreshold": 24
+      }
+    }
+  },
+  "slots": {
+    "memory": "opentrust"
+  }
+}`;
+
+const PLUGIN_TABS: Record<string, string> = {
+  "index.ts": PLUGIN_CODE,
+  "openclaw.plugin.json": PLUGIN_MANIFEST,
+  "config": PLUGIN_CONFIG,
+};
 
 export default function LandingPage() {
   return (
@@ -140,7 +177,6 @@ export default function LandingPage() {
       </nav>
 
       <section className="landing-hero">
-        <div className="landing-hero__glow" />
         <div className="landing-hero__badge">
           <img src={MOLTY_ICON} alt="Molty" className="landing-molty landing-molty--inline" />
           <Plug size={12} />
@@ -219,6 +255,77 @@ export default function LandingPage() {
             desc="Semantic and lexical search across the full evidence graph for deep investigations."
           />
         </CardGrid>
+      </section>
+
+      <hr className="landing-divider" />
+
+      <section className="landing-section">
+        <div className="landing-section__label">
+          <TrendingUp size={12} />
+          By the Numbers
+        </div>
+        <h2 className="landing-section__title">
+          Trusted at scale
+        </h2>
+        <p className="landing-section__desc">
+          OpenTrust processes raw agent activity into structured, evidence-backed
+          memory — here's what the pipeline handles.
+        </p>
+
+        <div className="landing-stats-grid">
+          <StatCard
+            label="Sessions Ingested"
+            value="142,847"
+            change="+12.4%"
+            changeType="positive"
+            sparkData={[28, 34, 42, 38, 52, 61, 58, 72, 68, 84, 91, 96]}
+          />
+          <StatCard
+            label="Memory Entries"
+            value="38,291"
+            change="+24.1%"
+            changeType="positive"
+            sparkData={[12, 18, 22, 28, 34, 31, 42, 48, 56, 62, 71, 78]}
+          />
+          <StatCard
+            label="Evidence Traces"
+            value="891,204"
+            change="+8.7%"
+            changeType="positive"
+            sparkData={[60, 62, 68, 64, 72, 78, 74, 82, 86, 84, 92, 96]}
+          />
+          <StatCard
+            label="Avg Confidence"
+            value="94.2%"
+            change="+2.1%"
+            changeType="positive"
+            sparkData={[82, 84, 86, 88, 86, 90, 88, 92, 90, 94, 92, 94]}
+          />
+        </div>
+
+        <div className="landing-stats-progress-row">
+          <ProgressStat
+            label="Semantic Index"
+            value="38,291"
+            limit="50,000"
+            percentage={76}
+            color="accent"
+          />
+          <ProgressStat
+            label="Storage Used"
+            value="2.1 GB"
+            limit="10 GB"
+            percentage={21}
+            color="info"
+          />
+          <ProgressStat
+            label="Pipeline Coverage"
+            value="47"
+            limit="50 pipelines"
+            percentage={94}
+            color="warning"
+          />
+        </div>
       </section>
 
       <hr className="landing-divider" />
@@ -357,6 +464,11 @@ export default function LandingPage() {
           lineage, explicit writeback, and operational health &mdash; all with stable
           envelopes safe for agent consumption.
         </p>
+        <div className="landing-section__cta">
+          <Link href="/api-playground" className="landing-btn landing-btn--primary">
+            Open API Playground <ArrowRight size={16} />
+          </Link>
+        </div>
         <CardGrid tone="accent" storageKey="landing-api" className="landing-api-wrap">
           <ApiCard
             method="POST"
@@ -463,22 +575,11 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-          <BorderGlow className="landing-plugin-code" active>
-            <div className="landing-plugin-code__tab">
-              <span className="landing-plugin-code__tab-item landing-plugin-code__tab-item--active">
-                index.ts
-              </span>
-              <span className="landing-plugin-code__tab-item">
-                openclaw.plugin.json
-              </span>
-              <span className="landing-plugin-code__tab-item">
-                config
-              </span>
-            </div>
-            <div className="landing-plugin-code__body">
-              <CodeBlock language="typescript" code={PLUGIN_CODE} highlights={pluginHighlights} />
-            </div>
-          </BorderGlow>
+          <CodeTabs
+            className="landing-plugin-code"
+            codes={PLUGIN_TABS}
+            lang="typescript"
+          />
         </div>
       </section>
 
@@ -641,18 +742,137 @@ function ApiCard({
   highlights: CodeHighlight[];
   variant: "search" | "inspect" | "promote" | "health";
 }) {
+  const demoResults = {
+    search: {
+      results: [
+        { id: "mem_queue_regression", title: "Queue backlog regression", confidence: 0.94, source: "trace" },
+        { id: "trace_deploy_123", title: "Deployment timing shift", confidence: 0.88, source: "trace" },
+      ],
+      mode: "hybrid",
+      count: 2,
+    },
+    inspect: {
+      type: "memoryEntry",
+      title: "Queue backlog regression",
+      body: "Consumer timing shifted after deployment and delayed downstream checks.",
+      origins: [{ type: "trace", id: "trace_queue_abc" }],
+      lineage: { parent: "trace_deploy_parent", children: 3 },
+    },
+    promote: {
+      status: "success",
+      memoryId: "mem_queue_regression_new",
+      retentionClass: "longTerm",
+      reviewStatus: "draft",
+    },
+    health: {
+      status: "healthy",
+      signals: [
+        { kind: "ingestion_freshness", status: "fresh", hours: 1 },
+        { kind: "semantic_coverage", status: "healthy", percentage: 94 },
+      ],
+      stalePipelines: 0,
+    },
+  };
+
+  async function handleRun() {
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    return demoResults[variant];
+  }
+
+  function renderResult(result: any) {
+    if (!result) return null;
+
+    if (variant === "search") {
+      return (
+        <GlassCard variant="inset">
+          <div style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", marginBottom: 12 }}>
+            <StatusBadge label={`${result.count} results`} status="healthy" /> · Mode: {result.mode}
+          </div>
+          {result.results.map((item: any) => (
+            <div key={item.id} style={{ padding: "10px 0", borderBottom: "1px solid var(--border)" }}>
+              <div style={{ fontWeight: 500, marginBottom: 4 }}>{item.title}</div>
+              <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
+                Confidence: {(item.confidence * 100).toFixed(0)}% · Source: {item.source} · ID: {item.id}
+              </div>
+            </div>
+          ))}
+        </GlassCard>
+      );
+    }
+
+    if (variant === "inspect") {
+      return (
+        <GlassCard variant="inset">
+          <div style={{ marginBottom: 12 }}>
+            <StatusBadge label={result.type} status="active" />
+          </div>
+          <div style={{ fontWeight: 500, marginBottom: 8 }}>{result.title}</div>
+          <div style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", marginBottom: 12 }}>{result.body}</div>
+          <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
+            Origins: {result.origins.length} · Lineage: {result.lineage.children} children
+          </div>
+        </GlassCard>
+      );
+    }
+
+    if (variant === "promote") {
+      return (
+        <GlassCard variant="inset">
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+            <CheckCircle2 size={16} style={{ color: "var(--success)" }} />
+            <span style={{ fontWeight: 500, color: "var(--success)" }}>Memory entry created</span>
+          </div>
+          <div style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", display: "flex", flexDirection: "column", gap: 6 }}>
+            <div>Memory ID: <code>{result.memoryId}</code></div>
+            <div>Retention: <StatusBadge label={result.retentionClass} tone="success" /></div>
+            <div>Review: <StatusBadge label={result.reviewStatus} tone="warning" /></div>
+          </div>
+        </GlassCard>
+      );
+    }
+
+    if (variant === "health") {
+      return (
+        <GlassCard variant="inset">
+          <div style={{ marginBottom: 12 }}>
+            <StatusBadge label={result.status} status="healthy" pulse />
+          </div>
+          <div style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", display: "flex", flexDirection: "column", gap: 8 }}>
+            {result.signals.map((signal: any) => (
+              <div key={signal.kind} style={{ display: "flex", justifyContent: "space-between" }}>
+                <span>{signal.kind}</span>
+                <StatusBadge label={signal.status} status="healthy" />
+              </div>
+            ))}
+            <div style={{ marginTop: 8, fontSize: "0.75rem", color: "var(--text-muted)" }}>
+              Stale pipelines: {result.stalePipelines}
+            </div>
+          </div>
+        </GlassCard>
+      );
+    }
+
+    return null;
+  }
+
   return (
-    <BorderGlow className={`landing-api-card landing-api-card--${variant}`} active>
+    <DemoSection
+      title={name}
+      description={desc}
+      icon={<img src={MOLTY_ICON} alt="Molty" className="landing-molty landing-molty--api" />}
+      onRun={handleRun}
+      renderResult={renderResult}
+      runLabel="Run Demo"
+      className={`landing-api-card landing-api-card--${variant}`}
+    >
       <div className="landing-api-card__header">
-        <img src={MOLTY_ICON} alt="Molty" className="landing-molty landing-molty--api" />
         <span className={`landing-api-card__method landing-api-card__method--${methodTone}`}>{method}</span>
         <span className="landing-api-card__name">{name}</span>
-        <span className="landing-api-card__desc">{desc}</span>
       </div>
       <div className="landing-api-card__body">
         <CodeBlock language={language} showLineNumbers={false} code={code} highlights={highlights} />
       </div>
-    </BorderGlow>
+    </DemoSection>
   );
 }
 
@@ -690,6 +910,105 @@ function FlowArrow() {
   return (
     <div className="landing-flow__arrow">
       <ChevronRight size={16} />
+    </div>
+  );
+}
+
+function StatCard({
+  label,
+  value,
+  change,
+  changeType,
+  sparkData,
+}: {
+  label: string;
+  value: string;
+  change: string;
+  changeType: "positive" | "negative";
+  sparkData: number[];
+}) {
+  const max = Math.max(...sparkData);
+  const min = Math.min(...sparkData);
+  const range = max - min || 1;
+  const w = 120;
+  const h = 40;
+  const points = sparkData
+    .map((v, i) => {
+      const x = (i / (sparkData.length - 1)) * w;
+      const y = h - ((v - min) / range) * h;
+      return `${x},${y}`;
+    })
+    .join(" ");
+  const areaPoints = `0,${h} ${points} ${w},${h}`;
+
+  return (
+    <div className="landing-stat-card">
+      <div className="landing-stat-card__top">
+        <span className="landing-stat-card__label">{label}</span>
+        <span className={`landing-stat-card__change landing-stat-card__change--${changeType}`}>
+          {changeType === "positive" ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+          {change}
+        </span>
+      </div>
+      <div className="landing-stat-card__value">{value}</div>
+      <svg
+        className="landing-stat-card__spark"
+        viewBox={`0 0 ${w} ${h}`}
+        preserveAspectRatio="none"
+      >
+        <defs>
+          <linearGradient id={`spark-fill-${label.replace(/\s/g, "")}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={changeType === "positive" ? "rgba(52,211,153,0.3)" : "rgba(248,113,113,0.3)"} />
+            <stop offset="100%" stopColor="transparent" />
+          </linearGradient>
+        </defs>
+        <polygon
+          points={areaPoints}
+          fill={`url(#spark-fill-${label.replace(/\s/g, "")})`}
+        />
+        <polyline
+          points={points}
+          fill="none"
+          stroke={changeType === "positive" ? "rgba(52,211,153,0.9)" : "rgba(248,113,113,0.9)"}
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </div>
+  );
+}
+
+function ProgressStat({
+  label,
+  value,
+  limit,
+  percentage,
+  color,
+}: {
+  label: string;
+  value: string;
+  limit: string;
+  percentage: number;
+  color: "accent" | "info" | "warning";
+}) {
+  return (
+    <div className="landing-progress-stat">
+      <div className="landing-progress-stat__top">
+        <span className="landing-progress-stat__label">{label}</span>
+        <span className="landing-progress-stat__values">
+          <span className="landing-progress-stat__value">{value}</span>
+          {" / "}
+          <span className="landing-progress-stat__limit">{limit}</span>
+        </span>
+      </div>
+      <div className="landing-progress-stat__bar">
+        <div
+          className={`landing-progress-stat__fill landing-progress-stat__fill--${color}`}
+          style={{ width: `${percentage}%` }}
+        />
+      </div>
+      <div className="landing-progress-stat__pct">{percentage}%</div>
     </div>
   );
 }

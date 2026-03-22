@@ -13,6 +13,8 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Pill } from "@/components/ui/pill";
 import { DataTable } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
+import { GlassCard } from "@/components/ui/glass-card";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { CodeBlock } from "@/components/code-block";
 
 export const dynamic = "force-dynamic";
@@ -34,8 +36,8 @@ export default async function InvestigationsPage() {
         ]}
       />
 
-      <div className="section">
-        <div className="section__header">
+      <GlassCard variant="raised" style={{ marginBottom: 24 }}>
+        <div className="section__header" style={{ marginBottom: 16 }}>
           <span className="section__title">Saved investigations</span>
           <span className="section__description">{investigations.length} saved item{investigations.length !== 1 ? "s" : ""}</span>
         </div>
@@ -47,10 +49,10 @@ export default async function InvestigationsPage() {
         ) : (
           <EmptyState message="No saved investigations yet." />
         )}
-      </div>
+      </GlassCard>
 
-      <div className="section">
-        <div className="section__header">
+      <GlassCard variant="raised">
+        <div className="section__header" style={{ marginBottom: 16 }}>
           <span className="section__title">Starter investigations</span>
           <span className="section__description">{templates.length} reusable example{templates.length !== 1 ? "s" : ""} shown without writing seeded records into the database</span>
         </div>
@@ -58,7 +60,7 @@ export default async function InvestigationsPage() {
         <div className="stack-list">
           {templates.map((template) => renderInvestigationCard(template, "starter", demo))}
         </div>
-      </div>
+      </GlassCard>
     </>
   );
 }
@@ -75,7 +77,7 @@ function renderInvestigationCard(
     <details key={investigation.id} className="expandable">
       <summary>
         <span className="summary-row">
-          <Pill label={mode} tone={mode === "saved" ? "accent" : "neutral"} />
+          <StatusBadge label={mode} tone={mode === "saved" ? "accent" : "neutral"} />
           <span className="summary-row__title">{investigation.title}</span>
           <span className="summary-row__meta">
             {"updated_at" in investigation ? formatRelativeTime(investigation.updated_at) : "not persisted"}
