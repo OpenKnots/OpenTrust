@@ -4,16 +4,23 @@ import React from "react";
 import Link from "next/link";
 import {
   ArrowRight,
+  BookOpen,
   Check,
+  ChevronDown,
+  Cloud,
   Database,
   FileSearch,
+  FileText,
+  FolderArchive,
   GitBranch,
   HeartPulse,
   Layers3,
   Search,
+  Shield,
   ShieldCheck,
   Sparkles,
   Telescope,
+  Users,
   Workflow,
   X,
 } from "lucide-react";
@@ -160,83 +167,84 @@ export default function LandingPage() {
 
       <hr className="landing-divider" />
 
-      <section id="comparison" className="landing-section">
+      <section id="comparison" className="landing-section landing-section--shader">
+        <NeuroNoiseBg
+          colorBack="#050507"
+          colorMid="#110508"
+          colorFront="#1c0a10"
+          speed={0.12}
+          className="landing-shader landing-shader--comparison"
+        />
         <div className="landing-section__eyebrow">Comparison</div>
-        <h2 className="landing-section__title">
-          OpenClaw today vs OpenTrust plugin model
+        <h2 className="landing-vs__headline">
+          Same memory source.
+          <br />
+          <span className="landing-vs__headline-accent">New operational power.</span>
         </h2>
         <p className="landing-section__desc">
-          The honest comparison is not “memory vs no memory.” OpenClaw already has real memory today. OpenTrust should extend it by ingesting the current source of truth and making it operational.
+          OpenClaw already has real memory. OpenTrust doesn{"'"}t replace it — it makes it reviewable, traceable, and durable.
         </p>
 
-        <div className="landing-comparison-wrap">
-          <div className="landing-comparison-topcards">
-            <div className="landing-comparison-topcard">
-              <div className="landing-comparison-topcard__eyebrow">OpenClaw today</div>
-              <div className="landing-comparison-topcard__title">Real memory already exists</div>
-              <div className="landing-comparison-topcard__desc">
-                Markdown files in the workspace already act as the canonical authored memory source.
+        <div className="landing-vs">
+          <div className="landing-vs__hero">
+            <div className="landing-vs__panel landing-vs__panel--before">
+              <div className="landing-vs__panel-eyebrow">OpenClaw today</div>
+              <h3 className="landing-vs__panel-title">Memory exists</h3>
+              <p className="landing-vs__panel-desc">Workspace Markdown is already the canonical authored memory source.</p>
+              <div className="landing-vs__panel-features">
+                <div className="landing-vs__feat landing-vs__feat--has"><Check size={14} /> MEMORY.md authored source</div>
+                <div className="landing-vs__feat landing-vs__feat--has"><Check size={14} /> Daily notes in memory/</div>
+                <div className="landing-vs__feat landing-vs__feat--has"><Check size={14} /> memory_search recall</div>
+                <div className="landing-vs__feat landing-vs__feat--gap"><X size={14} /> No structured review</div>
+                <div className="landing-vs__feat landing-vs__feat--gap"><X size={14} /> No timeline or calendar</div>
+                <div className="landing-vs__feat landing-vs__feat--gap"><X size={14} /> No backup strategy UI</div>
               </div>
             </div>
-            <div className="landing-comparison-topcard landing-comparison-topcard--highlight">
-              <div className="landing-comparison-topcard__eyebrow">OpenTrust plugin</div>
-              <div className="landing-comparison-topcard__title">Operational memory on top</div>
-              <div className="landing-comparison-topcard__desc">
-                The plugin adds structure, review, timelines, backups, and operator surfaces around that same memory truth.
+
+            <div className="landing-vs__divider">
+              <div className="landing-vs__divider-glow" />
+              <div className="landing-vs__divider-badge">+</div>
+            </div>
+
+            <div className="landing-vs__panel landing-vs__panel--after">
+              <div className="landing-vs__panel-eyebrow">With OpenTrust</div>
+              <h3 className="landing-vs__panel-title">Memory becomes operational</h3>
+              <p className="landing-vs__panel-desc">Same source, now with structure, review, provenance, and durability.</p>
+              <div className="landing-vs__panel-features">
+                <div className="landing-vs__feat landing-vs__feat--has"><Check size={14} /> Same Markdown truth, ingested</div>
+                <div className="landing-vs__feat landing-vs__feat--has"><Check size={14} /> Review queue & approval</div>
+                <div className="landing-vs__feat landing-vs__feat--has"><Check size={14} /> Provenance tracking</div>
+                <div className="landing-vs__feat landing-vs__feat--has"><Check size={14} /> Timeline & calendar views</div>
+                <div className="landing-vs__feat landing-vs__feat--has"><Check size={14} /> Backup-aware storage</div>
+                <div className="landing-vs__feat landing-vs__feat--has"><Check size={14} /> Health & coverage monitoring</div>
               </div>
             </div>
           </div>
 
-          <div className="landing-comparison-narrative">
-            <ComparisonSection
-              icon={<ShieldCheck size={18} />}
-              title="Current memory truth"
-              items={[
-                {
-                  title: "Workspace Markdown is already the memory source",
-                  current: "OpenClaw stores authored memory in files like MEMORY.md and memory/YYYY-MM-DD.md.",
-                  plugin: "OpenTrust preserves that truth instead of replacing it with a fake abstraction.",
-                },
-                {
-                  title: "Daily notes already work today",
-                  current: "Agents can already capture short-term and long-term continuity using the workspace memory files.",
-                  plugin: "The plugin ingests those same notes into a richer operational layer with review and visibility.",
-                },
-              ]}
+          <div className="landing-vs__details">
+            <ComparisonRow
+              icon={<ShieldCheck size={20} />}
+              title="Source of truth preserved"
+              before="MEMORY.md and daily notes already work. Agents read and write workspace memory files with memory_search recall."
+              after="OpenTrust ingests those same files. No replacement, no fake abstraction — just operational structure on top of authored truth."
             />
-
-            <ComparisonSection
-              icon={<Layers3 size={18} />}
-              title="Operational enhancements"
-              items={[
-                {
-                  title: "Review and retention become first-class",
-                  current: "OpenClaw has memory capture, but not a dedicated structured review queue or retention UI.",
-                  plugin: "OpenTrust adds review status, retention classes, provenance, and operator workflows around each memory candidate.",
-                },
-                {
-                  title: "Timelines and backups become visible",
-                  current: "The memory truth exists, but backup strategy, timeline surfaces, and operational health are mostly implied rather than surfaced.",
-                  plugin: "OpenTrust adds calendar views, health monitoring, export flows, and backup-aware storage recommendations.",
-                },
-              ]}
+            <ComparisonRow
+              icon={<Layers3 size={20} />}
+              title="Review & retention become first-class"
+              before="Memory capture exists, but no dedicated review queue, retention lifecycle, or structured approval workflow."
+              after="Every memory candidate gets review status, retention class, provenance links, and operator visibility."
             />
-
-            <ComparisonSection
-              icon={<Sparkles size={18} />}
-              title="Future-facing memory UX"
-              items={[
-                {
-                  title: "Daily summary recommendations",
-                  current: "Users can write summaries manually, but there is little built-in guidance about what deserves durable capture.",
-                  plugin: "OpenTrust can recommend daily summaries, meaningful moments, and promotion opportunities based on actual activity.",
-                },
-                {
-                  title: "Relationship memory scaffolding",
-                  current: "There is no dedicated CRM-style memory workflow in the current baseline model.",
-                  plugin: "OpenTrust is preparing docs-first scaffolding for contacts, interactions, follow-ups, and relationship memory with privacy guardrails.",
-                },
-              ]}
+            <ComparisonRow
+              icon={<Telescope size={20} />}
+              title="Timelines & backups become visible"
+              before="Memory truth exists in files, but backup strategy, timeline surfaces, and operational health are mostly implied."
+              after="Calendar views, health monitoring, export flows, and backup-aware storage recommendations become first-class."
+            />
+            <ComparisonRow
+              icon={<Sparkles size={20} />}
+              title="Intelligent capture recommendations"
+              before="Users can write summaries manually, but no built-in guidance about what deserves durable capture."
+              after="Daily summary drafts, meaningful moment detection, and promotion suggestions based on actual activity."
             />
           </div>
         </div>
@@ -261,10 +269,10 @@ export default function LandingPage() {
       <section className="landing-section">
         <div className="landing-section__eyebrow">Storage Strategy</div>
         <h2 className="landing-section__title">
-          Recommended storage strategy for durable memory
+          Your memory, two layers deep
         </h2>
         <p className="landing-section__desc">
-          The strongest model is dual-store: keep authored Markdown as the human-readable truth, and let OpenTrust add structured storage, review, and export workflows around it.
+          Markdown stays yours and human-readable. OpenTrust adds structure, search, exports, and backups around it &mdash; never instead of it.
         </p>
 
         <StorageStrategySection />
@@ -275,18 +283,13 @@ export default function LandingPage() {
       <section id="how-it-works" className="landing-section">
         <div className="landing-section__eyebrow">How it Works</div>
         <h2 className="landing-section__title">
-          Four-step upgrade path from current OpenClaw memory to plugin memory ops
+          From raw workspace files to structured memory ops
         </h2>
         <p className="landing-section__desc">
-          Start from the memory system OpenClaw already has today, then layer in ingestion, structure, retrieval, and user-facing recommendations for summaries, backups, and durable recall.
+          Four steps. Start from what OpenClaw already stores today, then layer in structure, recommendations, and full plugin-grade operations.
         </p>
 
-        <div className="landing-steps">
-          <Step num={1} title="Read current memory" desc="Import MEMORY.md, memory/YYYY-MM-DD.md, and optional session-memory snapshots from the OpenClaw workspace." />
-          <Step num={2} title="Structure it" desc="Persist those authored notes into a richer store with review state, provenance, retention, and timeline semantics." />
-          <Step num={3} title="Recommend better capture" desc="Suggest daily summaries, project memory, meaningful moments, backup flows, and long-term promotion opportunities." />
-          <Step num={4} title="Operate it" desc="Expose plugin-grade search, calendar/timeline, health, exports, and future relationship-memory scaffolding." />
-        </div>
+        <HowItWorksSection />
       </section>
 
       <hr className="landing-divider" />
@@ -294,10 +297,10 @@ export default function LandingPage() {
       <section className="landing-section">
         <div className="landing-section__eyebrow">Recommendations</div>
         <h2 className="landing-section__title">
-          A daily summaries and meaningful moments recommendation mock
+          Daily summaries and meaningful moments
         </h2>
         <p className="landing-section__desc">
-          OpenTrust should not only store memory. It should intelligently suggest what deserves durable capture, when to summarize a day, and when a moment looks historically meaningful.
+          OpenTrust doesn't just store memories — it intelligently suggests what deserves durable capture, when to summarize your day, and when a moment looks historically meaningful.
         </p>
 
         <RecommendationMockSection />
@@ -410,52 +413,132 @@ function Feature({ icon, title, desc }: { icon: React.ReactNode; title: string; 
   );
 }
 
-function ComparisonSection({
-  icon,
-  title,
-  items,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  items: { title: string; current: string; plugin: string }[];
-}) {
+function ComparisonRow({ icon, title, before, after }: { icon: React.ReactNode; title: string; before: string; after: string }) {
   return (
-    <div className="landing-comparison-section">
-      <div className="landing-comparison-section__header">
-        <div className="landing-comparison-section__icon">{icon}</div>
-        <div>
-          <div className="landing-comparison-section__title">{title}</div>
-          <div className="landing-comparison-section__subtitle">A clearer before / after view of what already exists and what the plugin layer adds.</div>
-        </div>
+    <div className="landing-vs__row">
+      <div className="landing-vs__row-header">
+        <div className="landing-vs__row-icon">{icon}</div>
+        <h4 className="landing-vs__row-title">{title}</h4>
       </div>
-
-      <div className="landing-comparison-section__list">
-        {items.map((item) => (
-          <div key={item.title} className="landing-comparison-section__item">
-            <div className="landing-comparison-section__item-title">{item.title}</div>
-            <div className="landing-comparison-section__columns">
-              <div className="landing-comparison-section__column">
-                <div className="landing-comparison-section__label">OpenClaw today</div>
-                <p>{item.current}</p>
-              </div>
-              <div className="landing-comparison-section__column landing-comparison-section__column--highlight">
-                <div className="landing-comparison-section__label">OpenTrust plugin</div>
-                <p>{item.plugin}</p>
-              </div>
-            </div>
-          </div>
-        ))}
+      <div className="landing-vs__row-cols">
+        <div className="landing-vs__row-col landing-vs__row-col--before">
+          <div className="landing-vs__row-label">Today</div>
+          <p>{before}</p>
+        </div>
+        <div className="landing-vs__row-col landing-vs__row-col--after">
+          <div className="landing-vs__row-label">With plugin</div>
+          <p>{after}</p>
+        </div>
       </div>
     </div>
   );
 }
 
-function Step({ num, title, desc }: { num: number; title: string; desc: string }) {
+const HOW_STEPS = [
+  {
+    num: 1,
+    title: "Read current memory",
+    summary: "Import workspace files",
+    icon: FileSearch,
+    color: "blue" as const,
+    desc: "Import MEMORY.md, memory/YYYY-MM-DD.md, and optional session-memory snapshots from the OpenClaw workspace.",
+    details: [
+      { icon: FileText, text: "MEMORY.md for curated long-term memory" },
+      { icon: FileText, text: "memory/YYYY-MM-DD.md daily notes" },
+      { icon: FileText, text: "Optional session-memory snapshots" },
+    ],
+  },
+  {
+    num: 2,
+    title: "Structure it",
+    summary: "Add provenance and review state",
+    icon: Database,
+    color: "purple" as const,
+    desc: "Persist those authored notes into a richer store with review state, provenance, retention, and timeline semantics.",
+    details: [
+      { icon: ShieldCheck, text: "Review state tracks what's verified" },
+      { icon: GitBranch, text: "Provenance links every entry to its source" },
+      { icon: Layers3, text: "Timeline semantics for calendar views" },
+    ],
+  },
+  {
+    num: 3,
+    title: "Recommend better capture",
+    summary: "Surface what deserves keeping",
+    icon: Sparkles,
+    color: "amber" as const,
+    desc: "Suggest daily summaries, project memory, meaningful moments, backup flows, and long-term promotion opportunities.",
+    details: [
+      { icon: Sparkles, text: "Daily summaries from raw notes" },
+      { icon: HeartPulse, text: "Meaningful moments flagged automatically" },
+      { icon: Shield, text: "Backup flow recommendations" },
+    ],
+  },
+  {
+    num: 4,
+    title: "Operate it",
+    summary: "Full plugin-grade memory ops",
+    icon: Telescope,
+    color: "green" as const,
+    desc: "Expose plugin-grade search, calendar/timeline, health, exports, and future relationship-memory scaffolding.",
+    details: [
+      { icon: Search, text: "Semantic search across all memory" },
+      { icon: HeartPulse, text: "Health dashboard and coverage gaps" },
+      { icon: Users, text: "Relationship-memory scaffolding" },
+    ],
+  },
+];
+
+function HowItWorksSection() {
+  const [activeStep, setActiveStep] = React.useState(0);
+  const step = HOW_STEPS[activeStep];
+
   return (
-    <div className="landing-step">
-      <div className="landing-step__num">{num}</div>
-      <h3 className="landing-step__title">{title}</h3>
-      <p className="landing-step__desc">{desc}</p>
+    <div className="hiw-root">
+      {/* Step rail */}
+      <div className="hiw-rail">
+        {HOW_STEPS.map((s, i) => (
+          <button
+            key={s.num}
+            className={`hiw-step ${activeStep === i ? "hiw-step--active" : ""} hiw-step--${s.color}`}
+            onClick={() => setActiveStep(i)}
+            aria-pressed={activeStep === i}
+          >
+            <div className="hiw-step__connector">
+              <div className={`hiw-step__dot ${activeStep === i ? "hiw-step__dot--active" : ""}`}>
+                {s.num}
+              </div>
+              {i < HOW_STEPS.length - 1 && <div className="hiw-step__line" />}
+            </div>
+            <div className="hiw-step__text">
+              <span className="hiw-step__title">{s.title}</span>
+              <span className="hiw-step__summary">{s.summary}</span>
+            </div>
+          </button>
+        ))}
+      </div>
+
+      {/* Active step detail panel */}
+      <div className={`hiw-panel hiw-panel--${step.color}`} key={activeStep}>
+        <div className="hiw-panel__header">
+          <div className={`hiw-panel__icon hiw-panel__icon--${step.color}`}>
+            <step.icon size={24} />
+          </div>
+          <div>
+            <div className="hiw-panel__eyebrow">Step {step.num} of 4</div>
+            <h3 className="hiw-panel__title">{step.title}</h3>
+          </div>
+        </div>
+        <p className="hiw-panel__desc">{step.desc}</p>
+        <div className="hiw-panel__details">
+          {step.details.map((d, i) => (
+            <div className="hiw-panel__detail" key={i}>
+              <d.icon size={16} />
+              <span>{d.text}</span>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -589,38 +672,171 @@ function ArchitectureDiagram() {
 }
 
 function StorageStrategySection() {
+  const [expandedCard, setExpandedCard] = React.useState<number>(0);
+
+  const toggle = (idx: number) =>
+    setExpandedCard(prev => (prev === idx ? -1 : idx));
+
   return (
-    <div className="landing-strategy-grid">
-      <div className="landing-strategy-card">
-        <div className="landing-strategy-card__eyebrow">Recommended default</div>
-        <div className="landing-strategy-card__title">Dual-store strategy</div>
-        <p className="landing-strategy-card__desc">Keep Markdown as human-readable truth and let OpenTrust provide structured operational views, review, export, and historical recall.</p>
-        <ul className="landing-strategy-list">
-          <li>Workspace Markdown remains authored source</li>
-          <li>OpenTrust SQLite stores structured operational state</li>
-          <li>Weekly export bundles protect the structured layer</li>
-        </ul>
+    <div className="ss-root">
+      {/* Visual layer diagram */}
+      <div className="ss-layers">
+        <div className="ss-layer ss-layer--md">
+          <FileText size={20} />
+          <div className="ss-layer__text">
+            <span className="ss-layer__label">Your Markdown</span>
+            <span className="ss-layer__sub">MEMORY.md &middot; daily notes &middot; project docs</span>
+          </div>
+          <span className="ss-layer__badge ss-layer__badge--you">You own this</span>
+        </div>
+        <div className="ss-layer-connector">
+          <div className="ss-layer-connector__line" />
+          <span className="ss-layer-connector__label">reads &amp; enriches</span>
+          <div className="ss-layer-connector__line" />
+        </div>
+        <div className="ss-layer ss-layer--ot">
+          <Database size={20} />
+          <div className="ss-layer__text">
+            <span className="ss-layer__label">OpenTrust structured store</span>
+            <span className="ss-layer__sub">SQLite &middot; provenance &middot; review state &middot; timeline</span>
+          </div>
+          <span className="ss-layer__badge ss-layer__badge--auto">Automatic</span>
+        </div>
+        <div className="ss-layer-connector">
+          <div className="ss-layer-connector__line" />
+          <span className="ss-layer-connector__label">exports &amp; backs up</span>
+          <div className="ss-layer-connector__line" />
+        </div>
+        <div className="ss-layer ss-layer--export">
+          <FolderArchive size={20} />
+          <div className="ss-layer__text">
+            <span className="ss-layer__label">Durable exports</span>
+            <span className="ss-layer__sub">Git archive &middot; cloud sync &middot; ZIP bundles</span>
+          </div>
+          <span className="ss-layer__badge ss-layer__badge--safe">Offline-safe</span>
+        </div>
       </div>
-      <div className="landing-strategy-card">
-        <div className="landing-strategy-card__eyebrow">Backup options</div>
-        <div className="landing-strategy-card__title">Layered durability</div>
-        <p className="landing-strategy-card__desc">Different users need different backup depth. OpenTrust should recommend practical presets instead of pretending one storage style fits everyone.</p>
-        <ul className="landing-strategy-list">
-          <li>Private git archive for diffable Markdown history</li>
-          <li>Encrypted cloud sync for off-machine backup</li>
-          <li>Periodic JSONL / SQLite / ZIP export bundles</li>
-        </ul>
-      </div>
-      <div className="landing-strategy-card">
-        <div className="landing-strategy-card__eyebrow">What to keep</div>
-        <div className="landing-strategy-card__title">Store more than work notes</div>
-        <p className="landing-strategy-card__desc">The strongest memory system preserves work continuity and life continuity together.</p>
-        <ul className="landing-strategy-list">
-          <li>Daily summaries</li>
-          <li>Project memory</li>
-          <li>Meaningful moments and milestones</li>
-          <li>Relationship / contact memory</li>
-        </ul>
+
+      {/* Expandable strategy cards */}
+      <div className="ss-cards">
+        <button
+          className={`ss-card ${expandedCard === 0 ? "ss-card--open" : ""} ss-card--recommended`}
+          onClick={() => toggle(0)}
+          aria-expanded={expandedCard === 0}
+        >
+          <div className="ss-card__head">
+            <div className="ss-card__icon ss-card__icon--blue">
+              <Layers3 size={20} />
+            </div>
+            <div className="ss-card__titles">
+              <span className="ss-card__eyebrow">Recommended default</span>
+              <span className="ss-card__title">Dual-store strategy</span>
+            </div>
+            <span className="ss-card__rec-pill">Recommended</span>
+            <ChevronDown size={18} className="ss-card__chevron" />
+          </div>
+          {expandedCard === 0 && (
+            <div className="ss-card__body">
+              <p className="ss-card__desc">
+                Markdown stays as the human-readable source of truth. OpenTrust adds structured operational views, review, export, and historical recall on top.
+              </p>
+              <div className="ss-card__details">
+                <div className="ss-detail">
+                  <FileText size={16} />
+                  <span>Workspace Markdown remains your authored source</span>
+                </div>
+                <div className="ss-detail">
+                  <Database size={16} />
+                  <span>SQLite stores structured operational state</span>
+                </div>
+                <div className="ss-detail">
+                  <FolderArchive size={16} />
+                  <span>Weekly export bundles protect the structured layer</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </button>
+
+        <button
+          className={`ss-card ${expandedCard === 1 ? "ss-card--open" : ""}`}
+          onClick={() => toggle(1)}
+          aria-expanded={expandedCard === 1}
+        >
+          <div className="ss-card__head">
+            <div className="ss-card__icon ss-card__icon--green">
+              <Shield size={20} />
+            </div>
+            <div className="ss-card__titles">
+              <span className="ss-card__eyebrow">Backup options</span>
+              <span className="ss-card__title">Layered durability</span>
+            </div>
+            <ChevronDown size={18} className="ss-card__chevron" />
+          </div>
+          {expandedCard === 1 && (
+            <div className="ss-card__body">
+              <p className="ss-card__desc">
+                Different users need different backup depth. OpenTrust recommends practical presets instead of pretending one storage style fits everyone.
+              </p>
+              <div className="ss-card__details">
+                <div className="ss-detail">
+                  <GitBranch size={16} />
+                  <span>Private git archive for diffable Markdown history</span>
+                </div>
+                <div className="ss-detail">
+                  <Cloud size={16} />
+                  <span>Encrypted cloud sync for off-machine backup</span>
+                </div>
+                <div className="ss-detail">
+                  <FolderArchive size={16} />
+                  <span>Periodic JSONL / SQLite / ZIP export bundles</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </button>
+
+        <button
+          className={`ss-card ${expandedCard === 2 ? "ss-card--open" : ""}`}
+          onClick={() => toggle(2)}
+          aria-expanded={expandedCard === 2}
+        >
+          <div className="ss-card__head">
+            <div className="ss-card__icon ss-card__icon--amber">
+              <BookOpen size={20} />
+            </div>
+            <div className="ss-card__titles">
+              <span className="ss-card__eyebrow">What to keep</span>
+              <span className="ss-card__title">Store more than work notes</span>
+            </div>
+            <ChevronDown size={18} className="ss-card__chevron" />
+          </div>
+          {expandedCard === 2 && (
+            <div className="ss-card__body">
+              <p className="ss-card__desc">
+                The strongest memory system preserves work continuity and life continuity together.
+              </p>
+              <div className="ss-card__details">
+                <div className="ss-detail">
+                  <Sparkles size={16} />
+                  <span>Daily summaries</span>
+                </div>
+                <div className="ss-detail">
+                  <Workflow size={16} />
+                  <span>Project memory</span>
+                </div>
+                <div className="ss-detail">
+                  <HeartPulse size={16} />
+                  <span>Meaningful moments and milestones</span>
+                </div>
+                <div className="ss-detail">
+                  <Users size={16} />
+                  <span>Relationship / contact memory</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </button>
       </div>
     </div>
   );
