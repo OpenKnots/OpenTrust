@@ -2,6 +2,7 @@ import Link from "next/link";
 import {
   ArrowRight,
   BookOpen,
+  Check,
   ChevronRight,
   Database,
   FileSearch,
@@ -9,6 +10,7 @@ import {
   HeartPulse,
   Layers3,
   Package,
+  Play,
   Plug,
   Search,
   Sparkles,
@@ -197,6 +199,134 @@ export default function LandingPage() {
         </div>
         <div className="landing-hero__demo">
           <CodeDemo />
+        </div>
+      </section>
+
+      <hr className="landing-divider" />
+
+      <section className="landing-section landing-section--wide">
+        <div className="landing-showcase-header">
+          <div className="landing-showcase-header__text">
+            <h2 className="landing-showcase-header__title">We ship, a lot.</h2>
+          </div>
+          <a href="#features" className="landing-showcase-header__cta">
+            View all features
+          </a>
+        </div>
+
+        <div className="landing-showcase-grid">
+          <ShowcaseCard
+            label="Memory"
+            title="Evidence-Backed Memory"
+          >
+            <div className="sc-mock">
+              <div className="sc-memory-panel">
+                <div className="sc-memory-panel__header">
+                  <span className="sc-memory-panel__date">Today&apos;s Traces, 3/22/2026</span>
+                  <span className="sc-memory-panel__badge">
+                    <span className="sc-memory-panel__count-num">2</span>
+                  </span>
+                </div>
+                <div className="sc-memory-entries">
+                  <div className="sc-memory-entry">
+                    <div className="sc-memory-entry__title">Queue backlog regression</div>
+                    <div className="sc-memory-entry__meta">trace_queue_abc · 3 evidence refs</div>
+                  </div>
+                  <div className="sc-memory-entry">
+                    <div className="sc-memory-entry__title">Deployment timing shift</div>
+                    <div className="sc-memory-entry__meta">trace_deploy_xyz · 5 evidence refs</div>
+                  </div>
+                </div>
+                <div className="sc-promote-btn">
+                  <Play size={10} /> Promote
+                </div>
+                <div className="sc-memory-panel__footer">
+                  <span className="sc-memory-panel__count">
+                    <span className="sc-memory-panel__count-num">3</span>
+                    pending review
+                  </span>
+                  <Check size={14} style={{ color: "rgba(255,255,255,0.3)" }} />
+                </div>
+              </div>
+            </div>
+          </ShowcaseCard>
+
+          <ShowcaseCard
+            label="Ingestion"
+            title="Multi-Source Ingestion"
+          >
+            <div className="sc-mock">
+              <div className="sc-sources-panel">
+                <div className="sc-sources-search">
+                  <div className="sc-sources-search__input">Search sources...</div>
+                  <div className="sc-sources-search__btn">Ingest</div>
+                </div>
+                <div className="sc-sources-list">
+                  <div className="sc-sources-item">
+                    <span className="sc-sources-item__name">Session Transcripts</span>
+                    <TrendingUp size={14} className="sc-sources-item__icon" />
+                  </div>
+                  <div className="sc-sources-item">
+                    <span className="sc-sources-item__name">Cron Workflows</span>
+                    <TrendingUp size={14} className="sc-sources-item__icon" />
+                  </div>
+                  <div className="sc-sources-item">
+                    <span className="sc-sources-item__name">Tool Call Artifacts</span>
+                    <TrendingUp size={14} className="sc-sources-item__icon" />
+                  </div>
+                  <div className="sc-sources-item">
+                    <span className="sc-sources-item__name">Workflow Runs</span>
+                    <TrendingUp size={14} className="sc-sources-item__icon" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ShowcaseCard>
+
+          <ShowcaseCard
+            label="Retrieval"
+            title="Trust & Confidence Scoring"
+          >
+            <div className="sc-mock">
+              <div className="sc-confidence-panel">
+                <div className="sc-donut-wrap">
+                  <svg width="120" height="120" viewBox="0 0 120 120">
+                    <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="10" />
+                    <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="10"
+                      strokeDasharray="157 314" strokeDashoffset="0" strokeLinecap="round"
+                      transform="rotate(-90 60 60)" />
+                    <circle cx="60" cy="60" r="38" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="8" />
+                    <circle cx="60" cy="60" r="38" fill="none" stroke="rgba(229,57,53,0.7)" strokeWidth="8"
+                      strokeDasharray="215 239" strokeDashoffset="0" strokeLinecap="round"
+                      transform="rotate(-90 60 60)" />
+                  </svg>
+                  <div className="sc-donut-inner-label">
+                    <span className="sc-donut-inner-label__name">OpenTrust</span>
+                    <span className="sc-donut-inner-label__value">94%</span>
+                  </div>
+                  <div className="sc-donut-outer" style={{ width: 64, height: 64 }}>
+                    <svg width="64" height="64" viewBox="0 0 64 64">
+                      <circle cx="32" cy="32" r="24" fill="rgba(18,18,24,0.95)" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+                      <circle cx="32" cy="32" r="20" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="6" />
+                      <circle cx="32" cy="32" r="20" fill="none" stroke="rgba(0,229,255,0.6)" strokeWidth="6"
+                        strokeDasharray="113 126" strokeDashoffset="0" strokeLinecap="round"
+                        transform="rotate(-90 32 32)" />
+                    </svg>
+                    <div className="sc-donut-outer-label">
+                      <span className="sc-donut-outer-label__name">others</span>
+                      <span className="sc-donut-outer-label__value">50%</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="sc-confidence-labels">
+                  <span className="sc-confidence-label">Lineage</span>
+                  <span className="sc-confidence-label">Evidence</span>
+                  <span className="sc-confidence-label">Semantic</span>
+                  <span className="sc-confidence-label">Coverage</span>
+                </div>
+              </div>
+            </div>
+          </ShowcaseCard>
         </div>
       </section>
 
@@ -716,6 +846,26 @@ pnpm dev`} />
           </Link>
         </div>
       </footer>
+    </div>
+  );
+}
+
+function ShowcaseCard({
+  label,
+  title,
+  children,
+}: {
+  label: string;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="landing-showcase-card">
+      <div className="landing-showcase-card__preview">{children}</div>
+      <div className="landing-showcase-card__body">
+        <div className="landing-showcase-card__label">{label}</div>
+        <div className="landing-showcase-card__title">{title}</div>
+      </div>
     </div>
   );
 }

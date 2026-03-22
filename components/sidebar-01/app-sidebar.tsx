@@ -1,6 +1,6 @@
 "use client";
 
-import { Sidebar, SidebarContent, SidebarRail } from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent } from "@/components/ui/sidebar";
 import {
   BarChart3,
   BookOpen,
@@ -14,7 +14,7 @@ import { NavCollapsible } from "@/components/sidebar-01/nav-collapsible";
 import { NavFooter } from "@/components/sidebar-01/nav-footer";
 import { NavHeader } from "@/components/sidebar-01/nav-header";
 import { NavMain } from "@/components/sidebar-01/nav-main";
-import type { SidebarData } from "@/components/sidebar-01/types";
+import type { SidebarData } from "./types";
 
 const data: SidebarData = {
   navMain: [
@@ -81,7 +81,6 @@ export function AppSidebar({
         <NavCollapsible memoryTools={data.navCollapsible.memoryTools} />
       </SidebarContent>
       <NavFooter latestIngest={latestIngest} />
-      <SidebarRail />
     </Sidebar>
   );
 }
