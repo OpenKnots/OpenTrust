@@ -37,6 +37,7 @@ Update this whenever plugin-draft-related changes land in the OpenTrust repo.
 - [x] trace promotion surface added
 - [x] artifact promotion surface added
 - [x] workflow promotion surface added
+- [x] saved investigation promotion surface added
 
 ### Deferred until real promotion
 - [ ] move draft files into `openclaw/openclaw/extensions/opentrust/`
