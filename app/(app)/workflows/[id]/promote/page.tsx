@@ -1,7 +1,10 @@
 import { notFound, redirect } from "next/navigation";
+import { isDemoMode } from "@/lib/opentrust/demo";
 import { getWorkflowDetail } from "@/lib/opentrust/workflow-details";
 import { memoryPromote } from "@/lib/opentrust/memory-api";
 import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PromoteButton } from "@/components/promote-button";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +15,15 @@ export default async function PromoteWorkflowPage({
   params: Promise<{ id: string }>;
   searchParams?: Promise<{ create?: string }>;
 }) {
+  if (await isDemoMode()) {
+    return (
+      <>
+        <PageHeader title="Promote workflow" subtitle="Promotion is not available in demo mode." breadcrumbs={[{ label: "Workflows", href: "/workflows" }, { label: "Demo" }]} />
+        <EmptyState message="Switch off demo mode to promote workflows to memory." />
+      </>
+    );
+  }
+
   const { id } = await params;
   const workflow = getWorkflowDetail(decodeURIComponent(id));
   const query = (await searchParams) ?? {};
@@ -57,7 +69,11 @@ export default async function PromoteWorkflowPage({
           <div className="artifact-card__title">{workflow.name}</div>
           <div className="list-item__subtitle">{workflow.summary ?? `${workflow.status} workflow run`}</div>
           <div style={{ marginTop: 16 }}>
-            <a className="btn btn--primary" href={`?create=1`}>Create draft memory entry</a>
+            <PromoteButton
+              href="?create=1"
+              itemTitle={workflow.name}
+              label="Create draft memory entry"
+            />
           </div>
         </div>
       </div>

@@ -16,6 +16,7 @@ import {
   X,
 } from "lucide-react";
 import { ThemeModeToggle } from "@/components/theme-toggle";
+import { DemoModeToggle } from "@/components/demo-mode-toggle";
 
 const NAV_ITEMS = [
   { label: "Overview", href: "/dashboard", icon: BarChart3 },
@@ -139,7 +140,12 @@ export function Sidebar({ latestIngest }: { latestIngest?: string }) {
               <span className={`sidebar__status-dot${latestIngest === "never" ? " sidebar__status-dot--stale" : ""}`} />
               <span>{latestIngest && latestIngest !== "never" ? `Ingested ${latestIngest}` : "No ingestion"}</span>
             </div>
-            {!collapsed && <ThemeModeToggle />}
+            {!collapsed && (
+              <>
+                <DemoModeToggle />
+                <ThemeModeToggle />
+              </>
+            )}
           </div>
         </div>
       </aside>

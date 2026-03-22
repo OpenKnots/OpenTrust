@@ -1,10 +1,17 @@
 import Link from "next/link";
 import { getRecentArtifacts } from "@/lib/opentrust/artifacts";
+import { isDemoMode } from "@/lib/opentrust/demo";
+import { getDemoArtifacts } from "@/lib/opentrust/demo-data";
 import { formatRelativeTime, truncatePath } from "@/lib/opentrust/format";
 import { CardGrid } from "@/components/ui/card-grid";
 import { PageHeader } from "@/components/ui/page-header";
 import { Pill } from "@/components/ui/pill";
 import { EmptyState } from "@/components/ui/empty-state";
+import {
+  PreviewCard,
+  PreviewCardTrigger,
+  PreviewCardPanel,
+} from "@/components/animate-ui/components/base/preview-card";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +24,9 @@ export default async function ArtifactsPage({
   const kind = typeof params.kind === "string" ? params.kind : undefined;
   const sort = !kind && params.sort === "kind" ? "kind" : "newest";
   const showSortOptions = !kind;
-  const artifacts = getRecentArtifacts(200, { kind, sort });
+  const demo = await isDemoMode();
+  const allArtifacts = demo ? getDemoArtifacts() : getRecentArtifacts(200, { kind, sort });
+  const artifacts = demo && kind ? allArtifacts.filter((a) => a.kind === kind) : allArtifacts;
   const kinds = ["url", "doc", "repo", "note"];
 
   return (
@@ -81,16 +90,31 @@ export default async function ArtifactsPage({
                 <div className="expandable__content">
                   <CardGrid tone="accent" storageKey={`artifacts-grouped-${kindKey}`}>
                     {items.map((artifact) => (
-                      <div key={artifact.id} className="artifact-card">
-                        <div className="artifact-card__kind">
-                          <Pill label={artifact.kind} tone="neutral" />
-                          <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)", marginLeft: 8 }}>
-                            {formatRelativeTime(artifact.created_at)}
-                          </span>
-                        </div>
-                        <div className="artifact-card__title">{artifact.title ?? artifact.id}</div>
-                        <div className="artifact-card__uri">{truncatePath(artifact.uri)}</div>
-                      </div>
+                      <PreviewCard key={artifact.id}>
+                        <PreviewCardTrigger
+                          render={
+                            <div className="artifact-card">
+                              <div className="artifact-card__kind">
+                                <Pill label={artifact.kind} tone="neutral" />
+                                <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)", marginLeft: 8 }}>
+                                  {formatRelativeTime(artifact.created_at)}
+                                </span>
+                              </div>
+                              <div className="artifact-card__title">{artifact.title ?? artifact.id}</div>
+                              <div className="artifact-card__uri">{truncatePath(artifact.uri)}</div>
+                            </div>
+                          }
+                        />
+                        <PreviewCardPanel side="bottom" sideOffset={4} align="start">
+                          <div className="preview-card__title">{artifact.title ?? artifact.id}</div>
+                          <div className="preview-card__uri">{artifact.uri}</div>
+                          <div className="preview-card__divider" />
+                          <div className="preview-card__meta">
+                            <Pill label={artifact.kind} tone="neutral" />
+                            <span>{formatRelativeTime(artifact.created_at)}</span>
+                          </div>
+                        </PreviewCardPanel>
+                      </PreviewCard>
                     ))}
                   </CardGrid>
                 </div>
@@ -100,16 +124,31 @@ export default async function ArtifactsPage({
         ) : (
           <CardGrid tone="neutral" storageKey="artifacts-flat">
             {artifacts.map((artifact) => (
-              <div key={artifact.id} className="artifact-card">
-                <div className="artifact-card__kind">
-                  <Pill label={artifact.kind} tone="neutral" />
-                  <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)", marginLeft: 8 }}>
-                    {formatRelativeTime(artifact.created_at)}
-                  </span>
-                </div>
-                <div className="artifact-card__title">{artifact.title ?? artifact.id}</div>
-                <div className="artifact-card__uri">{artifact.uri}</div>
-              </div>
+              <PreviewCard key={artifact.id}>
+                <PreviewCardTrigger
+                  render={
+                    <div className="artifact-card">
+                      <div className="artifact-card__kind">
+                        <Pill label={artifact.kind} tone="neutral" />
+                        <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)", marginLeft: 8 }}>
+                          {formatRelativeTime(artifact.created_at)}
+                        </span>
+                      </div>
+                      <div className="artifact-card__title">{artifact.title ?? artifact.id}</div>
+                      <div className="artifact-card__uri">{artifact.uri}</div>
+                    </div>
+                  }
+                />
+                <PreviewCardPanel side="bottom" sideOffset={4} align="start">
+                  <div className="preview-card__title">{artifact.title ?? artifact.id}</div>
+                  <div className="preview-card__uri">{artifact.uri}</div>
+                  <div className="preview-card__divider" />
+                  <div className="preview-card__meta">
+                    <Pill label={artifact.kind} tone="neutral" />
+                    <span>{formatRelativeTime(artifact.created_at)}</span>
+                  </div>
+                </PreviewCardPanel>
+              </PreviewCard>
             ))}
           </CardGrid>
         )

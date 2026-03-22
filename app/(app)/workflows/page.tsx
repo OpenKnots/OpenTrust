@@ -1,15 +1,23 @@
 import Link from "next/link";
 import { ArrowRight, Workflow } from "lucide-react";
+import { isDemoMode } from "@/lib/opentrust/demo";
+import { getDemoGroupedWorkflows } from "@/lib/opentrust/demo-data";
 import { formatRelativeTime } from "@/lib/opentrust/format";
 import { getGroupedWorkflows } from "@/lib/opentrust/workflow-list";
 import { PageHeader } from "@/components/ui/page-header";
 import { Pill, StatusDot } from "@/components/ui/pill";
 import { EmptyState } from "@/components/ui/empty-state";
+import {
+  PreviewCard,
+  PreviewCardTrigger,
+  PreviewCardPanel,
+} from "@/components/animate-ui/components/base/preview-card";
 
 export const dynamic = "force-dynamic";
 
 export default async function WorkflowsPage() {
-  const groups = getGroupedWorkflows();
+  const demo = await isDemoMode();
+  const groups = demo ? getDemoGroupedWorkflows() : getGroupedWorkflows();
   const totalRuns = groups.reduce((sum, g) => sum + g.run_count, 0);
 
   return (
@@ -57,42 +65,65 @@ export default async function WorkflowsPage() {
                 <div className="expandable__content" style={{ paddingTop: 0 }}>
                   <div className="list-group">
                     {group.runs.map((run) => (
-                      <Link
-                        key={run.id}
-                        href={`/workflows/${encodeURIComponent(run.id)}`}
-                        className="list-item"
-                      >
-                        <StatusDot
-                          tone={
-                            run.status === "error" || run.status === "attention"
-                              ? "danger"
-                              : run.status === "active"
-                                ? "accent"
-                                : "neutral"
+                      <PreviewCard key={run.id}>
+                        <PreviewCardTrigger
+                          render={
+                            <Link
+                              href={`/workflows/${encodeURIComponent(run.id)}`}
+                              className="list-item"
+                            >
+                              <StatusDot
+                                tone={
+                                  run.status === "error" || run.status === "attention"
+                                    ? "danger"
+                                    : run.status === "active"
+                                      ? "accent"
+                                      : "neutral"
+                                }
+                              />
+                              <div className="list-item__content">
+                                <span className="list-item__title">{run.name}</span>
+                                {run.summary && (
+                                  <span className="list-item__subtitle">{run.summary}</span>
+                                )}
+                              </div>
+                              <div className="list-item__meta">
+                                <Pill
+                                  label={run.status}
+                                  tone={
+                                    run.status === "error" || run.status === "attention"
+                                      ? "danger"
+                                      : "neutral"
+                                  }
+                                />
+                                {run.source_kind && (
+                                  <Pill label={run.source_kind} tone="neutral" />
+                                )}
+                                <span>{formatRelativeTime(run.updated_at)}</span>
+                              </div>
+                              <ArrowRight size={14} className="list-item__arrow" />
+                            </Link>
                           }
                         />
-                        <div className="list-item__content">
-                          <span className="list-item__title">{run.name}</span>
-                          {run.summary && (
-                            <span className="list-item__subtitle">{run.summary}</span>
-                          )}
-                        </div>
-                        <div className="list-item__meta">
-                          <Pill
-                            label={run.status}
-                            tone={
-                              run.status === "error" || run.status === "attention"
-                                ? "danger"
-                                : "neutral"
-                            }
-                          />
-                          {run.source_kind && (
-                            <Pill label={run.source_kind} tone="neutral" />
-                          )}
-                          <span>{formatRelativeTime(run.updated_at)}</span>
-                        </div>
-                        <ArrowRight size={14} className="list-item__arrow" />
-                      </Link>
+                        <PreviewCardPanel side="right" sideOffset={12} align="start">
+                          <div className="preview-card__title">{run.name}</div>
+                          <div className="preview-card__text">{run.summary ?? "No summary available."}</div>
+                          <div className="preview-card__meta">
+                            <Pill
+                              label={run.status}
+                              tone={
+                                run.status === "error" || run.status === "attention"
+                                  ? "danger"
+                                  : "neutral"
+                              }
+                            />
+                            {run.source_kind && (
+                              <Pill label={run.source_kind} tone="neutral" />
+                            )}
+                            <span>{formatRelativeTime(run.updated_at)}</span>
+                          </div>
+                        </PreviewCardPanel>
+                      </PreviewCard>
                     ))}
                   </div>
                 </div>

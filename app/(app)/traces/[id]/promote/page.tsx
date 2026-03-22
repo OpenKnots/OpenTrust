@@ -1,16 +1,31 @@
 import { notFound, redirect } from "next/navigation";
+import { isDemoMode } from "@/lib/opentrust/demo";
 import { getTraceDetail } from "@/lib/opentrust/trace-details";
 import { memoryPromote } from "@/lib/opentrust/memory-api";
 import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PromoteButton } from "@/components/promote-button";
 
 export const dynamic = "force-dynamic";
 
 export default async function PromoteTraceMemoryPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams?: Promise<{ create?: string }>;
 }) {
+  if (await isDemoMode()) {
+    return (
+      <>
+        <PageHeader title="Promote trace" subtitle="Promotion is not available in demo mode." breadcrumbs={[{ label: "Traces", href: "/traces" }, { label: "Demo" }]} />
+        <EmptyState message="Switch off demo mode to promote traces to memory." />
+      </>
+    );
+  }
+
   const { id } = await params;
+  const query = (await searchParams) ?? {};
   const traceId = decodeURIComponent(id);
   const trace = getTraceDetail(traceId);
 
@@ -18,9 +33,7 @@ export default async function PromoteTraceMemoryPage({
 
   const detail = trace;
 
-  async function createDraftAction() {
-    "use server";
-
+  if (query.create === "1") {
     memoryPromote({
       kind: "memoryEntry",
       title: detail.title ?? `Trace ${detail.id}`,
@@ -37,7 +50,6 @@ export default async function PromoteTraceMemoryPage({
       },
       uncertaintySummary: "This memory entry was promoted from trace detail and still requires operator review.",
     });
-
     redirect("/memory/review");
   }
 
@@ -63,9 +75,11 @@ export default async function PromoteTraceMemoryPage({
           <div className="artifact-card__title">{detail.title ?? detail.id}</div>
           <div className="list-item__subtitle">{detail.summary ?? "No summary available."}</div>
           <div style={{ marginTop: 16 }}>
-            <form action={createDraftAction}>
-              <button className="btn btn--primary" type="submit">Create draft memory entry</button>
-            </form>
+            <PromoteButton
+              href={`/traces/${encodeURIComponent(detail.id)}/promote?create=1`}
+              itemTitle={detail.title ?? detail.id}
+              label="Create draft memory entry"
+            />
           </div>
         </div>
       </div>

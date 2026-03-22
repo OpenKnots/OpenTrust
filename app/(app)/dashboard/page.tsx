@@ -9,7 +9,9 @@ import {
   Telescope,
   Workflow,
 } from "lucide-react";
-import { formatRelativeTime } from "@/lib/opentrust/format";
+import { isDemoMode } from "@/lib/opentrust/demo";
+import { getDemoOverview, getDemoHealthSummary, getDemoSearchResults } from "@/lib/opentrust/demo-data";
+import { formatRelativeTime, truncatePath } from "@/lib/opentrust/format";
 import { summarizeHealth } from "@/lib/opentrust/health";
 import { getOverview } from "@/lib/opentrust/overview";
 import { searchInvestigations } from "@/lib/opentrust/search";
@@ -17,6 +19,11 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Pill, StatusDot } from "@/components/ui/pill";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Panel } from "@/components/ui/panel";
+import {
+  PreviewCard,
+  PreviewCardTrigger,
+  PreviewCardPanel,
+} from "@/components/animate-ui/components/base/preview-card";
 
 export const dynamic = "force-dynamic";
 
@@ -25,16 +32,21 @@ export default async function HomePage({
 }: {
   searchParams?: Promise<{ q?: string }>;
 }) {
-  const overview = getOverview();
+  const demo = await isDemoMode();
+  const overview = demo ? getDemoOverview() : getOverview();
   const params = (await searchParams) ?? {};
   const query = typeof params.q === "string" ? params.q : "";
-  const investigationResults = query ? searchInvestigations(query) : [];
+  const investigationResults = demo
+    ? (query ? getDemoSearchResults() : [])
+    : (query ? searchInvestigations(query) : []);
   const latestIngestion = overview.ingestionStates[0]?.last_run_at ?? "never";
-  const health = summarizeHealth({
-    traces: overview.recentTraces,
-    workflows: overview.recentWorkflows,
-    ingestionStates: overview.ingestionStates,
-  });
+  const health = demo
+    ? getDemoHealthSummary()
+    : summarizeHealth({
+        traces: overview.recentTraces,
+        workflows: overview.recentWorkflows,
+        ingestionStates: overview.ingestionStates,
+      });
 
   return (
     <div className="overview-page">
@@ -93,18 +105,32 @@ export default async function HomePage({
             <div className="list-group">
               {overview.recentTraces.length > 0 ? (
                 overview.recentTraces.map((trace) => (
-                  <Link key={trace.id} href={`/traces/${encodeURIComponent(trace.id)}`} className="list-item">
-                    <StatusDot tone={trace.status === "attention" ? "danger" : trace.status === "streaming" ? "accent" : "success"} />
-                    <div className="list-item__content">
-                      <span className="list-item__title">{trace.title ?? trace.id}</span>
-                      <span className="list-item__subtitle">{trace.summary ?? "No summary yet."}</span>
-                    </div>
-                    <div className="list-item__meta">
-                      <Pill label={trace.status} tone={trace.status === "attention" ? "danger" : trace.status === "streaming" ? "info" : "neutral"} />
-                      <span>{formatRelativeTime(trace.updated_at)}</span>
-                    </div>
-                    <ArrowRight size={14} className="list-item__arrow" />
-                  </Link>
+                  <PreviewCard key={trace.id}>
+                    <PreviewCardTrigger
+                      render={
+                        <Link href={`/traces/${encodeURIComponent(trace.id)}`} className="list-item">
+                          <StatusDot tone={trace.status === "attention" ? "danger" : trace.status === "streaming" ? "accent" : "success"} />
+                          <div className="list-item__content">
+                            <span className="list-item__title">{trace.title ?? trace.id}</span>
+                            <span className="list-item__subtitle">{trace.summary ?? "No summary yet."}</span>
+                          </div>
+                          <div className="list-item__meta">
+                            <Pill label={trace.status} tone={trace.status === "attention" ? "danger" : trace.status === "streaming" ? "info" : "neutral"} />
+                            <span>{formatRelativeTime(trace.updated_at)}</span>
+                          </div>
+                          <ArrowRight size={14} className="list-item__arrow" />
+                        </Link>
+                      }
+                    />
+                    <PreviewCardPanel side="right" sideOffset={12} align="start">
+                      <div className="preview-card__title">{trace.title ?? trace.id}</div>
+                      <div className="preview-card__text">{trace.summary ?? "No summary available."}</div>
+                      <div className="preview-card__meta">
+                        <Pill label={trace.status} tone={trace.status === "attention" ? "danger" : trace.status === "streaming" ? "info" : "neutral"} />
+                        <span>{formatRelativeTime(trace.updated_at)}</span>
+                      </div>
+                    </PreviewCardPanel>
+                  </PreviewCard>
                 ))
               ) : (
                 <EmptyState message="No traces imported yet." />
@@ -122,17 +148,30 @@ export default async function HomePage({
             <div className="list-group">
               {overview.recentWorkflows.length > 0 ? (
                 overview.recentWorkflows.slice(0, 5).map((workflow) => (
-                  <Link key={workflow.id} href={`/workflows/${encodeURIComponent(workflow.id)}`} className="list-item">
-                    <StatusDot tone={workflow.status === "error" || workflow.status === "attention" ? "danger" : workflow.status === "active" ? "accent" : "neutral"} />
-                    <div className="list-item__content">
-                      <span className="list-item__title">{workflow.name}</span>
-                      <span className="list-item__subtitle">{workflow.summary ?? "No summary."}</span>
-                    </div>
-                    <div className="list-item__meta">
-                      <Pill label={workflow.status} tone={workflow.status === "error" ? "danger" : "neutral"} />
-                    </div>
-                    <ArrowRight size={14} className="list-item__arrow" />
-                  </Link>
+                  <PreviewCard key={workflow.id}>
+                    <PreviewCardTrigger
+                      render={
+                        <Link href={`/workflows/${encodeURIComponent(workflow.id)}`} className="list-item">
+                          <StatusDot tone={workflow.status === "error" || workflow.status === "attention" ? "danger" : workflow.status === "active" ? "accent" : "neutral"} />
+                          <div className="list-item__content">
+                            <span className="list-item__title">{workflow.name}</span>
+                            <span className="list-item__subtitle">{workflow.summary ?? "No summary."}</span>
+                          </div>
+                          <div className="list-item__meta">
+                            <Pill label={workflow.status} tone={workflow.status === "error" ? "danger" : "neutral"} />
+                          </div>
+                          <ArrowRight size={14} className="list-item__arrow" />
+                        </Link>
+                      }
+                    />
+                    <PreviewCardPanel side="right" sideOffset={12} align="start">
+                      <div className="preview-card__title">{workflow.name}</div>
+                      <div className="preview-card__text">{workflow.summary ?? "No summary available."}</div>
+                      <div className="preview-card__meta">
+                        <Pill label={workflow.status} tone={workflow.status === "error" ? "danger" : "neutral"} />
+                      </div>
+                    </PreviewCardPanel>
+                  </PreviewCard>
                 ))
               ) : (
                 <EmptyState message="No workflows tracked yet." />
@@ -195,13 +234,27 @@ export default async function HomePage({
             </div>
             <div className="list-group">
               {overview.recentArtifacts.slice(0, 5).map((artifact) => (
-                <div key={artifact.id} className="list-item">
-                  <div className="list-item__content">
-                    <span className="list-item__title">{artifact.title ?? artifact.id}</span>
-                    <span className="list-item__subtitle">{artifact.uri}</span>
-                  </div>
-                  <Pill label={artifact.kind} tone="neutral" />
-                </div>
+                <PreviewCard key={artifact.id}>
+                  <PreviewCardTrigger
+                    render={
+                      <div className="list-item">
+                        <div className="list-item__content">
+                          <span className="list-item__title">{artifact.title ?? artifact.id}</span>
+                          <span className="list-item__subtitle">{truncatePath(artifact.uri)}</span>
+                        </div>
+                        <Pill label={artifact.kind} tone="neutral" />
+                      </div>
+                    }
+                  />
+                  <PreviewCardPanel side="left" sideOffset={12} align="start">
+                    <div className="preview-card__title">{artifact.title ?? artifact.id}</div>
+                    <div className="preview-card__uri">{artifact.uri}</div>
+                    <div className="preview-card__divider" />
+                    <div className="preview-card__meta">
+                      <Pill label={artifact.kind} tone="neutral" />
+                    </div>
+                  </PreviewCardPanel>
+                </PreviewCard>
               ))}
             </div>
           </div>
@@ -219,15 +272,28 @@ export default async function HomePage({
             <div className="list-group">
               {overview.recentMemoryEntries.length > 0 ? (
                 overview.recentMemoryEntries.slice(0, 4).map((entry) => (
-                  <div key={entry.id} className="list-item" style={{ cursor: "default" }}>
-                    <div className="list-item__content">
-                      <span className="list-item__title">{entry.title}</span>
-                      <span className="list-item__subtitle">{entry.summary ?? entry.body.slice(0, 120)}</span>
-                    </div>
-                    <div className="list-item__meta">
-                      <Pill label={entry.review_status} tone={entry.review_status === "approved" ? "success" : entry.review_status === "reviewed" ? "accent" : "warning"} />
-                    </div>
-                  </div>
+                  <PreviewCard key={entry.id}>
+                    <PreviewCardTrigger
+                      render={
+                        <div className="list-item" style={{ cursor: "default" }}>
+                          <div className="list-item__content">
+                            <span className="list-item__title">{entry.title}</span>
+                            <span className="list-item__subtitle">{entry.summary ?? entry.body.slice(0, 120)}</span>
+                          </div>
+                          <div className="list-item__meta">
+                            <Pill label={entry.review_status} tone={entry.review_status === "approved" ? "success" : entry.review_status === "reviewed" ? "accent" : "warning"} />
+                          </div>
+                        </div>
+                      }
+                    />
+                    <PreviewCardPanel side="left" sideOffset={12} align="start">
+                      <div className="preview-card__title">{entry.title}</div>
+                      <div className="preview-card__text">{entry.summary ?? entry.body.slice(0, 300)}</div>
+                      <div className="preview-card__meta">
+                        <Pill label={entry.review_status} tone={entry.review_status === "approved" ? "success" : entry.review_status === "reviewed" ? "accent" : "warning"} />
+                      </div>
+                    </PreviewCardPanel>
+                  </PreviewCard>
                 ))
               ) : (
                 <EmptyState message="No curated memory yet." />

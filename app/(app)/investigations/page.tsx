@@ -1,4 +1,6 @@
 import { ensureBootstrapped } from "@/lib/opentrust/bootstrap";
+import { isDemoMode } from "@/lib/opentrust/demo";
+import { getDemoSavedInvestigations, getDemoInvestigationTemplates } from "@/lib/opentrust/demo-data";
 import { formatRelativeTime } from "@/lib/opentrust/format";
 import {
   getInvestigationTemplates,
@@ -15,10 +17,11 @@ import { CodeBlock } from "@/components/code-block";
 
 export const dynamic = "force-dynamic";
 
-export default function InvestigationsPage() {
-  ensureBootstrapped();
-  const investigations = getSavedInvestigations();
-  const templates = getInvestigationTemplates();
+export default async function InvestigationsPage() {
+  const demo = await isDemoMode();
+  if (!demo) ensureBootstrapped();
+  const investigations = demo ? getDemoSavedInvestigations() : getSavedInvestigations();
+  const templates = demo ? getDemoInvestigationTemplates() : getInvestigationTemplates();
 
   return (
     <>
@@ -38,9 +41,9 @@ export default function InvestigationsPage() {
         </div>
 
         {investigations.length > 0 ? (
-          <div className="stack-list">
-            {investigations.map((investigation) => renderInvestigationCard(investigation, "saved"))}
-          </div>
+        <div className="stack-list">
+          {investigations.map((investigation) => renderInvestigationCard(investigation, "saved", demo))}
+        </div>
         ) : (
           <EmptyState message="No saved investigations yet." />
         )}
@@ -53,7 +56,7 @@ export default function InvestigationsPage() {
         </div>
 
         <div className="stack-list">
-          {templates.map((template) => renderInvestigationCard(template, "starter"))}
+          {templates.map((template) => renderInvestigationCard(template, "starter", demo))}
         </div>
       </div>
     </>
@@ -63,8 +66,9 @@ export default function InvestigationsPage() {
 function renderInvestigationCard(
   investigation: SavedInvestigationRow | InvestigationTemplate,
   mode: "saved" | "starter",
+  demo = false,
 ) {
-  const previewRows = previewInvestigationSql(investigation.sql_text, 5);
+  const previewRows = demo ? [] : previewInvestigationSql(investigation.sql_text, 5);
   const columns = Object.keys(previewRows[0] ?? {});
 
   return (

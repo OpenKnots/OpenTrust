@@ -19,6 +19,7 @@ import {
 import { BorderGlow } from "@/components/border-glow";
 import { CardGrid } from "@/components/ui/card-grid";
 import { CodeBlock, type CodeHighlight } from "@/components/code-block";
+import { CodeDemo } from "@/components/code-demo";
 
 const MOLTY_ICON = "https://openclaw.ai/favicon.svg";
 
@@ -176,11 +177,11 @@ export default function LandingPage() {
               Official OpenClaw Memory Plugin
             </div>
             <h1 className="landing-hero__title">
-              The <span>Memory Layer</span> that makes OpenClaw feel undeniable
+              The <span>Memory Layer</span> that makes every OpenClaw answer feel earned
             </h1>
             <p className="landing-hero__subtitle">
-              Local-first, operator-grade memory and traceability with evidence-backed retrieval,
-              inspectable lineage, and cinematic trust signals that make every answer feel earned.
+              OpenTrust turns raw sessions, workflows, and artifacts into evidence-backed memory with
+              inspectable lineage, retrieval you can defend, and operator-grade trust signals built for OpenClaw.
             </p>
             <div className="landing-hero__actions">
               <Link href="/dashboard" className="landing-btn landing-btn--primary">
@@ -234,14 +235,9 @@ export default function LandingPage() {
                   <li><span /> Memory promotion stays reviewable</li>
                 </ul>
               </BorderGlow>
-              <BorderGlow className="landing-surface-card landing-surface-card--compact" active>
-                <div className="landing-surface-card__eyebrow">Why it feels native</div>
-                <ul className="landing-trust-list landing-trust-list--warm">
-                  <li><span /> Plugin-ready route and tool contracts</li>
-                  <li><span /> Operator-grade health and lineage UX</li>
-                  <li><span /> Built for OpenClaw, not bolted onto it</li>
-                </ul>
-              </BorderGlow>
+              <div className="landing-code-demo">
+                <CodeDemo />
+              </div>
             </div>
           </div>
         </div>
@@ -620,7 +616,7 @@ export default function LandingPage() {
             <div className="landing-start__step">
               <span className="landing-start__step-num">2</span>
               <div className="landing-start__step-text">
-                <div className="landing-start__step-title">Initialize the database</div>
+                <div className="landing-start__step-title">Initialize durable storage</div>
                 <div className="landing-start__step-desc">
                   Creates the SQLite database with all schema migrations
                   under the <code>storage/</code> directory.
@@ -640,7 +636,7 @@ export default function LandingPage() {
             <div className="landing-start__step">
               <span className="landing-start__step-num">4</span>
               <div className="landing-start__step-text">
-                <div className="landing-start__step-title">Launch the dashboard</div>
+                <div className="landing-start__step-title">Open the operator dashboard</div>
                 <div className="landing-start__step-desc">
                   Start the Next.js dev server and open the operator dashboard
                   at localhost.

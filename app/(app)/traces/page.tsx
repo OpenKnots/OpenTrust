@@ -1,10 +1,17 @@
 import Link from "next/link";
 import { ArrowRight, Bot, Telescope } from "lucide-react";
+import { isDemoMode } from "@/lib/opentrust/demo";
+import { getDemoGroupedTraces } from "@/lib/opentrust/demo-data";
 import { formatRelativeTime } from "@/lib/opentrust/format";
 import { getGroupedTraces, type SessionTraceGroup } from "@/lib/opentrust/trace-list";
 import { PageHeader } from "@/components/ui/page-header";
 import { Pill, StatusDot } from "@/components/ui/pill";
 import { EmptyState } from "@/components/ui/empty-state";
+import {
+  PreviewCard,
+  PreviewCardTrigger,
+  PreviewCardPanel,
+} from "@/components/animate-ui/components/base/preview-card";
 
 export const dynamic = "force-dynamic";
 
@@ -12,41 +19,63 @@ function TraceList({ traces }: { traces: SessionTraceGroup["traces"] }) {
   return (
     <div className="list-group">
       {traces.map((trace) => (
-        <Link
-          key={trace.id}
-          href={`/traces/${encodeURIComponent(trace.id)}`}
-          className="list-item"
-        >
-          <StatusDot
-            tone={
-              trace.status === "attention"
-                ? "danger"
-                : trace.status === "streaming"
-                  ? "accent"
-                  : "success"
+        <PreviewCard key={trace.id}>
+          <PreviewCardTrigger
+            render={
+              <Link
+                href={`/traces/${encodeURIComponent(trace.id)}`}
+                className="list-item"
+              >
+                <StatusDot
+                  tone={
+                    trace.status === "attention"
+                      ? "danger"
+                      : trace.status === "streaming"
+                        ? "accent"
+                        : "success"
+                  }
+                />
+                <div className="list-item__content">
+                  <span className="list-item__title">{trace.title ?? trace.id}</span>
+                  {trace.summary && (
+                    <span className="list-item__subtitle">{trace.summary}</span>
+                  )}
+                </div>
+                <div className="list-item__meta">
+                  <Pill
+                    label={trace.status}
+                    tone={
+                      trace.status === "attention"
+                        ? "danger"
+                        : trace.status === "streaming"
+                          ? "info"
+                          : "neutral"
+                    }
+                  />
+                  <span>{formatRelativeTime(trace.updated_at)}</span>
+                </div>
+                <ArrowRight size={14} className="list-item__arrow" />
+              </Link>
             }
           />
-          <div className="list-item__content">
-            <span className="list-item__title">{trace.title ?? trace.id}</span>
-            {trace.summary && (
-              <span className="list-item__subtitle">{trace.summary}</span>
-            )}
-          </div>
-          <div className="list-item__meta">
-            <Pill
-              label={trace.status}
-              tone={
-                trace.status === "attention"
-                  ? "danger"
-                  : trace.status === "streaming"
-                    ? "info"
-                    : "neutral"
-              }
-            />
-            <span>{formatRelativeTime(trace.updated_at)}</span>
-          </div>
-          <ArrowRight size={14} className="list-item__arrow" />
-        </Link>
+          <PreviewCardPanel side="right" sideOffset={12} align="start">
+            <div className="preview-card__title">{trace.title ?? trace.id}</div>
+            <div className="preview-card__text">{trace.summary ?? "No summary available."}</div>
+            <div className="preview-card__meta">
+              <Pill
+                label={trace.status}
+                tone={
+                  trace.status === "attention"
+                    ? "danger"
+                    : trace.status === "streaming"
+                      ? "info"
+                      : "neutral"
+                }
+              />
+              <span>{formatRelativeTime(trace.updated_at)}</span>
+            </div>
+          </PreviewCardPanel>
+        </PreviewCard>
       ))}
     </div>
   );
@@ -90,7 +119,8 @@ function SubagentGroup({ group }: { group: SessionTraceGroup }) {
 }
 
 export default async function TracesPage() {
-  const groups = getGroupedTraces();
+  const demo = await isDemoMode();
+  const groups = demo ? getDemoGroupedTraces() : getGroupedTraces();
   const totalTraces = groups.reduce((sum, g) => sum + totalTracesInGroup(g), 0);
 
   return (

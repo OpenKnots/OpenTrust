@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { isDemoMode } from "@/lib/opentrust/demo";
+import { getDemoOverview } from "@/lib/opentrust/demo-data";
 import { memoryHealth } from "@/lib/opentrust/memory-api";
 import { getOverview } from "@/lib/opentrust/overview";
 import { PageHeader } from "@/components/ui/page-header";
@@ -18,9 +20,22 @@ function tone(status: string) {
   }
 }
 
-export default function MemoryHealthPage() {
-  const health = memoryHealth({ scope: "global" });
-  const overview = getOverview();
+export default async function MemoryHealthPage() {
+  const demo = await isDemoMode();
+  const health = demo
+    ? {
+        scope: "global" as const,
+        generatedAt: new Date().toISOString(),
+        status: "attention" as const,
+        signals: [
+          { kind: "ingestion_freshness", status: "healthy" as const, summary: "All pipelines ran within the last hour.", metric: { name: "minutes_since_last_run", value: 15 } },
+          { kind: "review_debt", status: "attention" as const, summary: "5 draft memory entries awaiting review.", metric: { name: "draft_count", value: 5 } },
+          { kind: "semantic_coverage", status: "healthy" as const, summary: "284 chunks indexed, vector search operational.", metric: { name: "chunk_count", value: 284 } },
+        ],
+        stats: { total_entries: 14, approved: 7, draft: 5, reviewed: 2 },
+      }
+    : memoryHealth({ scope: "global" });
+  const overview = demo ? getDemoOverview() : getOverview();
   const weakProvenanceCount = overview.recentMemoryEntries.filter((entry) => entry.origins.length === 0).length;
 
   return (

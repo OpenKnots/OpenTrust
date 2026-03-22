@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getArtifactById } from "@/lib/opentrust/artifacts";
+import { isDemoMode } from "@/lib/opentrust/demo";
 import { formatRelativeTime } from "@/lib/opentrust/format";
 import { getMemoryEntry, updateMemoryEntry } from "@/lib/opentrust/memory-entries";
 import { getTraceDetail } from "@/lib/opentrust/trace-details";
@@ -96,6 +97,15 @@ function resolveOrigin(originType: string, originId: string) {
 }
 
 export default async function MemoryDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  if (await isDemoMode()) {
+    return (
+      <>
+        <PageHeader title="Memory entry" subtitle="Detail views are not available in demo mode." breadcrumbs={[{ label: "Memory", href: "/memory" }, { label: "Demo" }]} />
+        <EmptyState message="Switch off demo mode to view memory entry details." />
+      </>
+    );
+  }
+
   const { id } = await params;
   const entry = getMemoryEntry(decodeURIComponent(id));
 

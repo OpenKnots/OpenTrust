@@ -1,13 +1,16 @@
 import { redirect } from "next/navigation";
 import { listMemoryReviewQueue, updateMemoryEntryReview } from "@/lib/opentrust/memory-entries";
+import { isDemoMode } from "@/lib/opentrust/demo";
+import { getDemoMemoryEntries } from "@/lib/opentrust/demo-data";
 import { formatRelativeTime } from "@/lib/opentrust/format";
 import { PageHeader } from "@/components/ui/page-header";
 import { Pill } from "@/components/ui/pill";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ReviewActions } from "@/components/review-actions";
 
 export const dynamic = "force-dynamic";
 
-export default function MemoryReviewPage() {
+export default async function MemoryReviewPage() {
   async function updateReviewAction(formData: FormData) {
     "use server";
 
@@ -29,7 +32,10 @@ export default function MemoryReviewPage() {
     redirect("/memory/review");
   }
 
-  const entries = listMemoryReviewQueue(200);
+  const demo = await isDemoMode();
+  const entries = demo
+    ? getDemoMemoryEntries().filter((e) => e.review_status === "draft")
+    : listMemoryReviewQueue(200);
 
   return (
     <>
@@ -57,18 +63,7 @@ export default function MemoryReviewPage() {
               </div>
               <div className="list-item__meta" style={{ alignItems: "flex-end", gap: 8 }}>
                 <span>{formatRelativeTime(entry.updated_at)}</span>
-                <form action={updateReviewAction} style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "stretch" }}>
-                  <input type="hidden" name="id" value={entry.id} />
-                  <button className="btn btn--ghost" type="submit" name="action" value="reviewed">
-                    Mark reviewed
-                  </button>
-                  <button className="btn btn--primary" type="submit" name="action" value="approved">
-                    Approve
-                  </button>
-                  <button className="btn btn--ghost" type="submit" name="action" value="rejected">
-                    Reject
-                  </button>
-                </form>
+                <ReviewActions entryId={entry.id} formAction={updateReviewAction} />
               </div>
             </div>
           ))}

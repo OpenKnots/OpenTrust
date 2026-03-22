@@ -1,13 +1,28 @@
 import { notFound } from "next/navigation";
+import { isDemoMode } from "@/lib/opentrust/demo";
 import { getWorkflowDetail } from "@/lib/opentrust/workflow-details";
 import { PageHeader } from "@/components/ui/page-header";
 import { Pill } from "@/components/ui/pill";
 import { MetricInline } from "@/components/ui/metric";
 import { EmptyState } from "@/components/ui/empty-state";
+import {
+  PreviewCard,
+  PreviewCardTrigger,
+  PreviewCardPanel,
+} from "@/components/animate-ui/components/base/preview-card";
 
 export const dynamic = "force-dynamic";
 
 export default async function WorkflowDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  if (await isDemoMode()) {
+    return (
+      <>
+        <PageHeader title="Workflow detail" subtitle="Detail views are not available in demo mode." breadcrumbs={[{ label: "Workflows", href: "/workflows" }, { label: "Demo" }]} />
+        <EmptyState message="Switch off demo mode to view workflow details." />
+      </>
+    );
+  }
+
   const { id } = await params;
   const workflow = getWorkflowDetail(decodeURIComponent(id));
 
@@ -86,16 +101,31 @@ export default async function WorkflowDetailPage({ params }: { params: Promise<{
         {workflow.artifacts.length > 0 ? (
           <div className="list-group">
             {workflow.artifacts.map((artifact) => (
-              <div key={artifact.id} className="list-item" style={{ cursor: "default" }}>
-                <div className="list-item__content">
-                  <span className="list-item__title">{artifact.title ?? artifact.id}</span>
-                  <span className="list-item__subtitle">{artifact.uri}</span>
-                </div>
-                <div className="list-item__meta">
-                  <Pill label={artifact.kind} tone="neutral" />
-                  <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>{artifact.relation}</span>
-                </div>
-              </div>
+              <PreviewCard key={artifact.id}>
+                <PreviewCardTrigger
+                  render={
+                    <div className="list-item" style={{ cursor: "default" }}>
+                      <div className="list-item__content">
+                        <span className="list-item__title">{artifact.title ?? artifact.id}</span>
+                        <span className="list-item__subtitle">{artifact.uri}</span>
+                      </div>
+                      <div className="list-item__meta">
+                        <Pill label={artifact.kind} tone="neutral" />
+                        <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>{artifact.relation}</span>
+                      </div>
+                    </div>
+                  }
+                />
+                <PreviewCardPanel side="bottom" sideOffset={4} align="start">
+                  <div className="preview-card__title">{artifact.title ?? artifact.id}</div>
+                  <div className="preview-card__uri">{artifact.uri}</div>
+                  <div className="preview-card__divider" />
+                  <div className="preview-card__meta">
+                    <Pill label={artifact.kind} tone="neutral" />
+                    <span>{artifact.relation}</span>
+                  </div>
+                </PreviewCardPanel>
+              </PreviewCard>
             ))}
           </div>
         ) : (

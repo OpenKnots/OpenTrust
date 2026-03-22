@@ -1,8 +1,10 @@
 import { redirect } from "next/navigation";
 import { getRecentArtifacts } from "@/lib/opentrust/artifacts";
+import { isDemoMode } from "@/lib/opentrust/demo";
 import { memoryPromote } from "@/lib/opentrust/memory-api";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
+import { PromoteButton } from "@/components/promote-button";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +13,15 @@ export default async function PromoteArtifactPage({
 }: {
   searchParams?: Promise<{ id?: string; create?: string }>;
 }) {
+  if (await isDemoMode()) {
+    return (
+      <>
+        <PageHeader title="Promote artifact" subtitle="Promotion is not available in demo mode." breadcrumbs={[{ label: "Artifacts", href: "/artifacts" }, { label: "Demo" }]} />
+        <EmptyState message="Switch off demo mode to promote artifacts to memory." />
+      </>
+    );
+  }
+
   const params = (await searchParams) ?? {};
   const artifacts = getRecentArtifacts(100);
   const selected = params.id ? artifacts.find((artifact) => artifact.id === params.id) : null;
@@ -49,9 +60,10 @@ export default async function PromoteArtifactPage({
                 <span className="list-item__subtitle">{artifact.kind} · {artifact.uri}</span>
               </div>
               <div className="list-item__meta">
-                <a className="btn btn--primary" href={`/artifacts/promote?id=${encodeURIComponent(artifact.id)}&create=1`}>
-                  Promote
-                </a>
+                <PromoteButton
+                  href={`/artifacts/promote?id=${encodeURIComponent(artifact.id)}&create=1`}
+                  itemTitle={artifact.title ?? artifact.id}
+                />
               </div>
             </div>
           ))}

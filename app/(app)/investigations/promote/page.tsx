@@ -1,9 +1,11 @@
 import { redirect } from "next/navigation";
 import { ArrowUpCircle, Database } from "lucide-react";
+import { isDemoMode } from "@/lib/opentrust/demo";
 import { getSavedInvestigations, type SavedInvestigationRow } from "@/lib/opentrust/investigations";
 import { memoryPromote } from "@/lib/opentrust/memory-api";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
+import { PromoteButton } from "@/components/promote-button";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +14,15 @@ export default async function PromoteInvestigationPage({
 }: {
   searchParams?: Promise<{ id?: string; create?: string }>;
 }) {
+  if (await isDemoMode()) {
+    return (
+      <>
+        <PageHeader title="Promote investigation" subtitle="Promotion is not available in demo mode." breadcrumbs={[{ label: "Investigations", href: "/investigations" }, { label: "Demo" }]} />
+        <EmptyState message="Switch off demo mode to promote investigations to memory." />
+      </>
+    );
+  }
+
   const params = (await searchParams) ?? {};
   const investigations = getSavedInvestigations();
   const selected = params.id
@@ -65,10 +76,15 @@ export default async function PromoteInvestigationPage({
                 <span className="list-item__subtitle">{investigation.description ?? investigation.sql_text.slice(0, 180)}</span>
               </div>
               <div className="list-item__meta">
-                <a className="btn btn--primary" href={`/investigations/promote?id=${encodeURIComponent(investigation.id)}&create=1`}>
-                  <ArrowUpCircle size={14} />
-                  Promote to memory
-                </a>
+                <PromoteButton
+                  href={`/investigations/promote?id=${encodeURIComponent(investigation.id)}&create=1`}
+                  itemTitle={investigation.title}
+                >
+                  <button className="btn btn--primary" type="button">
+                    <ArrowUpCircle size={14} />
+                    Promote to memory
+                  </button>
+                </PromoteButton>
               </div>
             </div>
           ))}
