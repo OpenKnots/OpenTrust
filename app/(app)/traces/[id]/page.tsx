@@ -6,6 +6,7 @@ import { Pill } from "@/components/ui/pill";
 import { MetricInline } from "@/components/ui/metric";
 import { EmptyState } from "@/components/ui/empty-state";
 import { CodeBlock } from "@/components/code-block";
+import { Wrench, Package, Clock } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -50,39 +51,54 @@ export default async function TraceDetailPage({ params }: { params: Promise<{ id
 
         {trace.tools.length > 0 ? (
           <div className="list-group">
-            {trace.tools.map((tool) => (
-              <div key={tool.id} className="list-item detail-stack">
-                <div className="detail-stack__header">
-                  <Pill
-                    label={tool.status}
-                    tone={tool.status === "error" ? "danger" : tool.finished_at ? "success" : "info"}
-                  />
-                  <span className="list-item__title detail-stack__title">{tool.tool_name}</span>
-                  <span className="detail-stack__timestamp">{tool.started_at}</span>
+            {trace.tools.map((tool) => {
+              const status = tool.status === "error" ? "error" : tool.finished_at ? "success" : "info";
+              const startTime = tool.started_at ? new Date(tool.started_at).getTime() : 0;
+              const endTime = tool.finished_at ? new Date(tool.finished_at).getTime() : 0;
+              const duration = endTime > startTime ? endTime - startTime : null;
+
+              return (
+                <div key={tool.id} className="list-item detail-stack" data-status={status}>
+                  <div className="detail-stack__header">
+                    <Pill
+                      label={tool.status}
+                      tone={tool.status === "error" ? "danger" : tool.finished_at ? "success" : "info"}
+                    />
+                    <span className="list-item__title detail-stack__title">{tool.tool_name}</span>
+                    {duration && (
+                      <span className="detail-stack__duration" style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
+                        {duration}ms
+                      </span>
+                    )}
+                    <span className="detail-stack__timestamp">{tool.started_at}</span>
+                  </div>
+                  <div className="detail-stack__body">
+                    {tool.error_text ?? (tool.finished_at ? "Completed successfully." : "Awaiting paired result.")}
+                  </div>
+                  {(tool.result_json || tool.finished_at) && (
+                    <details className="expandable" style={{ marginTop: 8 }}>
+                      <summary>Result details</summary>
+                      <div className="expandable__content">
+                        <p style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginBottom: 8 }}>
+                          Finished: {tool.finished_at ?? "not yet paired"}
+                        </p>
+                        {tool.result_json ? (
+                          <CodeBlock code={tool.result_json} language="json" />
+                        ) : (
+                          <pre>No result payload captured.</pre>
+                        )}
+                      </div>
+                    </details>
+                  )}
                 </div>
-                <div className="detail-stack__body">
-                  {tool.error_text ?? (tool.finished_at ? "Completed successfully." : "Awaiting paired result.")}
-                </div>
-                {(tool.result_json || tool.finished_at) && (
-                  <details className="expandable" style={{ marginTop: 8 }}>
-                    <summary>Result details</summary>
-                    <div className="expandable__content">
-                      <p style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginBottom: 8 }}>
-                        Finished: {tool.finished_at ?? "not yet paired"}
-                      </p>
-                      {tool.result_json ? (
-                        <CodeBlock code={tool.result_json} language="json" />
-                      ) : (
-                        <pre>No result payload captured.</pre>
-                      )}
-                    </div>
-                  </details>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
-          <EmptyState message="No tool calls captured for this trace." />
+          <EmptyState
+            message="No tool calls captured for this trace. The trace may not have included any tool invocations."
+            icon={<Wrench size={24} style={{ color: "var(--text-muted)" }} />}
+          />
         )}
       </div>
 
@@ -109,7 +125,10 @@ export default async function TraceDetailPage({ params }: { params: Promise<{ id
             ))}
           </div>
         ) : (
-          <EmptyState message="No artifacts extracted for this trace." />
+          <EmptyState
+            message="No artifacts extracted for this trace. Artifacts represent files or resources referenced during execution."
+            icon={<Package size={24} style={{ color: "var(--text-muted)" }} />}
+          />
         )}
       </div>
 
@@ -133,7 +152,10 @@ export default async function TraceDetailPage({ params }: { params: Promise<{ id
             ))}
           </div>
         ) : (
-          <EmptyState message="No events captured for this trace." />
+          <EmptyState
+            message="No events captured for this trace. The event timeline shows the sequence of actions during execution."
+            icon={<Clock size={24} style={{ color: "var(--text-muted)" }} />}
+          />
         )}
       </div>
     </>

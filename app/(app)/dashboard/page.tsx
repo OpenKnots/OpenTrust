@@ -169,7 +169,10 @@ export default async function HomePage({
                 </PreviewCard>
               ))
             ) : (
-              <EmptyState message="No traces imported yet." />
+              <EmptyState
+                message="No traces imported yet. Run 'pnpm ingest:openclaw' to import sessions."
+                icon={<Telescope size={24} style={{ color: "var(--info)" }} />}
+              />
             )}
           </div>
         </BentoCard>
@@ -254,7 +257,10 @@ export default async function HomePage({
                 </PreviewCard>
               ))
             ) : (
-              <EmptyState message="No curated memory yet." />
+              <EmptyState
+                message="No curated memory yet. Promote a trace to create your first memory entry."
+                icon={<Sparkles size={24} style={{ color: "var(--accent)" }} />}
+              />
             )}
           </div>
         </BentoCard>
@@ -300,7 +306,10 @@ export default async function HomePage({
                 </PreviewCard>
               ))
             ) : (
-              <EmptyState message="No workflows tracked yet." />
+              <EmptyState
+                message="No workflows tracked yet. Import sessions to see workflow activity."
+                icon={<Workflow size={24} style={{ color: "var(--text-muted)" }} />}
+              />
             )}
           </div>
         </BentoCard>
@@ -367,7 +376,10 @@ function InvestigationSearchSection({
               </div>
             ))
           ) : (
-            <EmptyState message={`No matches for "${query}".`} />
+            <EmptyState
+              message={`No matches for "${query}". Try a different search term or check if data has been ingested.`}
+              icon={<Search size={24} style={{ color: "var(--text-muted)" }} />}
+            />
           )}
         </div>
       )}

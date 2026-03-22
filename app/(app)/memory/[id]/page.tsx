@@ -11,6 +11,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Pill } from "@/components/ui/pill";
 import { MetricInline } from "@/components/ui/metric";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Link2, Tag } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -168,7 +169,7 @@ export default async function MemoryDetailPage({ params }: { params: Promise<{ i
           <span className="section__title">Memory posture</span>
           <span className="section__description">How this entry is currently classified and trusted.</span>
         </div>
-        <CardGrid tone="success" storageKey="memory-posture">
+        <CardGrid tone="success" storageKey="memory-posture" className="memory-posture-cards">
           <div className="artifact-card">
             <div className="artifact-card__kind"><Pill label={entry.retention_class} tone={retentionTone(entry.retention_class)} /></div>
             <div className="artifact-card__title">Retention</div>
@@ -192,10 +193,8 @@ export default async function MemoryDetailPage({ params }: { params: Promise<{ i
           <span className="section__title">Entry body</span>
           <span className="section__description">The actual curated memory content.</span>
         </div>
-        <div className="artifact-card">
-          <div className="list-item__subtitle" style={{ whiteSpace: "pre-wrap", lineHeight: 1.6, color: "var(--text)" }}>
-            {entry.body}
-          </div>
+        <div className="memory-body-card">
+          {entry.body}
         </div>
       </div>
 
@@ -225,25 +224,25 @@ export default async function MemoryDetailPage({ params }: { params: Promise<{ i
           <span className="section__title">Review and retention controls</span>
           <span className="section__description">Adjust retention and capture operator rationale directly from the inspect view.</span>
         </div>
-        <form action={updateMemoryAction} className="artifact-card" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <form action={updateMemoryAction} className="review-controls-form" style={{ display: "flex", flexDirection: "column", gap: 16, padding: 24, borderRadius: "var(--radius-lg)" }}>
           <input type="hidden" name="id" value={entry.id} />
-          <label className="list-item__subtitle" style={{ color: "var(--text)" }}>
-            Retention class
-            <select name="retentionClass" defaultValue={entry.retention_class} className="input" style={{ marginTop: 8 }}>
+          <label className="list-item__subtitle" style={{ color: "var(--text)", display: "flex", flexDirection: "column", gap: 8 }}>
+            <span style={{ fontWeight: 500 }}>Retention class</span>
+            <select name="retentionClass" defaultValue={entry.retention_class} className="input" style={{ padding: "10px 12px", borderRadius: "var(--radius-md)" }}>
               <option value="ephemeral">ephemeral</option>
               <option value="working">working</option>
               <option value="longTerm">longTerm</option>
               <option value="pinned">pinned</option>
             </select>
           </label>
-          <label className="list-item__subtitle" style={{ color: "var(--text)" }}>
-            Review notes
+          <label className="list-item__subtitle" style={{ color: "var(--text)", display: "flex", flexDirection: "column", gap: 8 }}>
+            <span style={{ fontWeight: 500 }}>Review notes</span>
             <textarea
               name="reviewNotes"
               defaultValue={entry.review_notes ?? ""}
               rows={4}
               className="input"
-              style={{ marginTop: 8 }}
+              style={{ padding: "10px 12px", borderRadius: "var(--radius-md)", resize: "vertical" }}
               placeholder="Record why this memory entry was approved, disputed, or still uncertain."
             />
           </label>
@@ -264,7 +263,7 @@ export default async function MemoryDetailPage({ params }: { params: Promise<{ i
               const href = originHref(origin.origin_type, origin.origin_id);
               const resolved = resolveOrigin(origin.origin_type, origin.origin_id);
               return (
-                <div key={`${origin.origin_type}:${origin.origin_id}:${index}`} className="list-item" style={{ cursor: "default", alignItems: "flex-start" }}>
+                <div key={`${origin.origin_type}:${origin.origin_id}:${index}`} className={`list-item ${href ? "provenance-link" : ""}`} style={{ cursor: href ? "pointer" : "default", alignItems: "flex-start" }}>
                   <div className="list-item__content">
                     <span className="list-item__title">{resolved?.label ?? `${origin.origin_type}:${origin.origin_id}`}</span>
                     <span className="list-item__subtitle">
@@ -282,7 +281,10 @@ export default async function MemoryDetailPage({ params }: { params: Promise<{ i
             })}
           </div>
         ) : (
-          <EmptyState message="No origin references are attached to this memory entry." />
+          <EmptyState
+            message="No origin references are attached to this memory entry. Provenance links show where this memory came from."
+            icon={<Link2 size={24} style={{ color: "var(--text-muted)" }} />}
+          />
         )}
       </div>
 
@@ -298,7 +300,10 @@ export default async function MemoryDetailPage({ params }: { params: Promise<{ i
             ))}
           </div>
         ) : (
-          <EmptyState message="No tags attached to this memory entry." />
+          <EmptyState
+            message="No tags attached to this memory entry. Tags help cluster and filter related memory."
+            icon={<Tag size={24} style={{ color: "var(--text-muted)" }} />}
+          />
         )}
       </div>
     </>
