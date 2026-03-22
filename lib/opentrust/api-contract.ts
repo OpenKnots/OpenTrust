@@ -178,8 +178,8 @@ export function parseHealthRequest(input: unknown): MemoryHealthRequest {
 export function parsePromoteRequest(input: unknown): MemoryPromoteRequest {
   const body = (input ?? {}) as Record<string, unknown>;
   const originRefs = body.originRefs;
-  if (!Array.isArray(originRefs) || originRefs.length === 0) {
-    throw new ApiValidationError("originRefs must be a non-empty array", { details: { field: "originRefs" } });
+  if (!Array.isArray(originRefs)) {
+    throw new ApiValidationError("originRefs must be an array", { details: { field: "originRefs" } });
   }
 
   const author = (body.author ?? {}) as Record<string, unknown>;

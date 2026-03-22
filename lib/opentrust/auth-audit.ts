@@ -16,9 +16,14 @@ export function writeAuthAudit(event: {
   userAgent?: string | null;
   detail?: string | null;
 }) {
-  const line = JSON.stringify({
-    ts: new Date().toISOString(),
-    ...event,
-  });
-  appendFileSync(auditPath(), `${line}\n`, "utf8");
+  try {
+    const line = JSON.stringify({
+      ts: new Date().toISOString(),
+      ...event,
+    });
+    appendFileSync(auditPath(), `${line}\n`, "utf8");
+  } catch {
+    // Filesystem may be read-only in serverless environments (e.g. Vercel).
+    // Audit is best-effort; swallow the error to avoid crashing the request.
+  }
 }

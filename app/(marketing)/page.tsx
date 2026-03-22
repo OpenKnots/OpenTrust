@@ -69,21 +69,16 @@ export default function LandingPage() {
         />
 
         <div className="landing-hero-minimal__inner">
-          <div className="landing-hero-split__badge mx-auto w-fit justify-center">
-            OpenClaw memory, truthfully extended
-          </div>
-
           <div className="landing-hero-minimal__kicker">
-            OpenClaw already has memory.
+            OpenClaw remembers.
           </div>
 
           <h1 className="landing-hero-minimal__title">
-            <span>OpenTrust</span>
-            <span>has Clarity</span>
+            <span className="landing-hero-minimal__title-gradient">OpenTrust Clarifies.</span>
           </h1>
 
           <p className="landing-hero-minimal__subtitle">
-            OpenClaw already saves memory in files like <code>MEMORY.md</code> and <code>memory/YYYY-MM-DD.md</code>. OpenTrust takes that memory and makes it easier to review, search, track, and keep safe.
+            0 memories shaped into a cleaner operational layer across 60 traces and 6 workflows.
           </p>
 
           <div className="landing-hero-minimal__actions">
@@ -91,19 +86,9 @@ export default function LandingPage() {
               Open Dashboard
               <ArrowRight size={18} />
             </Link>
-            <a href="#comparison" className="landing-btn landing-btn--lg">
+            <a href="#comparison" className="landing-btn landing-btn--ghost landing-btn--lg">
               See Comparison
             </a>
-          </div>
-
-          <div className="landing-hero-minimal__chips">
-            <span className="landing-hero-minimal__chip">Current source: workspace Markdown</span>
-            <span className="landing-hero-minimal__chip">Plugin layer: review, provenance, timeline</span>
-            <span className="landing-hero-minimal__chip">Long-term value: summaries, backups, historical recall</span>
-          </div>
-
-          <div className="landing-hero-minimal__preview-wrap">
-            <TransformationPreviewCard />
           </div>
         </div>
       </section>
