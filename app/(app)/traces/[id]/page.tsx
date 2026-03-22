@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Pill } from "@/components/ui/pill";
 import { MetricInline } from "@/components/ui/metric";
 import { EmptyState } from "@/components/ui/empty-state";
+import { CodeBlock } from "@/components/code-block";
 
 export const dynamic = "force-dynamic";
 
@@ -68,7 +69,11 @@ export default async function TraceDetailPage({ params }: { params: Promise<{ id
                       <p style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginBottom: 8 }}>
                         Finished: {tool.finished_at ?? "not yet paired"}
                       </p>
-                      <pre>{tool.result_json ?? "No result payload captured."}</pre>
+                      {tool.result_json ? (
+                        <CodeBlock code={tool.result_json} language="json" />
+                      ) : (
+                        <pre>No result payload captured.</pre>
+                      )}
                     </div>
                   </details>
                 )}

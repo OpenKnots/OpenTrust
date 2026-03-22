@@ -17,6 +17,7 @@ import {
   Workflow,
   Zap,
 } from "lucide-react";
+import { CodeBlock } from "@/components/code-block";
 
 export default function LandingPage() {
   return (
@@ -268,7 +269,7 @@ export default function LandingPage() {
               <span className="landing-api-card__desc">Query with scope and confidence</span>
             </div>
             <div className="landing-api-card__body">
-              <pre>{`{
+              <CodeBlock language="json" showLineNumbers={false} code={`{
   "query": "deployment regression",
   "scope": {
     "sources": ["sessions", "memoryEntries"],
@@ -277,7 +278,7 @@ export default function LandingPage() {
   "mode": "hybrid",
   "limit": 10,
   "minConfidence": 0.5
-}`}</pre>
+}`} />
             </div>
           </div>
           <div className="landing-api-card">
@@ -287,7 +288,7 @@ export default function LandingPage() {
               <span className="landing-api-card__desc">Traverse lineage and raw evidence</span>
             </div>
             <div className="landing-api-card__body">
-              <pre>{`{
+              <CodeBlock language="json" showLineNumbers={false} code={`{
   "ref": {
     "type": "memoryEntry",
     "id": "mem_abc123"
@@ -295,7 +296,7 @@ export default function LandingPage() {
   "includeLineage": true,
   "includeRelated": true,
   "includeRaw": true
-}`}</pre>
+}`} />
             </div>
           </div>
           <div className="landing-api-card">
@@ -305,7 +306,7 @@ export default function LandingPage() {
               <span className="landing-api-card__desc">Writeback with review and retention</span>
             </div>
             <div className="landing-api-card__body">
-              <pre>{`{
+              <CodeBlock language="json" showLineNumbers={false} code={`{
   "title": "Queue backlog regression",
   "body": "Consumer timing shifted ...",
   "originRefs": [
@@ -313,7 +314,7 @@ export default function LandingPage() {
   ],
   "retentionClass": "longTerm",
   "review": { "status": "draft" }
-}`}</pre>
+}`} />
             </div>
           </div>
           <div className="landing-api-card">
@@ -323,7 +324,7 @@ export default function LandingPage() {
               <span className="landing-api-card__desc">Freshness and pipeline status</span>
             </div>
             <div className="landing-api-card__body">
-              <pre>{`{
+              <CodeBlock language="json" showLineNumbers={false} code={`{
   "scope": "global",
   "status": "healthy",
   "signals": [{
@@ -332,7 +333,7 @@ export default function LandingPage() {
     "metric": { "hours_since_ingest": 1 }
   }],
   "stats": { "stalePipelines": 0 }
-}`}</pre>
+}`} />
             </div>
           </div>
         </div>
@@ -415,7 +416,7 @@ export default function LandingPage() {
               </span>
             </div>
             <div className="landing-plugin-code__body">
-              <pre>{`import { definePluginEntry } from
+              <CodeBlock language="typescript" code={`import { definePluginEntry } from
   "openclaw/plugin-sdk/plugin-entry";
 
 export default definePluginEntry({
@@ -425,7 +426,6 @@ export default definePluginEntry({
     "Official OpenClaw memory layer plugin.",
 
   register(api) {
-    // Agent tools
     api.registerTool({
       name: "memory_search",
       description: "Search curated memory",
@@ -444,7 +444,6 @@ export default definePluginEntry({
     api.registerTool({
       name: "memory_health",  /* ... */ });
 
-    // HTTP surface
     api.registerHttpRoute({
       path: "/plugins/opentrust",
       auth: "plugin",
@@ -452,7 +451,7 @@ export default definePluginEntry({
       handler: createMemoryHttpHandler(),
     });
   },
-});`}</pre>
+});`} />
             </div>
           </div>
         </div>
@@ -548,7 +547,7 @@ export default definePluginEntry({
             </div>
           </div>
           <div className="landing-start__code">
-            <pre>{`# Clone and install
+            <CodeBlock language="bash" filename="terminal" code={`# Clone and install
 git clone https://github.com/OpenKnots/OpenTrust
 cd OpenTrust
 pnpm install
@@ -564,7 +563,7 @@ pnpm run ingest:cron
 pnpm run index:semantic
 
 # Launch the dashboard
-pnpm dev`}</pre>
+pnpm dev`} />
           </div>
         </div>
       </section>

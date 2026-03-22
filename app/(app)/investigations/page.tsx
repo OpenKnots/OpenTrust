@@ -11,6 +11,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Pill } from "@/components/ui/pill";
 import { DataTable } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
+import { CodeBlock } from "@/components/code-block";
 
 export const dynamic = "force-dynamic";
 
@@ -94,7 +95,7 @@ function renderInvestigationCard(
         <details className="expandable">
           <summary>SQL</summary>
           <div className="expandable__content">
-            <pre>{investigation.sql_text}</pre>
+            <CodeBlock code={investigation.sql_text} language="sql" />
           </div>
         </details>
       </div>
