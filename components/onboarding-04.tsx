@@ -54,14 +54,14 @@ const steps = [
 export function Onboarding04() {
   const [activeStep, setActiveStep] = useState(1);
 
-  const [openItem, setOpenItem] = useState(
-    activeStep < steps.length ? steps[activeStep].title : ''
+  const [openItem, setOpenItem] = useState<string[]>(
+    activeStep < steps.length ? [steps[activeStep].title] : []
   );
 
   const handleComplete = () => {
     const next = activeStep + 1;
     setActiveStep(next);
-    setOpenItem(next < steps.length ? steps[next].title : '');
+    setOpenItem(next < steps.length ? [steps[next].title] : []);
   };
 
   return (
@@ -73,9 +73,7 @@ export function Onboarding04() {
         </p>
         <Accordion
           className="mt-6 space-y-2"
-          collapsible
           onValueChange={setOpenItem}
-          type="single"
           value={openItem}
         >
           {steps.map((step, index) => {
