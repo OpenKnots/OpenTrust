@@ -72,6 +72,7 @@ export interface MemoryEntry {
   summary: string | null;
   retention_class: MemoryRetentionClass;
   review_status: MemoryReviewStatus;
+  review_notes: string | null;
   confidence_score: number | null;
   confidence_reason: string | null;
   uncertainty_summary: string | null;

@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getArtifactById } from "@/lib/opentrust/artifacts";
 import { formatRelativeTime } from "@/lib/opentrust/format";
-import { getMemoryEntry } from "@/lib/opentrust/memory-entries";
+import { getMemoryEntry, updateMemoryEntry } from "@/lib/opentrust/memory-entries";
 import { getTraceDetail } from "@/lib/opentrust/trace-details";
 import { getWorkflowDetail } from "@/lib/opentrust/workflow-details";
+import { CardGrid } from "@/components/ui/card-grid";
 import { PageHeader } from "@/components/ui/page-header";
 import { Pill } from "@/components/ui/pill";
 import { MetricInline } from "@/components/ui/metric";
@@ -100,6 +101,32 @@ export default async function MemoryDetailPage({ params }: { params: Promise<{ i
 
   if (!entry) notFound();
 
+  async function updateMemoryAction(formData: FormData) {
+    "use server";
+
+    const targetId = formData.get("id");
+    const retentionClass = formData.get("retentionClass");
+    const reviewNotes = formData.get("reviewNotes");
+
+    if (typeof targetId !== "string") {
+      redirect(`/memory/${encodeURIComponent(id)}`);
+    }
+
+    updateMemoryEntry({
+      id: targetId,
+      retentionClass:
+        retentionClass === "ephemeral" ||
+        retentionClass === "working" ||
+        retentionClass === "longTerm" ||
+        retentionClass === "pinned"
+          ? retentionClass
+          : undefined,
+      reviewNotes: typeof reviewNotes === "string" ? reviewNotes : undefined,
+    });
+
+    redirect(`/memory/${encodeURIComponent(targetId)}`);
+  }
+
   return (
     <>
       <PageHeader
@@ -131,7 +158,7 @@ export default async function MemoryDetailPage({ params }: { params: Promise<{ i
           <span className="section__title">Memory posture</span>
           <span className="section__description">How this entry is currently classified and trusted.</span>
         </div>
-        <div className="card-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
+        <CardGrid tone="success" storageKey="memory-posture">
           <div className="artifact-card">
             <div className="artifact-card__kind"><Pill label={entry.retention_class} tone={retentionTone(entry.retention_class)} /></div>
             <div className="artifact-card__title">Retention</div>
@@ -147,7 +174,7 @@ export default async function MemoryDetailPage({ params }: { params: Promise<{ i
             <div className="artifact-card__title">Confidence</div>
             <div className="list-item__subtitle">{entry.confidence_reason ?? "No confidence note recorded."}</div>
           </div>
-        </div>
+        </CardGrid>
       </div>
 
       <div className="section">
@@ -167,7 +194,7 @@ export default async function MemoryDetailPage({ params }: { params: Promise<{ i
           <span className="section__title">Uncertainty and review notes</span>
           <span className="section__description">What remains uncertain or operationally important.</span>
         </div>
-        <div className="card-grid">
+        <CardGrid tone="warning" storageKey="memory-uncertainty">
           <div className="artifact-card">
             <div className="artifact-card__title">Uncertainty summary</div>
             <div className="list-item__subtitle">{entry.uncertainty_summary ?? "No uncertainty summary recorded."}</div>
@@ -176,7 +203,44 @@ export default async function MemoryDetailPage({ params }: { params: Promise<{ i
             <div className="artifact-card__title">Author</div>
             <div className="list-item__subtitle">{entry.author_type}{entry.author_id ? `:${entry.author_id}` : ""}</div>
           </div>
+          <div className="artifact-card">
+            <div className="artifact-card__title">Review notes</div>
+            <div className="list-item__subtitle">{entry.review_notes ?? "No review notes recorded."}</div>
+          </div>
+        </CardGrid>
+      </div>
+
+      <div className="section">
+        <div className="section__header">
+          <span className="section__title">Review and retention controls</span>
+          <span className="section__description">Adjust retention and capture operator rationale directly from the inspect view.</span>
         </div>
+        <form action={updateMemoryAction} className="artifact-card" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <input type="hidden" name="id" value={entry.id} />
+          <label className="list-item__subtitle" style={{ color: "var(--text)" }}>
+            Retention class
+            <select name="retentionClass" defaultValue={entry.retention_class} className="input" style={{ marginTop: 8 }}>
+              <option value="ephemeral">ephemeral</option>
+              <option value="working">working</option>
+              <option value="longTerm">longTerm</option>
+              <option value="pinned">pinned</option>
+            </select>
+          </label>
+          <label className="list-item__subtitle" style={{ color: "var(--text)" }}>
+            Review notes
+            <textarea
+              name="reviewNotes"
+              defaultValue={entry.review_notes ?? ""}
+              rows={4}
+              className="input"
+              style={{ marginTop: 8 }}
+              placeholder="Record why this memory entry was approved, disputed, or still uncertain."
+            />
+          </label>
+          <div>
+            <button className="btn btn--primary" type="submit">Save review details</button>
+          </div>
+        </form>
       </div>
 
       <div className="section">

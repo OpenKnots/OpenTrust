@@ -74,6 +74,7 @@ export function createMemoryEntry(input: MemoryPromoteRequest): MemoryPromoteRes
         summary,
         retention_class,
         review_status,
+        review_notes,
         confidence_score,
         confidence_reason,
         uncertainty_summary,
@@ -91,6 +92,7 @@ export function createMemoryEntry(input: MemoryPromoteRequest): MemoryPromoteRes
         :summary,
         :retentionClass,
         :reviewStatus,
+        :reviewNotes,
         :confidenceScore,
         :confidenceReason,
         :uncertaintySummary,
@@ -110,6 +112,7 @@ export function createMemoryEntry(input: MemoryPromoteRequest): MemoryPromoteRes
       summary: normalizeSummary(input.summary),
       retentionClass: input.retentionClass,
       reviewStatus,
+      reviewNotes: normalizeOptional(input.review?.notes),
       confidenceScore: input.confidence?.score ?? null,
       confidenceReason: normalizeOptional(input.confidence?.reason),
       uncertaintySummary: normalizeOptional(input.uncertaintySummary),
@@ -184,6 +187,7 @@ export function getMemoryEntry(id: string): MemoryEntryWithOrigins | null {
         summary,
         retention_class,
         review_status,
+        review_notes,
         confidence_score,
         confidence_reason,
         uncertainty_summary,
@@ -239,6 +243,7 @@ export function listMemoryEntries(filters?: {
         summary,
         retention_class,
         review_status,
+        review_notes,
         confidence_score,
         confidence_reason,
         uncertainty_summary,
@@ -271,6 +276,7 @@ export function updateMemoryEntryReview(input: {
   id: string;
   reviewStatus: MemoryReviewStatus;
   reviewedBy?: string;
+  reviewNotes?: string | null;
 }) {
   ensureBootstrapped();
 
@@ -279,6 +285,7 @@ export function updateMemoryEntryReview(input: {
     `
       UPDATE memory_entries
       SET review_status = :reviewStatus,
+          review_notes = :reviewNotes,
           reviewed_at = :reviewedAt,
           reviewed_by = :reviewedBy,
           updated_at = :updatedAt
@@ -287,6 +294,7 @@ export function updateMemoryEntryReview(input: {
     {
       id: input.id,
       reviewStatus: input.reviewStatus,
+      reviewNotes: normalizeOptional(input.reviewNotes),
       reviewedAt:
         input.reviewStatus === "reviewed" || input.reviewStatus === "approved" ? now : null,
       reviewedBy: normalizeOptional(input.reviewedBy),
@@ -304,6 +312,7 @@ export function updateMemoryEntry(input: {
   summary?: string | null;
   retentionClass?: MemoryEntry["retention_class"];
   uncertaintySummary?: string | null;
+  reviewNotes?: string | null;
 }) {
   ensureBootstrapped();
 
@@ -319,6 +328,7 @@ export function updateMemoryEntry(input: {
           summary = :summary,
           retention_class = :retentionClass,
           uncertainty_summary = :uncertaintySummary,
+          review_notes = :reviewNotes,
           updated_at = :updatedAt
       WHERE id = :id;
     `,
@@ -332,6 +342,8 @@ export function updateMemoryEntry(input: {
         input.uncertaintySummary === undefined
           ? existing.uncertainty_summary
           : normalizeOptional(input.uncertaintySummary),
+      reviewNotes:
+        input.reviewNotes === undefined ? existing.review_notes : normalizeOptional(input.reviewNotes),
       updatedAt: now,
     },
   );

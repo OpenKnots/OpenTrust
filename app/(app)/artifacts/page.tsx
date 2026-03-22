@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getRecentArtifacts } from "@/lib/opentrust/artifacts";
 import { formatRelativeTime } from "@/lib/opentrust/format";
+import { CardGrid } from "@/components/ui/card-grid";
 import { PageHeader } from "@/components/ui/page-header";
 import { Pill } from "@/components/ui/pill";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -78,7 +79,7 @@ export default async function ArtifactsPage({
                   </span>
                 </summary>
                 <div className="expandable__content">
-                  <div className="card-grid">
+                  <CardGrid tone="accent" storageKey={`artifacts-grouped-${kindKey}`}>
                     {items.map((artifact) => (
                       <div key={artifact.id} className="artifact-card">
                         <div className="artifact-card__kind">
@@ -91,13 +92,13 @@ export default async function ArtifactsPage({
                         <div className="artifact-card__uri">{artifact.uri}</div>
                       </div>
                     ))}
-                  </div>
+                  </CardGrid>
                 </div>
               </details>
             ));
           })()
         ) : (
-          <div className="card-grid">
+          <CardGrid tone="neutral" storageKey="artifacts-flat">
             {artifacts.map((artifact) => (
               <div key={artifact.id} className="artifact-card">
                 <div className="artifact-card__kind">
@@ -110,7 +111,7 @@ export default async function ArtifactsPage({
                 <div className="artifact-card__uri">{artifact.uri}</div>
               </div>
             ))}
-          </div>
+          </CardGrid>
         )
       ) : (
         <EmptyState message="No artifacts match the current filter." />

@@ -11,14 +11,16 @@ import {
   Package,
   Plug,
   Search,
-  Shield,
   Sparkles,
   Telescope,
   Workflow,
   Zap,
 } from "lucide-react";
 import { BorderGlow } from "@/components/border-glow";
+import { CardGrid } from "@/components/ui/card-grid";
 import { CodeBlock, type CodeHighlight } from "@/components/code-block";
+
+const MOLTY_ICON = "https://openclaw.ai/favicon.svg";
 
 const SEARCH_CODE = `{
   "query": "deployment regression after queue changes",
@@ -147,7 +149,7 @@ export default function LandingPage() {
       <nav className="landing-nav">
         <div className="landing-nav__brand">
           <div className="landing-nav__logo">
-            <Shield size={16} />
+            <img src={MOLTY_ICON} alt="Molty" className="landing-molty landing-molty--nav" />
           </div>
           <span>OpenTrust</span>
         </div>
@@ -169,6 +171,7 @@ export default function LandingPage() {
         <div className="landing-hero__grid">
           <div className="landing-hero__copy">
             <div className="landing-hero__badge">
+              <img src={MOLTY_ICON} alt="Molty" className="landing-molty landing-molty--inline" />
               <Plug size={12} />
               Official OpenClaw Memory Plugin
             </div>
@@ -259,7 +262,7 @@ export default function LandingPage() {
           into a structured memory layer with provenance, lineage, and
           operator-grade explainability.
         </p>
-        <div className="landing-values">
+        <CardGrid tone="accent" storageKey="landing-values" className="landing-values-wrap">
           <ValueCard
             icon={<Telescope size={16} />}
             title="What happened?"
@@ -295,7 +298,7 @@ export default function LandingPage() {
             title="What insights can be derived?"
             desc="Semantic and lexical search across the full evidence graph for deep investigations."
           />
-        </div>
+        </CardGrid>
       </section>
 
       <hr className="landing-divider" />
@@ -312,7 +315,7 @@ export default function LandingPage() {
           OpenTrust is built as a layered system: durable storage at the bottom,
           multi-modal retrieval in the middle, and OpenClaw integration at the top.
         </p>
-        <div className="landing-arch">
+        <CardGrid tone="neutral" storageKey="landing-arch" className="landing-arch-wrap">
           <div className="landing-arch-card landing-arch-card--store">
             <div className="landing-arch-card__num">Layer 1</div>
             <div className="landing-arch-card__title">Evidence Store</div>
@@ -358,7 +361,7 @@ export default function LandingPage() {
               <span className="landing-arch-tag">Plugin</span>
             </div>
           </div>
-        </div>
+        </CardGrid>
       </section>
 
       <hr className="landing-divider" />
@@ -375,7 +378,7 @@ export default function LandingPage() {
           From raw event capture to curated memory, OpenTrust provides
           a complete pipeline for agent traceability and memory management.
         </p>
-        <div className="landing-features">
+        <CardGrid tone="info" storageKey="landing-features" className="landing-features-wrap">
           <FeatureCard
             icon={<Telescope size={15} />}
             title="Session Ingestion"
@@ -416,7 +419,7 @@ export default function LandingPage() {
             title="Lineage Tracking"
             desc="Parent-child trace edges, tool-call/tool-result pairing, and artifact provenance."
           />
-        </div>
+        </CardGrid>
       </section>
 
       <hr className="landing-divider" />
@@ -434,7 +437,7 @@ export default function LandingPage() {
           lineage, explicit writeback, and operational health — all with stable
           envelopes safe for agent consumption.
         </p>
-        <div className="landing-api-grid">
+        <CardGrid tone="accent" storageKey="landing-api" className="landing-api-wrap">
           <ApiCard
             method="POST"
             methodTone="post"
@@ -475,7 +478,7 @@ export default function LandingPage() {
             highlights={healthHighlights}
             variant="health"
           />
-        </div>
+        </CardGrid>
       </section>
 
       <hr className="landing-divider" />
@@ -670,6 +673,7 @@ pnpm dev`} />
 
       <footer className="landing-footer">
         <div className="landing-footer__brand">
+          <img src={MOLTY_ICON} alt="Molty" className="landing-molty landing-molty--footer" />
           OpenTrust by OpenKnots
         </div>
         <div className="landing-footer__links">
@@ -701,8 +705,11 @@ pnpm dev`} />
 function ProofPill({ title, value }: { title: string; value: string }) {
   return (
     <div className="landing-proof-pill">
-      <span className="landing-proof-pill__title">{title}</span>
-      <span className="landing-proof-pill__value">{value}</span>
+      <img src={MOLTY_ICON} alt="Molty" className="landing-molty landing-molty--proof" />
+      <div className="landing-proof-pill__copy">
+        <span className="landing-proof-pill__title">{title}</span>
+        <span className="landing-proof-pill__value">{value}</span>
+      </div>
     </div>
   );
 }
@@ -710,8 +717,11 @@ function ProofPill({ title, value }: { title: string; value: string }) {
 function SignalChip({ label, value, tone }: { label: string; value: string; tone: "search" | "inspect" | "promote" | "health" }) {
   return (
     <div className={`landing-signal-chip landing-signal-chip--${tone}`}>
-      <span className="landing-signal-chip__label">{label}</span>
-      <span className="landing-signal-chip__value">{value}</span>
+      <img src={MOLTY_ICON} alt="Molty" className="landing-molty landing-molty--signal" />
+      <div className="landing-signal-chip__copy">
+        <span className="landing-signal-chip__label">{label}</span>
+        <span className="landing-signal-chip__value">{value}</span>
+      </div>
     </div>
   );
 }
@@ -738,6 +748,7 @@ function ApiCard({
   return (
     <BorderGlow className={`landing-api-card landing-api-card--${variant}`} active>
       <div className="landing-api-card__header">
+        <img src={MOLTY_ICON} alt="Molty" className="landing-molty landing-molty--api" />
         <span className={`landing-api-card__method landing-api-card__method--${methodTone}`}>{method}</span>
         <span className="landing-api-card__name">{name}</span>
         <span className="landing-api-card__desc">{desc}</span>

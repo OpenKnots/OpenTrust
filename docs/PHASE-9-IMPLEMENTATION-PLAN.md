@@ -307,6 +307,9 @@ overview/health integration
 ## Step 9
 memory-entry inspect/provenance UI depth
 
+## Step 10
+expand promotion surfaces beyond traces (artifacts, workflows, investigations when ready)
+
 ---
 
 # Recommended first PR scope

@@ -7,7 +7,6 @@ import {
   BarChart3,
   BookOpen,
   ChevronLeft,
-  ChevronRight,
   FileSearch,
   Layers3,
   Menu,
@@ -16,6 +15,7 @@ import {
   Workflow,
   X,
 } from "lucide-react";
+import { ThemeModeToggle } from "@/components/theme-toggle";
 
 const NAV_ITEMS = [
   { label: "Overview", href: "/dashboard", icon: BarChart3 },
@@ -80,20 +80,35 @@ export function Sidebar({ latestIngest }: { latestIngest?: string }) {
         className={`sidebar${collapsed ? " sidebar--collapsed" : ""}${mobileOpen ? " sidebar--mobile-open" : ""}`}
       >
         <div className="sidebar__header">
-          <Link href="/" className="sidebar__brand" aria-label="OpenTrust home">
-            <div className="sidebar__logo">
-              <Shield size={14} />
-            </div>
-            <span>OpenTrust</span>
-          </Link>
-          <button
-            type="button"
-            className="sidebar__toggle"
-            onClick={() => setCollapsed((c) => !c)}
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
-          </button>
+          {collapsed ? (
+            <button
+              type="button"
+              className="sidebar__brand"
+              onClick={() => setCollapsed(false)}
+              aria-label="Expand sidebar"
+            >
+              <div className="sidebar__logo">
+                <Shield size={14} />
+              </div>
+            </button>
+          ) : (
+            <>
+              <Link href="/" className="sidebar__brand" aria-label="OpenTrust home">
+                <div className="sidebar__logo">
+                  <Shield size={14} />
+                </div>
+                <span>OpenTrust</span>
+              </Link>
+              <button
+                type="button"
+                className="sidebar__toggle"
+                onClick={() => setCollapsed((c) => !c)}
+                aria-label="Collapse sidebar"
+              >
+                <ChevronLeft size={14} />
+              </button>
+            </>
+          )}
         </div>
 
         <nav className="sidebar__nav">
@@ -123,6 +138,11 @@ export function Sidebar({ latestIngest }: { latestIngest?: string }) {
             <span className={`sidebar__status-dot${latestIngest === "never" ? " sidebar__status-dot--stale" : ""}`} />
             <span>{latestIngest && latestIngest !== "never" ? `Ingested ${latestIngest}` : "No ingestion"}</span>
           </div>
+          {!collapsed && (
+            <div style={{ marginTop: 10 }}>
+              <ThemeModeToggle />
+            </div>
+          )}
         </div>
       </aside>
 

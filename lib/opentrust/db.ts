@@ -113,6 +113,7 @@ export function ensureMigrated() {
       summary TEXT,
       retention_class TEXT NOT NULL,
       review_status TEXT NOT NULL,
+      review_notes TEXT,
       confidence_score REAL,
       confidence_reason TEXT,
       uncertainty_summary TEXT,
@@ -144,4 +145,10 @@ export function ensureMigrated() {
     CREATE INDEX IF NOT EXISTS idx_memory_entries_retention_class ON memory_entries(retention_class);
     CREATE INDEX IF NOT EXISTS idx_memory_entries_updated_at ON memory_entries(updated_at DESC);
   `);
+
+  const memoryEntryColumns = queryJson<{ name: string }>("PRAGMA table_info(memory_entries);");
+  const hasReviewNotes = memoryEntryColumns.some((column) => column.name === "review_notes");
+  if (!hasReviewNotes) {
+    runSql("ALTER TABLE memory_entries ADD COLUMN review_notes TEXT;");
+  }
 }

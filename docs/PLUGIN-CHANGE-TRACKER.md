@@ -33,6 +33,11 @@ Update this whenever plugin-draft-related changes land in the OpenTrust repo.
 - [ ] define the exact minimum scope for the future `extensions/opentrust/` PR
 - [ ] draft the future OpenClaw PR checklist / rollout notes
 
+### Recent product progress
+- [x] trace promotion surface added
+- [x] artifact promotion surface added
+- [x] workflow promotion surface added
+
 ### Deferred until real promotion
 - [ ] move draft files into `openclaw/openclaw/extensions/opentrust/`
 - [ ] add real OpenClaw plugin registration tests in the main repo

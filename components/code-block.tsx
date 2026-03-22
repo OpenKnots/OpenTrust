@@ -48,11 +48,23 @@ export function CodeBlock({
   const [html, setHtml] = useState("");
   const [highlightedLines, setHighlightedLines] = useState<Map<number, number>>(new Map());
 
+  const [themeMode, setThemeMode] = useState<"dark" | "light">("dark");
+
+  useEffect(() => {
+    const check = () => {
+      setThemeMode(document.documentElement.dataset.themeMode === "light" ? "light" : "dark");
+    };
+    check();
+    const observer = new MutationObserver(check);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme-mode"] });
+    return () => observer.disconnect();
+  }, []);
+
   useEffect(() => {
     let cancelled = false;
     codeToHtml(code.trim(), {
       lang: language as BundledLanguage,
-      theme: "vitesse-dark",
+      theme: themeMode === "light" ? "vitesse-light" : "vitesse-dark",
     })
       .then((result) => {
         if (!cancelled) setHtml(result);
@@ -63,7 +75,7 @@ export function CodeBlock({
     return () => {
       cancelled = true;
     };
-  }, [code, language]);
+  }, [code, language, themeMode]);
 
   const cinematicHighlights = useMemo(() => {
     const next = new Map<number, CodeHighlight>();

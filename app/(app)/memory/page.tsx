@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { listMemoryEntries } from "@/lib/opentrust/memory-entries";
 import { formatRelativeTime } from "@/lib/opentrust/format";
+import { CardGrid } from "@/components/ui/card-grid";
 import { PageHeader } from "@/components/ui/page-header";
 import { Pill } from "@/components/ui/pill";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -64,7 +65,7 @@ export default async function MemoryPage({
       </div>
 
       {entries.length > 0 ? (
-        <div className="card-grid">
+        <CardGrid tone="info" storageKey="memory-list">
           {entries.map((entry) => (
             <Link key={entry.id} href={`/memory/${encodeURIComponent(entry.id)}`} className="artifact-card" style={{ textDecoration: "none" }}>
               <div className="artifact-card__kind" style={{ flexWrap: "wrap", gap: 8 }}>
@@ -91,7 +92,7 @@ export default async function MemoryPage({
               </div>
             </Link>
           ))}
-        </div>
+        </CardGrid>
       ) : (
         <EmptyState message="No curated memory entries yet." />
       )}
