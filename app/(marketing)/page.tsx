@@ -54,37 +54,31 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      <section className="landing-hero-split">
+      <section className="landing-hero-minimal">
         <MeshGradientBg
-          colors={["#0a0a0a", "#1a0808", "#0a0a1a", "#111111"]}
-          speed={0.3}
+          colors={["#0b0b0f", "#19090d", "#0b1020", "#111214"]}
+          speed={0.22}
           className="landing-shader landing-shader--hero"
         />
-        <div className="landing-hero-split__left">
-          <div className="landing-hero-split__badge">
-            OpenClaw Memory, Truthfully Extended
+
+        <div className="landing-hero-minimal__inner">
+          <div className="landing-hero-split__badge mx-auto w-fit justify-center">
+            OpenClaw memory, truthfully extended
           </div>
 
-          <h1 className="landing-hero-split__title">
-            OpenClaw already has memory. OpenTrust makes it operational.
+          <div className="landing-hero-minimal__kicker">
+            OpenClaw already has memory.
+          </div>
+
+          <h1 className="landing-hero-minimal__title">
+            OpenTrust turns it into a true memory layer.
           </h1>
 
-          <div className="landing-hero-points">
-            <div className="landing-hero-point">
-              <span className="landing-hero-point__label">Current source</span>
-              <span className="landing-hero-point__value"><code>MEMORY.md</code> + <code>memory/YYYY-MM-DD.md</code></span>
-            </div>
-            <div className="landing-hero-point">
-              <span className="landing-hero-point__label">What OpenTrust adds</span>
-              <span className="landing-hero-point__value">review, provenance, timelines, backups, and health</span>
-            </div>
-            <div className="landing-hero-point">
-              <span className="landing-hero-point__label">Why it matters</span>
-              <span className="landing-hero-point__value">daily summaries, meaningful moments, durable historical recall</span>
-            </div>
-          </div>
+          <p className="landing-hero-minimal__subtitle">
+            It starts from the memory OpenClaw already stores today in <code>MEMORY.md</code> and <code>memory/YYYY-MM-DD.md</code>, then adds structure, provenance, review, timelines, backups, and operator-grade recall.
+          </p>
 
-          <div className="landing-hero-split__actions">
+          <div className="landing-hero-minimal__actions">
             <Link href="/dashboard" className="landing-btn landing-btn--primary landing-btn--lg">
               Open Dashboard
               <ArrowRight size={18} />
@@ -94,24 +88,15 @@ export default function LandingPage() {
             </a>
           </div>
 
-          <div className="landing-hero-chip-grid">
-            <div className="landing-hero-chip-card">
-              <div className="landing-hero-chip-card__title">Current source</div>
-              <div className="landing-hero-chip-card__desc">Workspace Markdown</div>
-            </div>
-            <div className="landing-hero-chip-card">
-              <div className="landing-hero-chip-card__title">Plugin layer</div>
-              <div className="landing-hero-chip-card__desc">Review, provenance, timeline</div>
-            </div>
-            <div className="landing-hero-chip-card">
-              <div className="landing-hero-chip-card__title">Long-term value</div>
-              <div className="landing-hero-chip-card__desc">Summaries, backups, historical recall</div>
-            </div>
+          <div className="landing-hero-minimal__chips">
+            <span className="landing-hero-minimal__chip">Current source: workspace Markdown</span>
+            <span className="landing-hero-minimal__chip">Plugin layer: review, provenance, timeline</span>
+            <span className="landing-hero-minimal__chip">Long-term value: summaries, backups, historical recall</span>
           </div>
-        </div>
 
-        <div className="landing-hero-split__right">
-          <TransformationPreviewCard />
+          <div className="landing-hero-minimal__preview-wrap">
+            <TransformationPreviewCard />
+          </div>
         </div>
       </section>
 
@@ -436,54 +421,49 @@ function HealthVisual() {
 function TransformationPreviewCard() {
   return (
     <div className="transform-preview texture-diagonal">
-      <div className="transform-preview__header">
+      <div className="transform-preview__header transform-preview__header--compact">
         <div>
           <div className="transform-preview__eyebrow">Current → Plugin layer</div>
-          <div className="transform-preview__title">From authored Markdown to operational memory</div>
+          <div className="transform-preview__title">From authored memory to operational memory</div>
         </div>
-        <div className="transform-preview__pill">memory upgrade path</div>
+        <div className="transform-preview__pill">grounded in current OpenClaw</div>
       </div>
-      <div className="transform-preview__body">
-        <div className="transform-preview__column">
-          <div className="transform-preview__column-title">OpenClaw today</div>
-          <div className="transform-preview__stack">
-            <div className="transform-preview__file">
-              <div className="transform-preview__file-name">MEMORY.md</div>
-              <div className="transform-preview__file-meta">curated long-term memory</div>
-            </div>
-            <div className="transform-preview__file">
-              <div className="transform-preview__file-name">memory/2026-03-22.md</div>
-              <div className="transform-preview__file-meta">daily notes and short-term capture</div>
-            </div>
-            <div className="transform-preview__file">
-              <div className="transform-preview__file-name">memory_search</div>
-              <div className="transform-preview__file-meta">semantic recall over Markdown</div>
-            </div>
+
+      <div className="transform-preview__rail">
+        <div className="transform-preview__rail-stage">
+          <div className="transform-preview__rail-label">Current source</div>
+          <div className="transform-preview__rail-card">
+            <div className="transform-preview__file-name">MEMORY.md</div>
+            <div className="transform-preview__file-meta">curated long-term memory</div>
+          </div>
+          <div className="transform-preview__rail-card">
+            <div className="transform-preview__file-name">memory/YYYY-MM-DD.md</div>
+            <div className="transform-preview__file-meta">daily notes and short-term capture</div>
           </div>
         </div>
 
-        <div className="transform-preview__flow">
-          <div className="transform-preview__flow-label">ingest</div>
-          <div className="transform-preview__flow-line" />
-          <div className="transform-preview__flow-label">review</div>
-          <div className="transform-preview__flow-line" />
-          <div className="transform-preview__flow-label">back up</div>
+        <div className="transform-preview__rail-center">
+          <div className="transform-preview__arrow-pill">ingest</div>
+          <div className="transform-preview__arrow-line transform-preview__arrow-line--horizontal" />
+          <div className="transform-preview__arrow-pill">review</div>
+          <div className="transform-preview__arrow-line transform-preview__arrow-line--horizontal" />
+          <div className="transform-preview__arrow-pill">operate</div>
         </div>
 
-        <div className="transform-preview__column transform-preview__column--highlight">
-          <div className="transform-preview__column-title">OpenTrust plugin layer</div>
+        <div className="transform-preview__rail-stage transform-preview__rail-stage--accent">
+          <div className="transform-preview__rail-label">Plugin layer</div>
           <div className="transform-preview__memory-card">
             <div className="transform-preview__memory-top">
               <span className="transform-preview__badge transform-preview__badge--violet">approved</span>
               <span className="transform-preview__badge transform-preview__badge--sky">from daily note</span>
             </div>
-            <div className="transform-preview__memory-title">Deployment timing shift is now durable memory</div>
-            <div className="transform-preview__memory-desc">Provenance, review, retention, timeline placement, and export readiness all attached.</div>
+            <div className="transform-preview__memory-title">Durable memory with context attached</div>
+            <div className="transform-preview__memory-desc">Provenance, timeline placement, review state, backup readiness, and operator visibility.</div>
             <div className="transform-preview__memory-grid">
+              <div className="transform-preview__mini">provenance</div>
               <div className="transform-preview__mini">timeline</div>
-              <div className="transform-preview__mini">backup</div>
+              <div className="transform-preview__mini">backups</div>
               <div className="transform-preview__mini">health</div>
-              <div className="transform-preview__mini">CRM-ready</div>
             </div>
           </div>
         </div>
