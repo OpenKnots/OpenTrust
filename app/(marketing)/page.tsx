@@ -63,8 +63,8 @@ export default function LandingPage() {
 
       <section className="landing-hero-minimal">
         <MeshGradientBg
-          colors={["#050506", "#150305", "#0a0b0f", "#120608"]}
-          speed={0.2}
+          colors={["#000000", "#060812", "#080412", "#040608"]}
+          speed={0.15}
           className="landing-shader landing-shader--hero"
         />
 
@@ -95,9 +95,9 @@ export default function LandingPage() {
 
       <section className="landing-section landing-section--shader">
         <NeuroNoiseBg
-          colorBack="#0a0a0a"
-          colorMid="#150a0a"
-          colorFront="#201010"
+          colorBack="#000000"
+          colorMid="#080612"
+          colorFront="#0c0818"
           speed={0.2}
           className="landing-shader landing-shader--features"
         />
@@ -154,9 +154,9 @@ export default function LandingPage() {
 
       <section id="comparison" className="landing-section landing-section--shader">
         <NeuroNoiseBg
-          colorBack="#050507"
-          colorMid="#110508"
-          colorFront="#1c0a10"
+          colorBack="#000000"
+          colorMid="#060410"
+          colorFront="#0a0616"
           speed={0.12}
           className="landing-shader landing-shader--comparison"
         />
@@ -302,7 +302,7 @@ export default function LandingPage() {
 
       <section className="landing-section landing-cta-final landing-section--shader">
         <MeshGradientBg
-          colors={["#0a0a0a", "#180a0a", "#0a0a18", "#0f0f0f"]}
+          colors={["#000000", "#060412", "#040810", "#020204"]}
           speed={0.25}
           className="landing-shader landing-shader--cta"
         />
@@ -368,7 +368,7 @@ export default function LandingPage() {
 
         <div className="footer-bottom">
           <span>© 2026 OpenKnot. All rights reserved.</span>
-          <span>Threaded by <a href="https://openknot.ai" style={{ color: "rgba(255,255,255,0.5)" }}>OpenKnot</a></span>
+          <span>Threaded by <a href="https://openknot.ai" style={{ color: "rgba(255,255,255,0.35)" }}>OpenKnot</a></span>
         </div>
       </footer>
     </div>

@@ -3294,8 +3294,8 @@ mark {
   top: -8px;
   bottom: -8px;
   width: calc(100% + 24px);
-  background: linear-gradient(90deg, transparent, rgba(229, 57, 53, 0.05), transparent);
-  opacity: 0.6;
+  background: transparent;
+  opacity: 0;
   pointer-events: none;
   border-radius: 6px;
 }
@@ -4046,18 +4046,18 @@ mark {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: rgba(229, 57, 53, 0.15);
+  background: rgba(196,181,253,0.1);
   font-size: 1rem;
   font-weight: 700;
   font-family: var(--font-mono);
-  color: var(--accent);
+  color: rgba(196,181,253,0.7);
   margin-bottom: 20px;
 }
 
 .landing-step__title {
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--text);
+  color: rgba(255,255,255,0.9);
   margin-bottom: 8px;
 }
 
@@ -4065,7 +4065,7 @@ mark {
   font-size: 0.875rem;
   font-weight: 300;
   line-height: 1.6;
-  color: var(--text-secondary);
+  color: rgba(255,255,255,0.4);
 }
 
 /* ── Testimonial ── */
@@ -5006,7 +5006,7 @@ mark {
   position: absolute;
   inset: auto 0 0 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
   pointer-events: none;
 }
 
@@ -6613,10 +6613,9 @@ select:focus {
   position: relative;
   padding: 28px;
   border-radius: 34px;
-  border: 1px solid rgba(255,255,255,0.08);
-  background: linear-gradient(180deg, rgba(8,8,10,0.94), rgba(18,10,12,0.88));
-  box-shadow: 0 30px 80px rgba(0,0,0,0.32);
-  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.02);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.5);
 }
 
 .transform-preview__header {
