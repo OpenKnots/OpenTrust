@@ -1,94 +1,130 @@
 "use client";
 
-import { Sidebar, SidebarContent, SidebarRail } from "@/components/ui/sidebar";
+import * as React from "react";
 import {
-  BarChart3,
-  BookOpen,
-  FileSearch,
-  Layers3,
-  Rocket,
-  Telescope,
-  Workflow,
-  Zap,
-} from "lucide-react";
-import { NavCollapsible } from "@/components/sidebar-01/nav-collapsible";
-import { NavFooter } from "@/components/sidebar-01/nav-footer";
+  IconChartBar,
+  IconBook,
+  IconFileSearch,
+  IconApi,
+  IconHelp,
+  IconSearch,
+  IconSettings,
+  IconLayersLinked,
+  IconRocket,
+  IconTelescope,
+  IconTopologyStar3,
+} from "@tabler/icons-react";
+
+import { NavDocuments } from "@/components/sidebar-01/nav-documents";
 import { NavHeader } from "@/components/sidebar-01/nav-header";
 import { NavMain } from "@/components/sidebar-01/nav-main";
-import type { SidebarData } from "@/components/sidebar-01/types";
+import { NavSecondary } from "@/components/sidebar-01/nav-secondary";
+import { NavUser } from "@/components/sidebar-01/nav-user";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+} from "@/components/ui/sidebar";
 
-const data: SidebarData = {
-  navMain: [
-    {
-      id: "overview",
-      title: "Overview",
-      url: "/dashboard",
-      icon: BarChart3,
-    },
-    {
-      id: "traces",
-      title: "Traces",
-      url: "/traces",
-      icon: Telescope,
-      matchPrefix: true,
-    },
-    {
-      id: "workflows",
-      title: "Workflows",
-      url: "/workflows",
-      icon: Workflow,
-      matchPrefix: true,
-    },
-    {
-      id: "artifacts",
-      title: "Artifacts",
-      url: "/artifacts",
-      icon: Layers3,
-    },
-    {
-      id: "onboarding",
-      title: "Onboarding",
-      url: "/onboarding",
-      icon: Rocket,
-    },
-  ],
-  navCollapsible: {
-    memoryTools: [
-      {
-        id: "memory",
-        title: "Memory",
-        url: "/memory",
-        icon: BookOpen,
-      },
-      {
-        id: "investigations",
-        title: "Investigations",
-        url: "/investigations",
-        icon: FileSearch,
-      },
-      {
-        id: "api",
-        title: "API",
-        url: "/api-playground",
-        icon: Zap,
-      },
-    ],
+const navMainItems = [
+  {
+    title: "Overview",
+    url: "/dashboard",
+    icon: IconChartBar,
   },
+  {
+    title: "Traces",
+    url: "/traces",
+    icon: IconTelescope,
+    matchPrefix: true,
+  },
+  {
+    title: "Workflows",
+    url: "/workflows",
+    icon: IconTopologyStar3,
+    matchPrefix: true,
+  },
+  {
+    title: "Artifacts",
+    url: "/artifacts",
+    icon: IconLayersLinked,
+  },
+  {
+    title: "Onboarding",
+    url: "/onboarding",
+    icon: IconRocket,
+  },
+];
+
+const memoryToolItems = [
+  {
+    name: "Memory",
+    url: "/memory",
+    icon: IconBook,
+  },
+  {
+    name: "Investigations",
+    url: "/investigations",
+    icon: IconFileSearch,
+  },
+  {
+    name: "API",
+    url: "/api-playground",
+    icon: IconApi,
+  },
+];
+
+const navSecondaryItems = [
+  {
+    title: "Settings",
+    url: "#",
+    icon: IconSettings,
+  },
+  {
+    title: "Get Help",
+    url: "#",
+    icon: IconHelp,
+  },
+  {
+    title: "Search",
+    url: "#",
+    icon: IconSearch,
+  },
+];
+
+const user = {
+  name: "Operator",
+  avatar: "https://openclaw.ai/favicon.svg",
 };
 
 export function AppSidebar({
   latestIngest,
   ...props
 }: { latestIngest?: string } & React.ComponentProps<typeof Sidebar>) {
+  const handleSearchClick = React.useCallback(() => {
+    const event = new KeyboardEvent("keydown", {
+      key: "k",
+      metaKey: true,
+      bubbles: true,
+    });
+    document.dispatchEvent(event);
+  }, []);
+
+  const secondaryWithSearch = navSecondaryItems.map((item) =>
+    item.title === "Search" ? { ...item, onClick: handleSearchClick } : item
+  );
+
   return (
-    <Sidebar {...props}>
-      <NavHeader data={data} />
+    <Sidebar collapsible="icon" {...props}>
+      <NavHeader />
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavCollapsible memoryTools={data.navCollapsible.memoryTools} />
+        <NavMain items={navMainItems} onSearchClick={handleSearchClick} />
+        <NavDocuments items={memoryToolItems} />
+        <NavSecondary items={secondaryWithSearch} className="mt-auto" />
       </SidebarContent>
-      <NavFooter latestIngest={latestIngest} />
-      <SidebarRail />
+      <SidebarFooter>
+        <NavUser user={user} latestIngest={latestIngest} />
+      </SidebarFooter>
     </Sidebar>
   );
 }

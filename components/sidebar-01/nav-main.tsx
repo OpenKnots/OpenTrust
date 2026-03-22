@@ -2,9 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { IconCirclePlusFilled, IconSearch } from "@tabler/icons-react";
+
+import { Button } from "@/components/ui/button";
 import {
   SidebarGroup,
-  SidebarGroupLabel,
+  SidebarGroupContent,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -17,30 +20,53 @@ function isActive(pathname: string, item: NavItem) {
   return pathname === item.url;
 }
 
-export function NavMain({ items }: { items: NavItem[] }) {
+export function NavMain({
+  items,
+  onSearchClick,
+}: {
+  items: NavItem[];
+  onSearchClick?: () => void;
+}) {
   const pathname = usePathname();
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-      <SidebarMenu>
-        {items.map((item) => {
-          const Icon = item.icon;
-
-          return (
-            <SidebarMenuItem key={item.id}>
+      <SidebarGroupContent className="flex flex-col gap-2">
+        <SidebarMenu>
+          <SidebarMenuItem className="flex items-center gap-2">
+            <SidebarMenuButton
+              tooltip="New Ingestion"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear"
+            >
+              <IconCirclePlusFilled />
+              <span>New Ingestion</span>
+            </SidebarMenuButton>
+            <Button
+              size="icon"
+              className="size-8 group-data-[collapsible=icon]:opacity-0"
+              variant="outline"
+              onClick={onSearchClick}
+            >
+              <IconSearch />
+              <span className="sr-only">Search</span>
+            </Button>
+          </SidebarMenuItem>
+        </SidebarMenu>
+        <SidebarMenu>
+          {items.map((item) => (
+            <SidebarMenuItem key={item.title}>
               <SidebarMenuButton
                 tooltip={item.title}
                 render={<Link href={item.url} />}
                 isActive={isActive(pathname, item)}
               >
-                {Icon && <Icon />}
+                {item.icon && <item.icon />}
                 <span>{item.title}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
-          );
-        })}
-      </SidebarMenu>
+          ))}
+        </SidebarMenu>
+      </SidebarGroupContent>
     </SidebarGroup>
   );
 }

@@ -5,9 +5,8 @@ import { getIngestionStates } from "@/lib/opentrust/ingestion-state";
 import { formatRelativeTime } from "@/lib/opentrust/format";
 import { AppSidebar } from "@/components/app-sidebar";
 import { CommandPalette } from "@/components/command-palette";
-import { DemoModeBanner } from "@/components/demo-mode-banner";
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { Separator } from "@/components/ui/separator";
+import { SiteHeader } from "@/components/site-header";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export async function AppShell({ children }: { children: React.ReactNode }) {
   const demo = await isDemoMode();
@@ -32,14 +31,10 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
     <SidebarProvider>
       <AppSidebar latestIngest={latestIngest} />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-          <SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="mr-2 !h-4" />
-          {demo && <DemoModeBanner />}
-        </header>
-        <main className="flex-1">
-          <div className="app-content">{children}</div>
-        </main>
+        <SiteHeader demo={demo} />
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+          {children}
+        </div>
       </SidebarInset>
       <CommandPalette />
     </SidebarProvider>

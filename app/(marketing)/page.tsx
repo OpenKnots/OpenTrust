@@ -263,7 +263,7 @@ export default function LandingPage() {
           </div>
         </div>
         <div className="landing-cta-final__code">
-          <CodeBlock language="bash" code={INSTALL_CODE} />
+          <CodeBlock language="bash" code={INSTALL_CODE} filename="terminal" />
         </div>
       </section>
 
