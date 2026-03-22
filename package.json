@@ -4,7 +4,6 @@
   "private": true,
   "description": "Local-first OpenClaw traceability, workflows, and capability intelligence.",
   "scripts": {
-    "bdev": "next build && next dev",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -14,40 +13,28 @@
     "ingest:openclaw": "tsx scripts/ingest-openclaw.ts",
     "ingest:cron": "tsx scripts/ingest-cron.ts",
     "index:semantic": "tsx scripts/index-semantic.ts",
-    "secrets:check": "secretlint --secretlintrc .secretlintrc.json --secretlintignore .secretlintignore \"**/*\"",
+    "secrets:check": "secretlint --secretlintrc .secretlintrc.json \"**/*\"",
     "prepare": "husky"
   },
   "dependencies": {
-    "@base-ui/react": "^1.3.0",
     "@radix-ui/react-dialog": "^1.1.15",
-    "@tabler/icons-react": "^3.40.0",
     "better-sqlite3": "^12.8.0",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "cmdk": "^1.1.1",
     "lucide-react": "^0.511.0",
-    "motion": "^12.38.0",
     "next": "^16.2.1",
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "shadcn": "^4.1.0",
     "shiki": "^4.0.2",
-    "sqlite-vec": "^0.1.7",
-    "tailwind-merge": "^3.5.0",
-    "tw-animate-css": "^1.4.0"
+    "sqlite-vec": "^0.1.7"
   },
   "devDependencies": {
     "@secretlint/core": "^11.4.0",
     "@secretlint/secretlint-rule-preset-recommend": "^11.4.0",
-    "@tailwindcss/postcss": "^4.2.2",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^22.19.15",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "husky": "^9.1.7",
-    "postcss": "^8.5.8",
     "secretlint": "^11.4.0",
-    "tailwindcss": "^4.2.2",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }

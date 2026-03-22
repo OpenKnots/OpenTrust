@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getRecentArtifacts } from "@/lib/opentrust/artifacts";
 import { isDemoMode } from "@/lib/opentrust/demo";
 import { memoryPromote } from "@/lib/opentrust/memory-api";
+import { truncatePath } from "@/lib/opentrust/format";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PromoteButton } from "@/components/promote-button";
@@ -57,7 +58,7 @@ export default async function PromoteArtifactPage({
             <div key={artifact.id} className="list-item" style={{ cursor: "default" }}>
               <div className="list-item__content">
                 <span className="list-item__title">{artifact.title ?? artifact.id}</span>
-                <span className="list-item__subtitle">{artifact.kind} · {artifact.uri}</span>
+                <span className="list-item__subtitle">{artifact.kind} · {truncatePath(artifact.uri)}</span>
               </div>
               <div className="list-item__meta">
                 <PromoteButton

@@ -1,6 +1,4 @@
 import { ensureBootstrapped } from "@/lib/opentrust/bootstrap";
-import { isDemoMode } from "@/lib/opentrust/demo";
-import { getDemoSavedInvestigations, getDemoInvestigationTemplates } from "@/lib/opentrust/demo-data";
 import { formatRelativeTime } from "@/lib/opentrust/format";
 import {
   getInvestigationTemplates,
@@ -13,17 +11,14 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Pill } from "@/components/ui/pill";
 import { DataTable } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
-import { GlassCard } from "@/components/ui/glass-card";
-import { StatusBadge } from "@/components/ui/status-badge";
-import { CodeBlock } from "@/components/code-block";
+import { RunnableSqlBlock } from "@/components/runnable-sql";
 
 export const dynamic = "force-dynamic";
 
-export default async function InvestigationsPage() {
-  const demo = await isDemoMode();
-  if (!demo) ensureBootstrapped();
-  const investigations = demo ? getDemoSavedInvestigations() : getSavedInvestigations();
-  const templates = demo ? getDemoInvestigationTemplates() : getInvestigationTemplates();
+export default function InvestigationsPage() {
+  ensureBootstrapped();
+  const investigations = getSavedInvestigations();
+  const templates = getInvestigationTemplates();
 
   return (
     <>
@@ -36,31 +31,31 @@ export default async function InvestigationsPage() {
         ]}
       />
 
-      <GlassCard variant="raised" style={{ marginBottom: 24 }}>
-        <div className="section__header" style={{ marginBottom: 16 }}>
+      <div className="section">
+        <div className="section__header">
           <span className="section__title">Saved investigations</span>
           <span className="section__description">{investigations.length} saved item{investigations.length !== 1 ? "s" : ""}</span>
         </div>
 
         {investigations.length > 0 ? (
-        <div className="stack-list">
-          {investigations.map((investigation) => renderInvestigationCard(investigation, "saved", demo))}
-        </div>
+          <div className="stack-list">
+            {investigations.map((investigation) => renderInvestigationCard(investigation, "saved"))}
+          </div>
         ) : (
           <EmptyState message="No saved investigations yet." />
         )}
-      </GlassCard>
+      </div>
 
-      <GlassCard variant="raised">
-        <div className="section__header" style={{ marginBottom: 16 }}>
+      <div className="section">
+        <div className="section__header">
           <span className="section__title">Starter investigations</span>
           <span className="section__description">{templates.length} reusable example{templates.length !== 1 ? "s" : ""} shown without writing seeded records into the database</span>
         </div>
 
         <div className="stack-list">
-          {templates.map((template) => renderInvestigationCard(template, "starter", demo))}
+          {templates.map((template) => renderInvestigationCard(template, "starter"))}
         </div>
-      </GlassCard>
+      </div>
     </>
   );
 }
@@ -68,16 +63,15 @@ export default async function InvestigationsPage() {
 function renderInvestigationCard(
   investigation: SavedInvestigationRow | InvestigationTemplate,
   mode: "saved" | "starter",
-  demo = false,
 ) {
-  const previewRows = demo ? [] : previewInvestigationSql(investigation.sql_text, 5);
+  const previewRows = previewInvestigationSql(investigation.sql_text, 5);
   const columns = Object.keys(previewRows[0] ?? {});
 
   return (
     <details key={investigation.id} className="expandable">
       <summary>
         <span className="summary-row">
-          <StatusBadge label={mode} tone={mode === "saved" ? "accent" : "neutral"} />
+          <Pill label={mode} tone={mode === "saved" ? "accent" : "neutral"} />
           <span className="summary-row__title">{investigation.title}</span>
           <span className="summary-row__meta">
             {"updated_at" in investigation ? formatRelativeTime(investigation.updated_at) : "not persisted"}
@@ -101,7 +95,7 @@ function renderInvestigationCard(
         <details className="expandable">
           <summary>SQL</summary>
           <div className="expandable__content">
-            <CodeBlock code={investigation.sql_text} language="sql" />
+            <RunnableSqlBlock sql={investigation.sql_text} />
           </div>
         </details>
       </div>
