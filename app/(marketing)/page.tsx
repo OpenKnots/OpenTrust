@@ -19,6 +19,7 @@ import {
 import { BorderGlow } from "@/components/border-glow";
 import { CardGrid } from "@/components/ui/card-grid";
 import { CodeBlock, type CodeHighlight } from "@/components/code-block";
+import { GitHubStars } from "@/components/github-stars";
 
 const MOLTY_ICON = "https://openclaw.ai/favicon.svg";
 
@@ -137,10 +138,10 @@ const healthHighlights: CodeHighlight[] = [
 ];
 
 const pluginHighlights: CodeHighlight[] = [
-  { line: 1, variant: "plugin", start: 17, width: 42, label: "plugin entry" },
-  { line: 6, variant: "plugin", start: 8, width: 48, label: "tool registration" },
-  { line: 10, variant: "plugin", start: 8, width: 60, label: "route registration" },
-  { line: 11, variant: "plugin", start: 14, width: 56, label: "plugin route" },
+  { line: 1, variant: "plugin", start: 34, width: 28, label: "entry" },
+  { line: 6, variant: "plugin", start: 38, width: 26, label: "tools" },
+  { line: 10, variant: "plugin", start: 42, width: 24, label: "route" },
+  { line: 11, variant: "plugin", start: 70, width: 16, label: "path" },
 ];
 
 export default function LandingPage() {
