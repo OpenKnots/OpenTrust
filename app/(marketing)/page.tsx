@@ -5,17 +5,17 @@ import Link from "next/link";
 import {
   ArrowRight,
   Check,
-  ChevronRight,
   Database,
   FileSearch,
   GitBranch,
   HeartPulse,
   Layers3,
   Search,
+  ShieldCheck,
+  Sparkles,
   Telescope,
   Workflow,
   X,
-  Zap,
 } from "lucide-react";
 import { CodeBlock } from "@/components/code-block";
 import { MeshGradientBg, NeuroNoiseBg } from "@/components/shader-background";
@@ -39,7 +39,6 @@ pnpm dev`;
 export default function LandingPage() {
   return (
     <div className="landing">
-      {/* Nav */}
       <nav className="landing-nav">
         <div className="landing-nav__brand">
           <img src={MOLTY_ICON} alt="Molty" className="landing-nav__icon" />
@@ -47,7 +46,7 @@ export default function LandingPage() {
         </div>
         <div className="landing-nav__links">
           <a href="#features" className="landing-nav__link">Features</a>
-          <a href="#how-it-works" className="landing-nav__link">How it Works</a>
+          <a href="#architecture" className="landing-nav__link">Architecture</a>
           <a href="#comparison" className="landing-nav__link">Comparison</a>
           <Link href="/dashboard" className="landing-nav__cta">
             Open Dashboard
@@ -55,7 +54,6 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* Hero - Nexflow Split Layout */}
       <section className="landing-hero-split">
         <MeshGradientBg
           colors={["#0a0a0a", "#1a0808", "#0a0a1a", "#111111"]}
@@ -68,37 +66,55 @@ export default function LandingPage() {
           </div>
 
           <h1 className="landing-hero-split__title">
-            OpenClaw already has memory. OpenTrust turns it into a true memory layer.
+            OpenClaw already has memory. OpenTrust makes it operational.
           </h1>
 
-          <p className="landing-hero-split__subtitle">
-            Today, OpenClaw memory lives in workspace Markdown like <code>MEMORY.md</code> and <code>memory/YYYY-MM-DD.md</code>.
-            OpenTrust ingests that real source of truth, then adds structure, lineage, health, timelines, backups, and operator review.
-          </p>
+          <div className="landing-hero-points">
+            <div className="landing-hero-point">
+              <span className="landing-hero-point__label">Current source</span>
+              <span className="landing-hero-point__value"><code>MEMORY.md</code> + <code>memory/YYYY-MM-DD.md</code></span>
+            </div>
+            <div className="landing-hero-point">
+              <span className="landing-hero-point__label">What OpenTrust adds</span>
+              <span className="landing-hero-point__value">review, provenance, timelines, backups, and health</span>
+            </div>
+            <div className="landing-hero-point">
+              <span className="landing-hero-point__label">Why it matters</span>
+              <span className="landing-hero-point__value">daily summaries, meaningful moments, durable historical recall</span>
+            </div>
+          </div>
 
           <div className="landing-hero-split__actions">
             <Link href="/dashboard" className="landing-btn landing-btn--primary landing-btn--lg">
               Open Dashboard
               <ArrowRight size={18} />
             </Link>
-            <a href="#api" className="landing-btn landing-btn--lg">
-              Explore API
+            <a href="#comparison" className="landing-btn landing-btn--lg">
+              See Comparison
             </a>
           </div>
 
-          <div className="landing-hero-split__logos">
-            <span className="landing-hero-split__logo">Current source: workspace Markdown</span>
-            <span className="landing-hero-split__logo">Future shape: plugin-backed memory ops</span>
-            <span className="landing-hero-split__logo">Backups, summaries, and historical recall</span>
+          <div className="landing-hero-chip-grid">
+            <div className="landing-hero-chip-card">
+              <div className="landing-hero-chip-card__title">Current source</div>
+              <div className="landing-hero-chip-card__desc">Workspace Markdown</div>
+            </div>
+            <div className="landing-hero-chip-card">
+              <div className="landing-hero-chip-card__title">Plugin layer</div>
+              <div className="landing-hero-chip-card__desc">Review, provenance, timeline</div>
+            </div>
+            <div className="landing-hero-chip-card">
+              <div className="landing-hero-chip-card__title">Long-term value</div>
+              <div className="landing-hero-chip-card__desc">Summaries, backups, historical recall</div>
+            </div>
           </div>
         </div>
 
         <div className="landing-hero-split__right">
-          <ProductPreviewCard />
+          <TransformationPreviewCard />
         </div>
       </section>
 
-      {/* Feature Showcase */}
       <section className="landing-section landing-section--shader">
         <NeuroNoiseBg
           colorBack="#0a0a0a"
@@ -137,7 +153,6 @@ export default function LandingPage() {
 
       <hr className="landing-divider" />
 
-      {/* Features Grid */}
       <section id="features" className="landing-section">
         <div className="landing-section__eyebrow">Features</div>
         <h2 className="landing-section__title">
@@ -148,42 +163,17 @@ export default function LandingPage() {
         </p>
 
         <div className="landing-features">
-          <Feature
-            icon={<Database size={18} />}
-            title="Truthful Source Import"
-            desc="Import the real OpenClaw memory source today: MEMORY.md, memory/YYYY-MM-DD.md, and related workspace Markdown files."
-          />
-          <Feature
-            icon={<Workflow size={18} />}
-            title="Daily Summary Recommendations"
-            desc="Generate intelligent prompts and drafts for daily summaries, unresolved threads, and meaningful moments worth preserving."
-          />
-          <Feature
-            icon={<Search size={18} />}
-            title="Semantic + Exact Recall"
-            desc="Keep OpenClaw’s searchable memory feel while adding stronger structure, indexing, and operator review."
-          />
-          <Feature
-            icon={<FileSearch size={18} />}
-            title="Lineage Tracking"
-            desc="Connect long-term memory back to workspace files, traces, artifacts, workflows, and future writeback sources."
-          />
-          <Feature
-            icon={<Layers3 size={18} />}
-            title="Backup-Aware Storage"
-            desc="Recommend git-backed history, encrypted cloud backups, export bundles, and dual-store strategies for durable memory archives."
-          />
-          <Feature
-            icon={<GitBranch size={18} />}
-            title="CRM-Ready Scaffolding"
-            desc="Plan for relationship memory, contacts, interactions, and follow-up queues in docs first before runtime implementation."
-          />
+          <Feature icon={<Database size={18} />} title="Truthful Source Import" desc="Import the real OpenClaw memory source today: MEMORY.md, memory/YYYY-MM-DD.md, and related workspace Markdown files." />
+          <Feature icon={<Workflow size={18} />} title="Daily Summary Recommendations" desc="Generate intelligent prompts and drafts for daily summaries, unresolved threads, and meaningful moments worth preserving." />
+          <Feature icon={<Search size={18} />} title="Semantic + Exact Recall" desc="Keep OpenClaw’s searchable memory feel while adding stronger structure, indexing, and operator review." />
+          <Feature icon={<FileSearch size={18} />} title="Lineage Tracking" desc="Connect long-term memory back to workspace files, traces, artifacts, workflows, and future writeback sources." />
+          <Feature icon={<Layers3 size={18} />} title="Backup-Aware Storage" desc="Recommend git-backed history, encrypted cloud backups, export bundles, and dual-store strategies for durable memory archives." />
+          <Feature icon={<GitBranch size={18} />} title="CRM-Ready Scaffolding" desc="Plan for relationship memory, contacts, interactions, and follow-up queues in docs first before runtime implementation." />
         </div>
       </section>
 
       <hr className="landing-divider" />
 
-      {/* Comparison Table */}
       <section id="comparison" className="landing-section">
         <div className="landing-section__eyebrow">Comparison</div>
         <h2 className="landing-section__title">
@@ -212,7 +202,34 @@ export default function LandingPage() {
 
       <hr className="landing-divider" />
 
-      {/* How It Works */}
+      <section id="architecture" className="landing-section">
+        <div className="landing-section__eyebrow">Architecture</div>
+        <h2 className="landing-section__title">
+          A visual current-vs-plugin architecture diagram
+        </h2>
+        <p className="landing-section__desc">
+          OpenTrust should begin by respecting the memory system OpenClaw already uses today, then layer operational structure and user-facing capabilities on top.
+        </p>
+
+        <ArchitectureDiagram />
+      </section>
+
+      <hr className="landing-divider" />
+
+      <section className="landing-section">
+        <div className="landing-section__eyebrow">Storage Strategy</div>
+        <h2 className="landing-section__title">
+          Recommended storage strategy for durable memory
+        </h2>
+        <p className="landing-section__desc">
+          The strongest model is dual-store: keep authored Markdown as the human-readable truth, and let OpenTrust add structured storage, review, and export workflows around it.
+        </p>
+
+        <StorageStrategySection />
+      </section>
+
+      <hr className="landing-divider" />
+
       <section id="how-it-works" className="landing-section">
         <div className="landing-section__eyebrow">How it Works</div>
         <h2 className="landing-section__title">
@@ -223,32 +240,29 @@ export default function LandingPage() {
         </p>
 
         <div className="landing-steps">
-          <Step
-            num={1}
-            title="Read current memory"
-            desc="Import MEMORY.md, memory/YYYY-MM-DD.md, and optional session-memory snapshots from the OpenClaw workspace."
-          />
-          <Step
-            num={2}
-            title="Structure it"
-            desc="Persist those authored notes into a richer store with review state, provenance, retention, and timeline semantics."
-          />
-          <Step
-            num={3}
-            title="Recommend better capture"
-            desc="Suggest daily summaries, project memory, meaningful moments, backup flows, and long-term promotion opportunities."
-          />
-          <Step
-            num={4}
-            title="Operate it"
-            desc="Expose plugin-grade search, calendar/timeline, health, exports, and future relationship-memory scaffolding."
-          />
+          <Step num={1} title="Read current memory" desc="Import MEMORY.md, memory/YYYY-MM-DD.md, and optional session-memory snapshots from the OpenClaw workspace." />
+          <Step num={2} title="Structure it" desc="Persist those authored notes into a richer store with review state, provenance, retention, and timeline semantics." />
+          <Step num={3} title="Recommend better capture" desc="Suggest daily summaries, project memory, meaningful moments, backup flows, and long-term promotion opportunities." />
+          <Step num={4} title="Operate it" desc="Expose plugin-grade search, calendar/timeline, health, exports, and future relationship-memory scaffolding." />
         </div>
       </section>
 
       <hr className="landing-divider" />
 
-      {/* FAQ - Nexflow Split Layout */}
+      <section className="landing-section">
+        <div className="landing-section__eyebrow">Recommendations</div>
+        <h2 className="landing-section__title">
+          A daily summaries and meaningful moments recommendation mock
+        </h2>
+        <p className="landing-section__desc">
+          OpenTrust should not only store memory. It should intelligently suggest what deserves durable capture, when to summarize a day, and when a moment looks historically meaningful.
+        </p>
+
+        <RecommendationMockSection />
+      </section>
+
+      <hr className="landing-divider" />
+
       <section className="landing-section">
         <div className="landing-section__eyebrow">FAQs</div>
         <FAQSection />
@@ -256,7 +270,6 @@ export default function LandingPage() {
 
       <hr className="landing-divider" />
 
-      {/* Final CTA */}
       <section className="landing-section landing-cta-final landing-section--shader">
         <MeshGradientBg
           colors={["#0a0a0a", "#180a0a", "#0a0a18", "#0f0f0f"]}
@@ -282,7 +295,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Footer - Nexflow 4-Column Layout */}
       <footer>
         <div className="footer-grid">
           <div className="footer-col">
@@ -298,15 +310,9 @@ export default function LandingPage() {
           <div className="footer-col">
             <div className="footer-col__title">Social</div>
             <div className="footer-col__links">
-              <a href="https://github.com/OpenKnots/OpenTrust" target="_blank" rel="noopener noreferrer" className="footer-col__link">
-                GitHub
-              </a>
-              <a href="https://x.com/OpenKnot" target="_blank" rel="noopener noreferrer" className="footer-col__link">
-                Twitter
-              </a>
-              <a href="https://discord.gg/openknot" target="_blank" rel="noopener noreferrer" className="footer-col__link">
-                Discord
-              </a>
+              <a href="https://github.com/OpenKnots/OpenTrust" target="_blank" rel="noopener noreferrer" className="footer-col__link">GitHub</a>
+              <a href="https://x.com/OpenKnot" target="_blank" rel="noopener noreferrer" className="footer-col__link">Twitter</a>
+              <a href="https://discord.gg/openknot" target="_blank" rel="noopener noreferrer" className="footer-col__link">Discord</a>
             </div>
           </div>
 
@@ -315,7 +321,7 @@ export default function LandingPage() {
             <div className="footer-col__links">
               <Link href="/dashboard" className="footer-col__link">Dashboard</Link>
               <a href="#features" className="footer-col__link">Features</a>
-              <a href="#how-it-works" className="footer-col__link">How it Works</a>
+              <a href="#architecture" className="footer-col__link">Architecture</a>
               <a href="#comparison" className="footer-col__link">Comparison</a>
             </div>
           </div>
@@ -323,15 +329,9 @@ export default function LandingPage() {
           <div className="footer-col">
             <div className="footer-col__title">Information</div>
             <div className="footer-col__links">
-              <a href="https://docs.openclaw.ai/plugins" target="_blank" rel="noopener noreferrer" className="footer-col__link">
-                Documentation
-              </a>
-              <a href="https://github.com/OpenKnots/OpenTrust#readme" target="_blank" rel="noopener noreferrer" className="footer-col__link">
-                README
-              </a>
-              <a href="https://github.com/OpenKnots/OpenTrust/issues" target="_blank" rel="noopener noreferrer" className="footer-col__link">
-                Support
-              </a>
+              <a href="https://docs.openclaw.ai/plugins" target="_blank" rel="noopener noreferrer" className="footer-col__link">Documentation</a>
+              <a href="https://github.com/OpenKnots/OpenTrust#readme" target="_blank" rel="noopener noreferrer" className="footer-col__link">README</a>
+              <a href="https://github.com/OpenKnots/OpenTrust/issues" target="_blank" rel="noopener noreferrer" className="footer-col__link">Support</a>
             </div>
           </div>
         </div>
@@ -345,21 +345,7 @@ export default function LandingPage() {
   );
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
-// Components
-// ──────────────────────────────────────────────────────────────────────────────
-
-function FeatureShowcase({
-  label,
-  title,
-  description,
-  visual,
-}: {
-  label: string;
-  title: string;
-  description: string;
-  visual: React.ReactNode;
-}) {
+function FeatureShowcase({ label, title, description, visual }: { label: string; title: string; description: string; visual: React.ReactNode }) {
   return (
     <div className="landing-showcase__card">
       <div className="landing-showcase__visual">{visual}</div>
@@ -409,25 +395,12 @@ function Step({ num, title, desc }: { num: number; title: string; desc: string }
   );
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
-// Visuals (simplified mockups)
-// ──────────────────────────────────────────────────────────────────────────────
-
 function TraceVisual() {
   return (
     <div className="visual-trace">
-      <div className="visual-trace__item">
-        <div className="visual-trace__dot" />
-        <div className="visual-trace__label">session_abc_123</div>
-      </div>
-      <div className="visual-trace__item">
-        <div className="visual-trace__dot" />
-        <div className="visual-trace__label">trace_deployment_xyz</div>
-      </div>
-      <div className="visual-trace__item">
-        <div className="visual-trace__dot" />
-        <div className="visual-trace__label">artifact_config.json</div>
-      </div>
+      <div className="visual-trace__item"><div className="visual-trace__dot" /><div className="visual-trace__label">MEMORY.md</div></div>
+      <div className="visual-trace__item"><div className="visual-trace__dot" /><div className="visual-trace__label">memory/2026-03-22.md</div></div>
+      <div className="visual-trace__item"><div className="visual-trace__dot" /><div className="visual-trace__label">memory/session-reset.md</div></div>
     </div>
   );
 }
@@ -436,8 +409,8 @@ function MemoryVisual() {
   return (
     <div className="visual-memory">
       <div className="visual-memory__badge">3 pending review</div>
-      <div className="visual-memory__entry">Queue backlog regression</div>
-      <div className="visual-memory__entry">Deployment timing shift</div>
+      <div className="visual-memory__entry">Approved: deployment timing shift</div>
+      <div className="visual-memory__entry">Draft: meaningful milestone recap</div>
     </div>
   );
 }
@@ -445,10 +418,8 @@ function MemoryVisual() {
 function RetrievalVisual() {
   return (
     <div className="visual-retrieval">
-      <div className="visual-retrieval__bar">
-        <div className="visual-retrieval__fill" style={{ width: "94%" }} />
-      </div>
-      <div className="visual-retrieval__label">94% confidence</div>
+      <div className="visual-retrieval__bar"><div className="visual-retrieval__fill" style={{ width: "94%" }} /></div>
+      <div className="visual-retrieval__label">Generate Daily Summary</div>
     </div>
   );
 }
@@ -456,114 +427,209 @@ function RetrievalVisual() {
 function HealthVisual() {
   return (
     <div className="visual-health">
-      <div className="visual-health__status">
-        <div className="visual-health__dot" />
-        <span>All pipelines healthy</span>
-      </div>
-      <div className="visual-health__metric">Last ingest: 1h ago</div>
+      <div className="visual-health__status"><div className="visual-health__dot" /><span>Source memory synced</span></div>
+      <div className="visual-health__metric">Backup strategy: dual-store active</div>
     </div>
   );
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
-// Nexflow-Inspired Components
-// ──────────────────────────────────────────────────────────────────────────────
-
-function ProductPreviewCard() {
+function TransformationPreviewCard() {
   return (
-    <div className="product-preview texture-diagonal">
-      <div className="product-preview__breadcrumb">
-        <span>OpenTrust</span>
-        <span className="product-preview__breadcrumb-sep">/</span>
-        <span>Memory</span>
-        <span className="product-preview__breadcrumb-sep">/</span>
-        <span>Evidence</span>
+    <div className="transform-preview texture-diagonal">
+      <div className="transform-preview__header">
+        <div>
+          <div className="transform-preview__eyebrow">Current → Plugin layer</div>
+          <div className="transform-preview__title">From authored Markdown to operational memory</div>
+        </div>
+        <div className="transform-preview__pill">memory upgrade path</div>
       </div>
+      <div className="transform-preview__body">
+        <div className="transform-preview__column">
+          <div className="transform-preview__column-title">OpenClaw today</div>
+          <div className="transform-preview__stack">
+            <div className="transform-preview__file">
+              <div className="transform-preview__file-name">MEMORY.md</div>
+              <div className="transform-preview__file-meta">curated long-term memory</div>
+            </div>
+            <div className="transform-preview__file">
+              <div className="transform-preview__file-name">memory/2026-03-22.md</div>
+              <div className="transform-preview__file-meta">daily notes and short-term capture</div>
+            </div>
+            <div className="transform-preview__file">
+              <div className="transform-preview__file-name">memory_search</div>
+              <div className="transform-preview__file-meta">semantic recall over Markdown</div>
+            </div>
+          </div>
+        </div>
 
-      <div className="product-preview__tabs">
-        <div className="product-preview__tab product-preview__tab--active">
-          Traces <span style={{ opacity: 0.5 }}>12</span>
+        <div className="transform-preview__flow">
+          <div className="transform-preview__flow-label">ingest</div>
+          <div className="transform-preview__flow-line" />
+          <div className="transform-preview__flow-label">review</div>
+          <div className="transform-preview__flow-line" />
+          <div className="transform-preview__flow-label">back up</div>
         </div>
-        <div className="product-preview__tab">
-          Memory <span style={{ opacity: 0.5 }}>8</span>
-        </div>
-        <div className="product-preview__tab">Health</div>
-        <div className="product-preview__tab">API</div>
-      </div>
 
-      <div className="product-preview__table-row">
-        <div className="product-preview__status-badge product-preview__status-badge--completed">
-          Completed
+        <div className="transform-preview__column transform-preview__column--highlight">
+          <div className="transform-preview__column-title">OpenTrust plugin layer</div>
+          <div className="transform-preview__memory-card">
+            <div className="transform-preview__memory-top">
+              <span className="transform-preview__badge transform-preview__badge--violet">approved</span>
+              <span className="transform-preview__badge transform-preview__badge--sky">from daily note</span>
+            </div>
+            <div className="transform-preview__memory-title">Deployment timing shift is now durable memory</div>
+            <div className="transform-preview__memory-desc">Provenance, review, retention, timeline placement, and export readiness all attached.</div>
+            <div className="transform-preview__memory-grid">
+              <div className="transform-preview__mini">timeline</div>
+              <div className="transform-preview__mini">backup</div>
+              <div className="transform-preview__mini">health</div>
+              <div className="transform-preview__mini">CRM-ready</div>
+            </div>
+          </div>
         </div>
-        <div className="product-preview__name">session_deploy_prod_v2</div>
-        <div className="product-preview__progress">
-          <div className="product-preview__progress-dot product-preview__progress-dot--active" />
-          <div className="product-preview__progress-line" />
-          <div className="product-preview__progress-dot product-preview__progress-dot--active" />
-          <div className="product-preview__progress-line" />
-          <div className="product-preview__progress-dot product-preview__progress-dot--active" />
-        </div>
-        <div className="product-preview__meta">operator</div>
-        <div className="product-preview__meta">2m 14s</div>
-      </div>
-
-      <div className="product-preview__table-row">
-        <div className="product-preview__status-badge product-preview__status-badge--running">
-          Running
-        </div>
-        <div className="product-preview__name">workflow_memory_sync</div>
-        <div className="product-preview__progress">
-          <div className="product-preview__progress-dot product-preview__progress-dot--active" />
-          <div className="product-preview__progress-line" />
-          <div className="product-preview__progress-dot product-preview__progress-dot--active" />
-          <div className="product-preview__progress-line" />
-          <div className="product-preview__progress-dot" />
-        </div>
-        <div className="product-preview__meta">system</div>
-        <div className="product-preview__meta">1m 32s</div>
-      </div>
-
-      <div className="product-preview__table-row">
-        <div className="product-preview__status-badge product-preview__status-badge--completed">
-          Completed
-        </div>
-        <div className="product-preview__name">trace_config_validation</div>
-        <div className="product-preview__progress">
-          <div className="product-preview__progress-dot product-preview__progress-dot--active" />
-          <div className="product-preview__progress-line" />
-          <div className="product-preview__progress-dot product-preview__progress-dot--active" />
-          <div className="product-preview__progress-line" />
-          <div className="product-preview__progress-dot product-preview__progress-dot--active" />
-        </div>
-        <div className="product-preview__meta">agent</div>
-        <div className="product-preview__meta">45s</div>
-      </div>
-
-      <div className="product-preview__table-row">
-        <div className="product-preview__status-badge product-preview__status-badge--failed">
-          Failed
-        </div>
-        <div className="product-preview__name">artifact_ingestion_retry</div>
-        <div className="product-preview__progress">
-          <div className="product-preview__progress-dot product-preview__progress-dot--active" />
-          <div className="product-preview__progress-line" />
-          <div className="product-preview__progress-dot" />
-          <div className="product-preview__progress-line" />
-          <div className="product-preview__progress-dot" />
-        </div>
-        <div className="product-preview__meta">system</div>
-        <div className="product-preview__meta">—</div>
       </div>
     </div>
   );
 }
 
+function ArchitectureDiagram() {
+  return (
+    <div className="landing-architecture-grid">
+      <div className="landing-arch-stage">
+        <div className="landing-arch-stage__label">1. Authored memory</div>
+        <div className="landing-arch-stage__title">Workspace Markdown</div>
+        <div className="landing-arch-stage__list">
+          <div className="landing-arch-node">MEMORY.md</div>
+          <div className="landing-arch-node">memory/YYYY-MM-DD.md</div>
+          <div className="landing-arch-node">session-memory snapshots</div>
+        </div>
+      </div>
+      <div className="landing-arch-arrow">→</div>
+      <div className="landing-arch-stage">
+        <div className="landing-arch-stage__label">2. Search / import</div>
+        <div className="landing-arch-stage__title">Current OpenClaw recall + OpenTrust ingest</div>
+        <div className="landing-arch-stage__list">
+          <div className="landing-arch-node">memory_search index</div>
+          <div className="landing-arch-node">source parsing</div>
+          <div className="landing-arch-node">provenance capture</div>
+        </div>
+      </div>
+      <div className="landing-arch-arrow">→</div>
+      <div className="landing-arch-stage landing-arch-stage--highlight">
+        <div className="landing-arch-stage__label">3. Plugin memory ops</div>
+        <div className="landing-arch-stage__title">Operational memory layer</div>
+        <div className="landing-arch-stage__list">
+          <div className="landing-arch-node">review queue</div>
+          <div className="landing-arch-node">timeline + calendar</div>
+          <div className="landing-arch-node">health + backups + recommendations</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StorageStrategySection() {
+  return (
+    <div className="landing-strategy-grid">
+      <div className="landing-strategy-card">
+        <div className="landing-strategy-card__eyebrow">Recommended default</div>
+        <div className="landing-strategy-card__title">Dual-store strategy</div>
+        <p className="landing-strategy-card__desc">Keep Markdown as human-readable truth and let OpenTrust provide structured operational views, review, export, and historical recall.</p>
+        <ul className="landing-strategy-list">
+          <li>Workspace Markdown remains authored source</li>
+          <li>OpenTrust SQLite stores structured operational state</li>
+          <li>Weekly export bundles protect the structured layer</li>
+        </ul>
+      </div>
+      <div className="landing-strategy-card">
+        <div className="landing-strategy-card__eyebrow">Backup options</div>
+        <div className="landing-strategy-card__title">Layered durability</div>
+        <p className="landing-strategy-card__desc">Different users need different backup depth. OpenTrust should recommend practical presets instead of pretending one storage style fits everyone.</p>
+        <ul className="landing-strategy-list">
+          <li>Private git archive for diffable Markdown history</li>
+          <li>Encrypted cloud sync for off-machine backup</li>
+          <li>Periodic JSONL / SQLite / ZIP export bundles</li>
+        </ul>
+      </div>
+      <div className="landing-strategy-card">
+        <div className="landing-strategy-card__eyebrow">What to keep</div>
+        <div className="landing-strategy-card__title">Store more than work notes</div>
+        <p className="landing-strategy-card__desc">The strongest memory system preserves work continuity and life continuity together.</p>
+        <ul className="landing-strategy-list">
+          <li>Daily summaries</li>
+          <li>Project memory</li>
+          <li>Meaningful moments and milestones</li>
+          <li>Relationship / contact memory</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function RecommendationMockSection() {
+  return (
+    <div className="landing-rec-grid">
+      <div className="landing-rec-shell">
+        <div className="landing-rec-shell__header">
+          <div>
+            <div className="landing-rec-shell__eyebrow">Recommendation center</div>
+            <div className="landing-rec-shell__title">What should be remembered today?</div>
+          </div>
+          <div className="landing-rec-shell__badge">dynamic suggestions</div>
+        </div>
+        <div className="landing-rec-list">
+          <div className="landing-rec-item landing-rec-item--primary">
+            <div className="landing-rec-item__icon"><Workflow size={16} /></div>
+            <div className="landing-rec-item__body">
+              <div className="landing-rec-item__title">Generate today’s daily summary</div>
+              <div className="landing-rec-item__desc">14 traces, 3 promoted memories, and 2 unresolved investigations suggest enough activity for a durable daily recap.</div>
+            </div>
+            <div className="landing-rec-item__action">Draft summary</div>
+          </div>
+          <div className="landing-rec-item">
+            <div className="landing-rec-item__icon"><Sparkles size={16} /></div>
+            <div className="landing-rec-item__body">
+              <div className="landing-rec-item__title">This looks like a meaningful moment</div>
+              <div className="landing-rec-item__desc">A milestone-sized event appears across multiple notes. Save it to long-term memory or life log?</div>
+            </div>
+            <div className="landing-rec-item__action">Promote moment</div>
+          </div>
+          <div className="landing-rec-item">
+            <div className="landing-rec-item__icon"><HeartPulse size={16} /></div>
+            <div className="landing-rec-item__body">
+              <div className="landing-rec-item__title">No backup snapshot this week</div>
+              <div className="landing-rec-item__desc">Recommend exporting a weekly bundle so authored Markdown and structured memory stay recoverable together.</div>
+            </div>
+            <div className="landing-rec-item__action">Create export</div>
+          </div>
+        </div>
+      </div>
+      <div className="landing-rec-side">
+        <div className="landing-rec-side__card">
+          <div className="landing-rec-side__label">Meaningful memory types</div>
+          <div className="landing-rec-side__chips">
+            <span>daily summary</span>
+            <span>project update</span>
+            <span>important person</span>
+            <span>milestone</span>
+            <span>preference</span>
+            <span>follow-up</span>
+          </div>
+        </div>
+        <div className="landing-rec-side__card">
+          <div className="landing-rec-side__label">Future CRM direction</div>
+          <p>Docs-only for now: people, interactions, relationship memory, and follow-up queues with explicit privacy guardrails.</p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function FAQSection() {
   return (
     <div className="faq-grid">
       <div>
-        <h2 className="faq-left__title">Got questions? We've got answers.</h2>
+        <h2 className="faq-left__title">Got questions? We’ve got answers.</h2>
         <p className="faq-left__subtitle">
           Still have questions? Contact us at support@openknot.ai
         </p>
@@ -573,36 +639,12 @@ function FAQSection() {
       </div>
 
       <div className="faq-accordion">
-        <FAQItem
-          number="01"
-          question="Where is memory stored in OpenClaw today?"
-          answer="Today, OpenClaw memory is primarily stored as Markdown in the workspace: MEMORY.md for curated long-term memory and memory/YYYY-MM-DD.md for daily notes. Optional hook-generated memory snapshots also land under memory/. That workspace content is the right initial source for OpenTrust ingestion."
-        />
-        <FAQItem
-          number="02"
-          question="Does OpenClaw already have memory without OpenTrust?"
-          answer="Yes. OpenClaw already has a real memory model today. Agents read and write workspace memory files, and memory_search indexes those Markdown files for semantic recall. OpenTrust should extend that system, not pretend it doesn’t exist."
-        />
-        <FAQItem
-          number="03"
-          question="What does the OpenTrust plugin add?"
-          answer="OpenTrust adds structured storage, provenance, review workflows, timeline/calendar views, health surfaces, export and backup strategy, and richer operator tooling on top of the existing authored memory source."
-        />
-        <FAQItem
-          number="04"
-          question="What should users store besides daily notes?"
-          answer="The strongest recommendations are daily summaries, long-term profile memory, project memory, meaningful life moments, and relationship/contact memory. These categories help preserve both operational continuity and personal continuity."
-        />
-        <FAQItem
-          number="05"
-          question="How should users back up their memory?"
-          answer="Recommended options include a private git-backed archive, encrypted cloud folder sync, periodic export bundles, or a dual-store strategy where Markdown remains human-readable truth and OpenTrust SQLite provides structured operational views."
-        />
-        <FAQItem
-          number="06"
-          question="Is CRM support built yet?"
-          answer="Not in runtime yet. For now, CRM-style relationship memory is docs-only scaffolding so the product can define people, interactions, follow-ups, and guardrails before implementing anything sensitive."
-        />
+        <FAQItem number="01" question="Where is memory stored in OpenClaw today?" answer="Today, OpenClaw memory is primarily stored as Markdown in the workspace: MEMORY.md for curated long-term memory and memory/YYYY-MM-DD.md for daily notes. Optional hook-generated memory snapshots also land under memory/. That workspace content is the right initial source for OpenTrust ingestion." />
+        <FAQItem number="02" question="Does OpenClaw already have memory without OpenTrust?" answer="Yes. OpenClaw already has a real memory model today. Agents read and write workspace memory files, and memory_search indexes those Markdown files for semantic recall. OpenTrust should extend that system, not pretend it doesn’t exist." />
+        <FAQItem number="03" question="What does the OpenTrust plugin add?" answer="OpenTrust adds structured storage, provenance, review workflows, timeline/calendar views, health surfaces, export and backup strategy, and richer operator tooling on top of the existing authored memory source." />
+        <FAQItem number="04" question="What should users store besides daily notes?" answer="The strongest recommendations are daily summaries, long-term profile memory, project memory, meaningful life moments, and relationship/contact memory. These categories help preserve both operational continuity and personal continuity." />
+        <FAQItem number="05" question="How should users back up their memory?" answer="Recommended options include a private git-backed archive, encrypted cloud folder sync, periodic export bundles, or a dual-store strategy where Markdown remains human-readable truth and OpenTrust SQLite provides structured operational views." />
+        <FAQItem number="06" question="Is CRM support built yet?" answer="Not in runtime yet. For now, CRM-style relationship memory is docs-only scaffolding so the product can define people, interactions, follow-ups, and guardrails before implementing anything sensitive." />
       </div>
     </div>
   );
@@ -613,20 +655,12 @@ function FAQItem({ number, question, answer }: { number: string; question: strin
 
   return (
     <div className={`faq-item ${isOpen ? "faq-item--open" : ""}`}>
-      <button
-        className="faq-item__trigger"
-        onClick={() => setIsOpen(!isOpen)}
-        aria-expanded={isOpen}
-      >
+      <button className="faq-item__trigger" onClick={() => setIsOpen(!isOpen)} aria-expanded={isOpen}>
         <span className="faq-item__number">{number}</span>
         <span className="faq-item__question">{question}</span>
         <X size={20} className="faq-item__icon" />
       </button>
-      {isOpen && (
-        <div className="faq-item__answer">
-          {answer}
-        </div>
-      )}
+      {isOpen && <div className="faq-item__answer">{answer}</div>}
     </div>
   );
 }
