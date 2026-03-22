@@ -6,6 +6,7 @@ import {
   BookOpen,
   FileSearch,
   Layers3,
+  Rocket,
   Telescope,
   Workflow,
   Zap,
@@ -43,6 +44,12 @@ const data: SidebarData = {
       title: "Artifacts",
       url: "/artifacts",
       icon: Layers3,
+    },
+    {
+      id: "onboarding",
+      title: "Onboarding",
+      url: "/onboarding",
+      icon: Rocket,
     },
   ],
   navCollapsible: {
