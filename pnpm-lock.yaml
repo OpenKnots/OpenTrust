@@ -126,6 +126,9 @@ importers:
       shadcn:
         specifier: ^4.1.0
         version: 4.1.0(@types/node@22.19.15)(typescript@5.9.3)
+      sharp:
+        specifier: ^0.34.5
+        version: 0.34.5
       tailwindcss:
         specifier: ^4.2.2
         version: 4.2.2
@@ -4502,8 +4505,7 @@ snapshots:
     dependencies:
       hono: 4.12.8
 
-  '@img/colour@1.1.0':
-    optional: true
+  '@img/colour@1.1.0': {}
 
   '@img/sharp-darwin-arm64@0.34.5':
     optionalDependencies:
@@ -7534,7 +7536,6 @@ snapshots:
       '@img/sharp-win32-arm64': 0.34.5
       '@img/sharp-win32-ia32': 0.34.5
       '@img/sharp-win32-x64': 0.34.5
-    optional: true
 
   shebang-command@2.0.0:
     dependencies:
