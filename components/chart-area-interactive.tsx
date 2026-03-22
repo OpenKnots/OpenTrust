@@ -130,11 +130,11 @@ const chartConfig = {
   },
   traces: {
     label: "Traces",
-    color: "var(--primary)",
+    color: "var(--brand)",
   },
   workflows: {
     label: "Workflows",
-    color: "var(--primary)",
+    color: "color-mix(in srgb, var(--brand) 55%, #ff9800)",
   },
 } satisfies ChartConfig;
 
@@ -213,24 +213,24 @@ export function ChartAreaInteractive() {
                 <stop
                   offset="5%"
                   stopColor="var(--color-traces)"
-                  stopOpacity={1.0}
+                  stopOpacity={0.8}
                 />
                 <stop
                   offset="95%"
                   stopColor="var(--color-traces)"
-                  stopOpacity={0.1}
+                  stopOpacity={0.05}
                 />
               </linearGradient>
               <linearGradient id="fillWorkflows" x1="0" y1="0" x2="0" y2="1">
                 <stop
                   offset="5%"
                   stopColor="var(--color-workflows)"
-                  stopOpacity={0.4}
+                  stopOpacity={0.5}
                 />
                 <stop
                   offset="95%"
                   stopColor="var(--color-workflows)"
-                  stopOpacity={0.1}
+                  stopOpacity={0.05}
                 />
               </linearGradient>
             </defs>

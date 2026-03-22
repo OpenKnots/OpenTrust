@@ -143,12 +143,12 @@ export default async function MemoryDetailPage({ params }: { params: Promise<{ i
   return (
     <>
       <PageHeader
-        title={entry.title}
-        subtitle={entry.summary ?? "Curated memory entry with provenance and review metadata."}
+        title={<PiiSafe>{entry.title}</PiiSafe>}
+        subtitle={<PiiSafe>{entry.summary ?? "Curated memory entry with provenance and review metadata."}</PiiSafe>}
         breadcrumbs={[
           { label: "Overview", href: "/" },
           { label: "Memory", href: "/memory" },
-          { label: entry.title },
+          { label: <PiiSafe>{entry.title}</PiiSafe> },
         ]}
         actions={
           <Link className="btn btn--ghost" href="/memory/review">

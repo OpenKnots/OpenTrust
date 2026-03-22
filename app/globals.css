@@ -193,7 +193,8 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
+  letter-spacing: 0.02em;
   color: var(--text-muted);
   margin-bottom: 8px;
 }
@@ -292,48 +293,49 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 2px 10px;
-  border-radius: 12px;
-  font-size: 0.6875rem;
-  font-weight: 400;
-  letter-spacing: 0.01em;
+  padding: 1px 8px;
+  border-radius: 6px;
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   white-space: nowrap;
 }
 
 .pill--neutral {
   color: var(--text-secondary);
   background: transparent;
-  border: 0.5px solid var(--border);
+  border: 1px solid var(--border);
 }
 
 .pill--accent {
   color: var(--accent);
   background: transparent;
-  border: 0.5px solid var(--accent-border);
+  border: 1px solid var(--accent-border);
 }
 
 .pill--success {
   color: var(--success);
   background: transparent;
-  border: 0.5px solid var(--success-border);
+  border: 1px solid var(--success-border);
 }
 
 .pill--danger {
   color: var(--danger);
   background: transparent;
-  border: 0.5px solid var(--danger-border);
+  border: 1px solid var(--danger-border);
 }
 
 .pill--warning {
   color: var(--warning);
   background: transparent;
-  border: 0.5px solid var(--warning-border);
+  border: 1px solid var(--warning-border);
 }
 
 .pill--info {
   color: var(--info);
   background: transparent;
-  border: 0.5px solid var(--info-border);
+  border: 1px solid var(--info-border);
 }
 
 /* ── Status dot ── */

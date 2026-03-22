@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 
 export interface Breadcrumb {
-  label: string;
+  label: React.ReactNode;
   href?: string;
 }
 
@@ -12,8 +12,8 @@ export function PageHeader({
   breadcrumbs,
   actions,
 }: {
-  title: string;
-  subtitle?: string;
+  title: React.ReactNode;
+  subtitle?: React.ReactNode;
   breadcrumbs?: Breadcrumb[];
   actions?: React.ReactNode;
 }) {
@@ -36,7 +36,7 @@ export function PageHeader({
       <div className="page-header__row">
         <div>
           <h1 className="page-header__title">{title}</h1>
-          {subtitle && <p className="page-header__subtitle">{subtitle}</p>}
+          {subtitle && <div className="page-header__subtitle">{subtitle}</div>}
         </div>
         {actions && <div className="page-header__actions">{actions}</div>}
       </div>

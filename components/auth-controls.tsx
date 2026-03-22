@@ -2,9 +2,16 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { IconLock, IconLogout } from "@tabler/icons-react";
+import { IconShieldCheck, IconLogout } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
-import { Pill } from "@/components/ui/pill";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 
 export function AuthControls({
   mode,
@@ -29,15 +36,30 @@ export function AuthControls({
 
   if (mode === "none") return null;
 
+  const detail = `${mode}${localBypass ? " · localhost bypass" : ""}`;
+
   return (
-    <div className="flex items-center gap-2">
-      <Pill label={`auth: ${mode}`} tone="accent" />
-      {localBypass ? <Pill label="localhost bypass" tone="neutral" /> : null}
-      <Button size="sm" variant="outline" onClick={handleLogout} disabled={busy}>
-        <IconLock />
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-7 gap-1.5 px-2 text-xs text-muted-foreground hover:text-foreground"
+          />
+        }
+      >
+        <IconShieldCheck className="size-3.5" />
         <span className="hidden sm:inline">Protected</span>
-        <IconLogout className="ml-1" />
-      </Button>
-    </div>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" sideOffset={8} className="min-w-44">
+        <DropdownMenuLabel>Auth: {detail}</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleLogout} disabled={busy}>
+          <IconLogout className="size-3.5" />
+          Sign out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

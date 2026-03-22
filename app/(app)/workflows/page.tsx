@@ -10,6 +10,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { GlassCard } from "@/components/ui/glass-card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { PiiSafe } from "@/components/pii-safe";
+import { MarkdownPreview } from "@/components/markdown-preview";
 import {
   PreviewCard,
   PreviewCardTrigger,
@@ -112,7 +113,9 @@ export default async function WorkflowsPage() {
                         />
                         <PreviewCardPanel side="right" sideOffset={12} align="start">
                           <div className="preview-card__title"><PiiSafe>{run.name}</PiiSafe></div>
-                          <div className="preview-card__text"><PiiSafe>{run.summary ?? "No summary available."}</PiiSafe></div>
+                          <div className="preview-card__text">
+                            <MarkdownPreview content={run.summary ?? "No summary available."} />
+                          </div>
                           <div className="preview-card__meta">
                             <StatusBadge
                               label={run.status}

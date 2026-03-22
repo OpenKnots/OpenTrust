@@ -47,6 +47,7 @@ export function CodeBlock({
 }: CodeBlockProps) {
   const [html, setHtml] = useState("");
   const [highlightedLines, setHighlightedLines] = useState<Map<number, number>>(new Map());
+  const [copied, setCopied] = useState(false);
 
   const [themeMode, setThemeMode] = useState<"dark" | "light">("dark");
 
@@ -102,6 +103,13 @@ export function CodeBlock({
   const clearAll = useCallback(() => {
     setHighlightedLines(new Map());
   }, []);
+
+  const copyToClipboard = useCallback(() => {
+    navigator.clipboard.writeText(code.trim()).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }, [code]);
 
   const lines = code.trim().split("\n");
   const htmlLines = useMemo(() => extractLines(html), [html]);

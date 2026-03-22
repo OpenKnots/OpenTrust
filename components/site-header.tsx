@@ -1,11 +1,4 @@
-import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbPage,
-  BreadcrumbList,
-} from "@/components/ui/breadcrumb";
 import { AuthControls } from "@/components/auth-controls";
 import { DemoModeBanner } from "@/components/demo-mode-banner";
 
@@ -21,20 +14,15 @@ export function SiteHeader({
   allowLocalhostBypass?: boolean;
 }) {
   return (
-    <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-      <div className="flex w-full items-center gap-2 px-4">
+    <header className="flex h-12 shrink-0 items-center transition-[width,height] ease-linear">
+      <div className="flex w-full items-center gap-3 px-4">
         <SidebarTrigger className="-ml-1" />
-        <Separator orientation="vertical" className="mr-2 !h-4" />
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem className="hidden md:block">
-              <BreadcrumbPage>{title ?? "Dashboard"}</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-        <div className="ml-auto flex items-center gap-2">
-          {authMode ? <AuthControls mode={authMode} localBypass={!!allowLocalhostBypass} /> : null}
+        <span className="text-sm font-medium text-muted-foreground">
+          {title ?? "Dashboard"}
+        </span>
+        <div className="ml-auto flex items-center gap-1.5">
           {demo && <DemoModeBanner />}
+          {authMode ? <AuthControls mode={authMode} localBypass={!!allowLocalhostBypass} /> : null}
         </div>
       </div>
     </header>

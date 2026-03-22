@@ -6,6 +6,7 @@ import { Pill } from "@/components/ui/pill";
 import { MetricInline } from "@/components/ui/metric";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PiiSafe } from "@/components/pii-safe";
+import { MarkdownPreview } from "@/components/markdown-preview";
 
 export const dynamic = "force-dynamic";
 
@@ -18,12 +19,14 @@ export default async function WorkflowDetailPage({ params }: { params: Promise<{
   return (
     <>
       <PageHeader
-        title={workflow.name}
-        subtitle={workflow.summary ?? "No summary available for this workflow."}
+        title={<PiiSafe>{workflow.name}</PiiSafe>}
+        subtitle={
+          <MarkdownPreview content={workflow.summary ?? "No summary available for this workflow."} />
+        }
         breadcrumbs={[
           { label: "Overview", href: "/" },
           { label: "Workflows", href: "/workflows" },
-          { label: workflow.name },
+          { label: <PiiSafe>{workflow.name}</PiiSafe> },
         ]}
       />
 

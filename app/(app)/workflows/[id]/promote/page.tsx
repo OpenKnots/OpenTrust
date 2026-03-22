@@ -56,7 +56,7 @@ export default async function PromoteWorkflowPage({
         breadcrumbs={[
           { label: "Overview", href: "/" },
           { label: "Workflows", href: "/dashboard" },
-          { label: workflow.name, href: `/workflows/${encodeURIComponent(workflow.id)}` },
+          { label: <PiiSafe>{workflow.name}</PiiSafe>, href: `/workflows/${encodeURIComponent(workflow.id)}` },
           { label: "Promote" },
         ]}
       />

@@ -62,7 +62,7 @@ export default async function PromoteTraceMemoryPage({
         breadcrumbs={[
           { label: "Overview", href: "/" },
           { label: "Traces", href: "/traces" },
-          { label: detail.title ?? detail.id, href: `/traces/${encodeURIComponent(detail.id)}` },
+          { label: <PiiSafe>{detail.title ?? detail.id}</PiiSafe>, href: `/traces/${encodeURIComponent(detail.id)}` },
           { label: "Promote" },
         ]}
       />

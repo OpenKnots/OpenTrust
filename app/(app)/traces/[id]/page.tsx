@@ -7,7 +7,15 @@ import { MetricInline } from "@/components/ui/metric";
 import { EmptyState } from "@/components/ui/empty-state";
 import { CodeBlock } from "@/components/code-block";
 import { PiiSafe } from "@/components/pii-safe";
-import { Wrench, Package, Clock } from "lucide-react";
+import { Wrench, Package, Clock, FileJson } from "lucide-react";
+
+function prettyJson(raw: string): string {
+  try {
+    return JSON.stringify(JSON.parse(raw), null, 2);
+  } catch {
+    return raw;
+  }
+}
 
 export const dynamic = "force-dynamic";
 
@@ -20,12 +28,12 @@ export default async function TraceDetailPage({ params }: { params: Promise<{ id
   return (
     <>
       <PageHeader
-        title={trace.title ?? trace.id}
-        subtitle={trace.summary ?? "No summary available for this trace."}
+        title={<PiiSafe>{trace.title ?? trace.id}</PiiSafe>}
+        subtitle={<PiiSafe>{trace.summary ?? "No summary available for this trace."}</PiiSafe>}
         breadcrumbs={[
           { label: "Overview", href: "/" },
           { label: "Traces", href: "/traces" },
-          { label: trace.title ?? trace.id },
+          { label: <PiiSafe>{trace.title ?? trace.id}</PiiSafe> },
         ]}
         actions={
           <a className="btn btn--primary" href={`/traces/${encodeURIComponent(trace.id)}/promote`}>
@@ -84,7 +92,7 @@ export default async function TraceDetailPage({ params }: { params: Promise<{ id
                           Finished: {tool.finished_at ?? "not yet paired"}
                         </p>
                         {tool.result_json ? (
-                          <CodeBlock code={tool.result_json} language="json" />
+                          <CodeBlock code={prettyJson(tool.result_json)} language="json" />
                         ) : (
                           <pre>No result payload captured.</pre>
                         )}
@@ -132,6 +140,17 @@ export default async function TraceDetailPage({ params }: { params: Promise<{ id
           />
         )}
       </div>
+
+      {/* Trace metadata */}
+      {trace.metadata_json && trace.metadata_json !== "{}" && (
+        <div className="section">
+          <div className="section__header">
+            <span className="section__title">Trace metadata</span>
+            <span className="section__description">Raw metadata attached to this trace</span>
+          </div>
+          <CodeBlock code={prettyJson(trace.metadata_json)} language="json" filename="metadata.json" />
+        </div>
+      )}
 
       {/* Event timeline */}
       <div className="section">
