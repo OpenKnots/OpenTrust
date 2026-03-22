@@ -19,7 +19,6 @@ import {
   Zap,
 } from "lucide-react";
 import { CodeBlock } from "@/components/code-block";
-import { CodeDemo } from "@/components/code-demo";
 
 const MOLTY_ICON = "https://openclaw.ai/favicon.svg";
 

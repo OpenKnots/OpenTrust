@@ -73,11 +73,11 @@ export default async function MemoryPage({
       />
 
       <div className="filter-bar">
-        <Link href="/memory" className="filter-chip">All</Link>
-        <Link href="/memory?review=draft" className="filter-chip">Draft</Link>
-        <Link href="/memory?review=approved" className="filter-chip">Approved</Link>
-        <Link href="/memory?retention=working" className="filter-chip">Working</Link>
-        <Link href="/memory?retention=longTerm" className="filter-chip">Long-term</Link>
+        <Link href="/memory" className={`filter-chip${!reviewFilter && !retentionFilter ? " filter-chip--active" : ""}`}>All</Link>
+        <Link href="/memory?review=draft" className={`filter-chip${reviewFilter === "draft" ? " filter-chip--active" : ""}`}>Draft</Link>
+        <Link href="/memory?review=approved" className={`filter-chip${reviewFilter === "approved" ? " filter-chip--active" : ""}`}>Approved</Link>
+        <Link href="/memory?retention=working" className={`filter-chip${retentionFilter === "working" ? " filter-chip--active" : ""}`}>Working</Link>
+        <Link href="/memory?retention=longTerm" className={`filter-chip${retentionFilter === "longTerm" ? " filter-chip--active" : ""}`}>Long-term</Link>
         <Link href="/memory/review" className="filter-chip">Review queue</Link>
         <Link href="/memory/health" className="filter-chip">Health</Link>
       </div>
