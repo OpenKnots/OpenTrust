@@ -78,7 +78,7 @@ export default function LandingPage() {
           </h1>
 
           <p className="landing-hero-minimal__subtitle">
-            0 memories shaped into a cleaner operational layer across 60 traces and 6 workflows.
+            Memories stored in operational layers across traces and workflows.
           </p>
 
           <div className="landing-hero-minimal__actions">

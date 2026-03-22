@@ -96,7 +96,9 @@ export default async function DashboardPage() {
           </h1>
 
           <p className="mt-6 max-w-2xl px-4 text-sm leading-6 text-muted-foreground sm:text-base">
-            {overview.counts.memoryEntries} memories shaped into a clearer operational layer across {overview.counts.traces} traces and {overview.counts.workflows} workflows.
+            {overview.counts.memoryEntries < 50 || overview.counts.traces < 50 || overview.counts.workflows < 50
+              ? "Memories stored in operational layers across traces and workflows."
+              : `${overview.counts.memoryEntries} memories shaped into a cleaner operational layer across ${overview.counts.traces} traces and ${overview.counts.workflows} workflows.`}
           </p>
         </div>
       </HeroHighlight>

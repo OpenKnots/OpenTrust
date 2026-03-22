@@ -21,7 +21,7 @@ export function HeroHighlight({
 }: HeroHighlightProps) {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-  const spotlight = useMotionTemplate`radial-gradient(32rem 32rem at ${mouseX}px ${mouseY}px, rgba(125, 211, 252, 0.18), transparent 70%)`;
+  const spotlight = useMotionTemplate`radial-gradient(32rem 32rem at ${mouseX}px ${mouseY}px, rgba(220, 38, 38, 0.18), transparent 70%)`;
 
   const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
     const { currentTarget, clientX, clientY } = event;
@@ -50,7 +50,7 @@ export function HeroHighlight({
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-0 h-px w-2/3 -translate-x-1/2 bg-gradient-to-r from-transparent via-sky-400/70 to-transparent blur-sm"
+        className="pointer-events-none absolute left-1/2 top-0 h-px w-2/3 -translate-x-1/2 bg-gradient-to-r from-transparent via-red-500/70 to-transparent blur-sm"
       />
       <div className={cn("relative z-10 mx-auto w-full max-w-5xl", className)}>{children}</div>
     </div>
@@ -65,13 +65,13 @@ export function Highlight({ children, className, ...props }: HighlightProps) {
   return (
     <span
       className={cn(
-        "relative inline-block rounded-md bg-gradient-to-r from-sky-500/20 via-cyan-400/25 to-violet-500/20 px-2 py-1 font-semibold text-foreground",
-        "shadow-[inset_0_-1px_0_rgba(255,255,255,0.22)] ring-1 ring-sky-400/20",
+        "relative inline-block rounded-md bg-gradient-to-r from-red-600/20 via-red-500/25 to-neutral-900/30 px-2 py-1 font-semibold text-foreground",
+        "shadow-[inset_0_-1px_0_rgba(255,255,255,0.22)] ring-1 ring-red-500/20",
         className,
       )}
       {...props}
     >
-      <span className="absolute inset-0 rounded-md bg-gradient-to-r from-sky-400/12 via-transparent to-violet-400/12 blur-sm" aria-hidden="true" />
+      <span className="absolute inset-0 rounded-md bg-gradient-to-r from-red-500/12 via-transparent to-neutral-800/12 blur-sm" aria-hidden="true" />
       <span className="relative z-10">{children}</span>
     </span>
   );
