@@ -160,6 +160,10 @@ pnpm run secrets:check
 - `docs/OPENCLAW-PLUGIN-PACKAGING.md`
 - `docs/PLUGIN-READY-REFACTOR-PLAN.md`
 - `docs/OPENCLAW-PLUGIN-DRAFT-ARTIFACTS.md`
+- `plugin-drafts/opentrust/`
+- `docs/PLUGIN-DRAFT-RUNTIME-MAP.md`
+- `docs/PLUGIN-PROMOTION-CHECKLIST.md`
+- `docs/PLUGIN-CHANGE-TRACKER.md`
 - `docs/DOCS-ALIGNMENT-NOTES.md`
 - `db/0001_init.sql`
 - `SECURITY.md`

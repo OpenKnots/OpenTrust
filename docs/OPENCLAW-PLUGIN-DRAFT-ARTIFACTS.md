@@ -4,233 +4,100 @@
 
 This document captures the first concrete draft artifacts for packaging OpenTrust as a first-class OpenClaw plugin.
 
-These are **drafts**, not yet committed into the `openclaw/openclaw` repo.
-They exist to reduce ambiguity before the first packaging PR.
+All draft artifacts now live in this repo under:
 
-## 1. Draft plugin package shape
+- `plugin-drafts/opentrust/`
+
+These are **drafts**, not yet bundled into the `openclaw/openclaw` repo.
+They exist to reduce ambiguity before the first real packaging PR.
+
+## Draft package location
 
 ```text
-extensions/opentrust/
+plugin-drafts/opentrust/
   package.json
   openclaw.plugin.json
   index.ts
   api.ts
+  README.md
   src/
     config.ts
-    tools/
-      memory-search.ts
-      memory-inspect.ts
-      memory-promote.ts
-      memory-health.ts
-    http/
-      search.ts
-      inspect.ts
-      promote.ts
-      health.ts
+    client.ts
+    tools.ts
+    http.ts
 ```
 
-## 2. Draft `package.json`
+## What the draft currently models
 
-```json
-{
-  "name": "@openclaw/opentrust",
-  "version": "0.1.0",
-  "private": true,
-  "description": "OpenClaw memory layer plugin",
-  "type": "module",
-  "openclaw": {
-    "extensions": ["./index.ts"]
-  },
-  "dependencies": {
-    "better-sqlite3": "^12.4.1"
-  }
-}
-```
+- plugin package metadata
+- plugin manifest
+- plugin config shape
+- plugin runtime entrypoint
+- first-class memory tool registration
+- plugin-owned HTTP route prefix (`/plugins/opentrust`)
+- proxy bridge to the OpenTrust service endpoints
 
-## 3. Draft `openclaw.plugin.json`
+## Draft artifacts included
 
-```json
-{
-  "id": "opentrust",
-  "name": "OpenTrust",
-  "description": "Official OpenClaw memory layer plugin for durable evidence, retrieval, lineage, and memory health.",
-  "configSchema": {
-    "type": "object",
-    "additionalProperties": false,
-    "properties": {
-      "storage": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "path": {
-            "type": "string",
-            "default": "~/.openclaw/opentrust.sqlite"
-          },
-          "mode": {
-            "type": "string",
-            "enum": ["local"],
-            "default": "local"
-          }
-        }
-      },
-      "ingestion": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "sessions": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "enabled": { "type": "boolean", "default": true }
-            }
-          },
-          "workflows": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "enabled": { "type": "boolean", "default": true }
-            }
-          }
-        }
-      },
-      "indexing": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "semantic": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "enabled": { "type": "boolean", "default": true }
-            }
-          }
-        }
-      },
-      "retention": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "defaultClass": {
-            "type": "string",
-            "enum": ["ephemeral", "working", "longTerm", "pinned"],
-            "default": "working"
-          }
-        }
-      },
-      "health": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "stalePipelineHours": {
-            "type": "number",
-            "minimum": 1,
-            "maximum": 168,
-            "default": 8
-          }
-        }
-      },
-      "api": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "enableRoutes": { "type": "boolean", "default": true },
-          "enableTools": { "type": "boolean", "default": true }
-        }
-      }
-    }
-  }
-}
-```
+### `package.json`
+Declares the extension package shape and `openclaw.extensions` entry.
 
-## 4. Draft plugin entrypoint
+### `openclaw.plugin.json`
+Declares:
+- plugin id
+- plugin kind
+- description
+- config schema draft
 
-```ts
-import { definePluginEntry, type OpenClawPluginApi } from "./api.js";
-import { createMemorySearchTool } from "./src/tools/memory-search.js";
-import { createMemoryInspectTool } from "./src/tools/memory-inspect.js";
-import { createMemoryPromoteTool } from "./src/tools/memory-promote.js";
-import { createMemoryHealthTool } from "./src/tools/memory-health.js";
-import { createMemoryHttpHandler } from "./src/http/index.js";
-import { opentrustPluginConfigSchema } from "./src/config.js";
+### `index.ts`
+Draft plugin entrypoint using:
+- `definePluginEntry(...)`
+- tool registration
+- plugin-owned HTTP route registration
 
-export default definePluginEntry({
-  id: "opentrust",
-  name: "OpenTrust",
-  description: "Official OpenClaw memory layer plugin.",
-  configSchema: opentrustPluginConfigSchema,
-  register(api: OpenClawPluginApi) {
-    api.registerTool((ctx) => createMemorySearchTool({ api, context: ctx }), { name: "memory_search" });
-    api.registerTool((ctx) => createMemoryInspectTool({ api, context: ctx }), { name: "memory_inspect" });
-    api.registerTool((ctx) => createMemoryPromoteTool({ api, context: ctx }), { name: "memory_promote" });
-    api.registerTool((ctx) => createMemoryHealthTool({ api, context: ctx }), { name: "memory_health" });
+### `src/config.ts`
+Draft config resolver for:
+- `service.baseUrl`
+- `service.apiPrefix`
+- `service.timeoutMs`
+- `defaults.retentionClass`
 
-    api.registerHttpRoute({
-      path: "/plugins/opentrust",
-      auth: "plugin",
-      match: "prefix",
-      handler: createMemoryHttpHandler({ api }),
-    });
-  },
-});
-```
+### `src/client.ts`
+Draft bridge client that proxies to:
+- `/api/memory/search`
+- `/api/memory/inspect`
+- `/api/memory/promote`
+- `/api/memory/health`
 
-## 5. Route/tool ownership map
-
-### Plugin-owned tools
+### `src/tools.ts`
+Draft first-class tools:
 - `memory_search`
 - `memory_inspect`
 - `memory_promote`
 - `memory_health`
 
-### Plugin-owned HTTP paths
-- `/plugins/opentrust/search`
-- `/plugins/opentrust/inspect`
-- `/plugins/opentrust/promote`
-- `/plugins/opentrust/health`
+### `src/http.ts`
+Draft plugin-owned route bridge under:
+- `/plugins/opentrust/*`
 
-### Optional operator routes later
-- `/plugins/opentrust/ui/memory`
-- `/plugins/opentrust/ui/review`
-- `/plugins/opentrust/ui/health`
+## Current scope guardrail
 
-## 6. E2E integration checklist
+These draft files are planning/package artifacts only.
+They should not be treated as the canonical runtime yet.
 
-### First packaging E2E target
-Verify that a draft `opentrust` plugin can:
-- load successfully in OpenClaw plugin discovery
-- register all four memory tools
-- register plugin-owned HTTP routes
-- answer a health request
-- answer a search request
-- reject malformed promote requests with stable envelopes
+The canonical runtime remains the actual OpenTrust app/runtime in this repo.
 
-### Specific E2E assertions
-- plugin shows as `loaded` in `plugins list --json`
-- tools include:
-  - `memory_search`
-  - `memory_inspect`
-  - `memory_promote`
-  - `memory_health`
-- GET `/plugins/opentrust/health` returns envelope `{ ok: true, data: ... }`
-- POST `/plugins/opentrust/promote` rejects malformed payload with `{ ok: false, error: ... }`
-- config keys resolve under `plugins.entries.opentrust.config.*`
+See also:
+- `docs/PLUGIN-DRAFT-RUNTIME-MAP.md`
 
-## 7. Recommended next implementation PR sequence
+## Recommended next step
 
-### PR A — draft packaging artifacts
-- create plugin manifest draft
-- create package draft
-- create entrypoint draft
-- create config schema draft
+When ready to move into the real OpenClaw repo, promote these draft files into:
 
-### PR B — route/tool adapter extraction
-- extract route handlers to plugin-reusable modules
-- add tool wrappers around runtime
+- `extensions/opentrust/`
 
-### PR C — OpenClaw E2E test
-- load draft plugin in OpenClaw test runtime
-- verify tools/routes/config
-
-## Decision
-
-These draft artifacts are the recommended bridge between planning and the first real plugin packaging PR.
+and then add focused plugin tests for:
+- registration
+- route registration
+- bridge client behavior
+- route proxy behavior

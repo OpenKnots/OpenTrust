@@ -310,6 +310,7 @@ A draft manifest and package shape.
 - config schema draft
 - plugin route/tool ownership map
 - `docs/OPENCLAW-PLUGIN-DRAFT-ARTIFACTS.md`
+- `docs/PLUGIN-DRAFT-RUNTIME-MAP.md`
 
 ## Code planning stubs
 - plugin entrypoint draft
@@ -328,11 +329,19 @@ OpenTrust is plugin-ready when:
 - plugin manifest/package shape is drafted
 - the current standalone app can be mapped cleanly onto a plugin host model
 
+## Tracking
+
+Use these docs together:
+- `docs/PLUGIN-DRAFT-RUNTIME-MAP.md`
+- `docs/PLUGIN-PROMOTION-CHECKLIST.md`
+- `docs/PLUGIN-CHANGE-TRACKER.md`
+
 ## Decision
 
 The next planning/build step after this doc should be:
 1. draft the plugin manifest and package shape
 2. draft the plugin config schema
 3. draft the plugin tool/route ownership map
+4. maintain the promotion checklist and change tracker as the draft evolves
 
 That is the shortest path from “we want a first-class plugin” to “we know exactly how to package one.”

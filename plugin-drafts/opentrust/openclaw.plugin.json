@@ -1,0 +1,32 @@
+{
+  "id": "opentrust",
+  "kind": "memory",
+  "name": "OpenTrust",
+  "description": "Draft first-class OpenClaw plugin packaging for the OpenTrust memory layer.",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "service": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "baseUrl": { "type": "string", "default": "http://127.0.0.1:3000" },
+          "apiPrefix": { "type": "string", "default": "/api/memory" },
+          "timeoutMs": { "type": "number", "minimum": 100, "maximum": 120000, "default": 10000 }
+        }
+      },
+      "defaults": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "retentionClass": {
+            "type": "string",
+            "enum": ["ephemeral", "working", "longTerm", "pinned"],
+            "default": "working"
+          }
+        }
+      }
+    }
+  }
+}

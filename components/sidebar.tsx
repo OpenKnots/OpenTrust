@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 
 const NAV_ITEMS = [
-  { label: "Overview", href: "/", icon: BarChart3 },
+  { label: "Overview", href: "/dashboard", icon: BarChart3 },
   { label: "Traces", href: "/traces", icon: Telescope, matchPrefix: true },
   { label: "Workflows", href: "/workflows", icon: Workflow, matchPrefix: true },
   { label: "Artifacts", href: "/artifacts", icon: Layers3 },
@@ -32,7 +32,7 @@ export function Sidebar({ latestIngest }: { latestIngest?: string }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   function isActive(item: (typeof NAV_ITEMS)[number]) {
-    if (item.href === "/") return pathname === "/";
+    if (item.href === "/dashboard") return pathname === "/dashboard";
     if (item.matchPrefix) return pathname.startsWith(item.href);
     return pathname === item.href;
   }

@@ -1,0 +1,20 @@
+{
+  "name": "@openclaw/opentrust",
+  "version": "0.1.0-draft",
+  "private": true,
+  "description": "Draft OpenClaw plugin packaging for OpenTrust",
+  "type": "module",
+  "peerDependencies": {
+    "openclaw": ">=2026.3.11"
+  },
+  "peerDependenciesMeta": {
+    "openclaw": {
+      "optional": true
+    }
+  },
+  "openclaw": {
+    "extensions": [
+      "./index.ts"
+    ]
+  }
+}
