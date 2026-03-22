@@ -12,7 +12,6 @@ import {
   HeartPulse,
   Layers3,
   Search,
-  Sparkles,
   Telescope,
   Workflow,
   X,
@@ -235,14 +234,6 @@ export default function LandingPage() {
             desc="Inspect evidence, traverse lineage, promote to memory, and monitor health."
           />
         </div>
-      </section>
-
-      <hr className="landing-divider" />
-
-      {/* Testimonial - Nexflow Split Layout */}
-      <section className="landing-section">
-        <div className="landing-section__eyebrow">Customer Impact</div>
-        <TestimonialSection />
       </section>
 
       <hr className="landing-divider" />
@@ -549,48 +540,6 @@ function ProductPreviewCard() {
   );
 }
 
-function TestimonialSection() {
-  return (
-    <div className="testimonial-split">
-      <div className="testimonial-split__image">
-        <div className="testimonial-split__play">
-          <Sparkles size={24} />
-        </div>
-      </div>
-
-      <div>
-        <div className="testimonial-split__quote">
-          "Finally, a memory layer I can trust. <mark>The lineage tracking alone is worth it</mark> — I know exactly where every answer came from."
-        </div>
-
-        <div className="testimonial-split__author">
-          <div className="testimonial-split__author-info">
-            <div className="testimonial-split__author-name">OpenClaw Operator</div>
-            <div className="testimonial-split__author-title">Production Deployment</div>
-          </div>
-          <div className="testimonial-split__logo">
-            <img src={MOLTY_ICON} alt="OpenClaw" style={{ width: 32, height: 32, opacity: 0.6 }} />
-          </div>
-        </div>
-
-        <div className="testimonial-split__stats">
-          <div className="testimonial-stat">
-            <div className="testimonial-stat__value">4</div>
-            <div className="testimonial-stat__label">API endpoints</div>
-          </div>
-          <div className="testimonial-stat">
-            <div className="testimonial-stat__value">100%</div>
-            <div className="testimonial-stat__label">Evidence-backed retrieval</div>
-          </div>
-          <div className="testimonial-stat">
-            <div className="testimonial-stat__value">8</div>
-            <div className="testimonial-stat__label">Hours saved per release</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function FAQSection() {
   return (
