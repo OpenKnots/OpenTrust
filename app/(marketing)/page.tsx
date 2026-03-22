@@ -17,12 +17,133 @@ import {
   Workflow,
   Zap,
 } from "lucide-react";
-import { CodeBlock } from "@/components/code-block";
+import { BorderGlow } from "@/components/border-glow";
+import { CodeBlock, type CodeHighlight } from "@/components/code-block";
+
+const SEARCH_CODE = `{
+  "query": "deployment regression after queue changes",
+  "scope": {
+    "sources": ["sessions", "memoryEntries", "artifacts"],
+    "timeRange": { "from": "2026-03-01" }
+  },
+  "mode": "hybrid",
+  "limit": 10,
+  "minConfidence": 0.72
+}`;
+
+const INSPECT_CODE = `{
+  "ref": {
+    "type": "memoryEntry",
+    "id": "mem_queue_regression"
+  },
+  "includeLineage": true,
+  "includeRelated": true,
+  "includeRaw": true
+}`;
+
+const PROMOTE_CODE = `{
+  "title": "Queue backlog regression",
+  "body": "Consumer timing shifted after deployment and delayed downstream checks.",
+  "originRefs": [
+    { "type": "trace", "id": "trace_queue_abc" }
+  ],
+  "retentionClass": "longTerm",
+  "review": { "status": "draft" }
+}`;
+
+const HEALTH_CODE = `{
+  "scope": "global",
+  "status": "healthy",
+  "signals": [{
+    "kind": "ingestion_freshness",
+    "status": "fresh",
+    "metric": { "hours_since_ingest": 1 }
+  }],
+  "stats": { "stalePipelines": 0 }
+}`;
+
+const HERO_CODE = `memory_search("deployment regression after queue changes")
+  ↳ 3 evidence-backed matches
+  ↳ confidence: 0.93
+  ↳ lineage attached
+
+memory_inspect("mem_queue_regression")
+  ↳ trace_queue_abc → workflow_run_42 → artifact_diff
+  ↳ raw evidence + provenance loaded
+
+memory_promote("Queue backlog regression")
+  ↳ review: draft
+  ↳ retention: longTerm
+
+memory_health()
+  ↳ ingestion fresh · stalePipelines: 0`;
+
+const PLUGIN_CODE = `export default definePluginEntry({
+  id: "opentrust",
+  name: "OpenTrust",
+
+  register(api) {
+    api.registerTool({ name: "memory_search" /* ... */ })
+    api.registerTool({ name: "memory_inspect" /* ... */ })
+    api.registerTool({ name: "memory_promote" /* ... */ })
+    api.registerTool({ name: "memory_health" /* ... */ })
+
+    api.registerHttpRoute({
+      path: "/plugins/opentrust",
+      auth: "plugin",
+      match: "prefix",
+      handler: createMemoryHttpHandler(),
+    })
+  },
+})`;
+
+const heroHighlights: CodeHighlight[] = [
+  { line: 1, variant: "search", start: 2, width: 72, label: "query" },
+  { line: 2, variant: "search", start: 16, width: 44, label: "evidence" },
+  { line: 6, variant: "inspect", start: 2, width: 56, label: "inspect" },
+  { line: 7, variant: "inspect", start: 8, width: 76, label: "lineage" },
+  { line: 10, variant: "promote", start: 2, width: 58, label: "writeback" },
+  { line: 11, variant: "promote", start: 16, width: 28, label: "review" },
+  { line: 14, variant: "health", start: 2, width: 36, label: "health" },
+  { line: 15, variant: "health", start: 10, width: 54, label: "fresh" },
+];
+
+const searchHighlights: CodeHighlight[] = [
+  { line: 2, variant: "search", start: 16, width: 56, label: "query" },
+  { line: 4, variant: "search", start: 17, width: 52 },
+  { line: 8, variant: "search", start: 17, width: 28, label: "confidence" },
+];
+
+const inspectHighlights: CodeHighlight[] = [
+  { line: 2, variant: "inspect", start: 12, width: 40, label: "entity" },
+  { line: 5, variant: "inspect", start: 17, width: 42, label: "lineage" },
+  { line: 7, variant: "inspect", start: 17, width: 34, label: "raw evidence" },
+];
+
+const promoteHighlights: CodeHighlight[] = [
+  { line: 2, variant: "promote", start: 12, width: 46, label: "memory title" },
+  { line: 5, variant: "promote", start: 8, width: 54, label: "origin" },
+  { line: 7, variant: "promote", start: 21, width: 24, label: "retention" },
+  { line: 8, variant: "promote", start: 16, width: 28, label: "review" },
+];
+
+const healthHighlights: CodeHighlight[] = [
+  { line: 3, variant: "health", start: 15, width: 28, label: "healthy" },
+  { line: 5, variant: "health", start: 15, width: 24, label: "fresh" },
+  { line: 6, variant: "health", start: 18, width: 34, label: "metric" },
+  { line: 8, variant: "health", start: 13, width: 34, label: "trust signal" },
+];
+
+const pluginHighlights: CodeHighlight[] = [
+  { line: 1, variant: "plugin", start: 17, width: 42, label: "plugin entry" },
+  { line: 6, variant: "plugin", start: 8, width: 48, label: "tool registration" },
+  { line: 10, variant: "plugin", start: 8, width: 60, label: "route registration" },
+  { line: 11, variant: "plugin", start: 14, width: 56, label: "plugin route" },
+];
 
 export default function LandingPage() {
   return (
     <div className="landing">
-      {/* ── Nav ── */}
       <nav className="landing-nav">
         <div className="landing-nav__brand">
           <div className="landing-nav__logo">
@@ -42,34 +163,89 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* ── Hero ── */}
       <section className="landing-hero">
         <div className="landing-hero__glow" />
-        <div className="landing-hero__badge">
-          <Plug size={12} />
-          Official OpenClaw Memory Plugin
-        </div>
-        <h1 className="landing-hero__title">
-          The <span>Memory Layer</span> for OpenClaw
-        </h1>
-        <p className="landing-hero__subtitle">
-          Local-first, operator-grade memory and traceability.
-          Evidence-backed answers. Explainable retrieval.
-          Built for agents, inspectable by operators.
-        </p>
-        <div className="landing-hero__actions">
-          <Link href="/dashboard" className="landing-btn landing-btn--primary">
-            Open Dashboard <ArrowRight size={16} />
-          </Link>
-          <a href="#architecture" className="landing-btn">
-            Explore Architecture <ChevronRight size={16} />
-          </a>
+        <div className="landing-hero__glow landing-hero__glow--secondary" />
+        <div className="landing-hero__grid">
+          <div className="landing-hero__copy">
+            <div className="landing-hero__badge">
+              <Plug size={12} />
+              Official OpenClaw Memory Plugin
+            </div>
+            <h1 className="landing-hero__title">
+              The <span>Memory Layer</span> that makes OpenClaw feel undeniable
+            </h1>
+            <p className="landing-hero__subtitle">
+              Local-first, operator-grade memory and traceability with evidence-backed retrieval,
+              inspectable lineage, and cinematic trust signals that make every answer feel earned.
+            </p>
+            <div className="landing-hero__actions">
+              <Link href="/dashboard" className="landing-btn landing-btn--primary">
+                Open Dashboard <ArrowRight size={16} />
+              </Link>
+              <a href="#api" className="landing-btn">
+                Explore Memory API <ChevronRight size={16} />
+              </a>
+            </div>
+            <div className="landing-proof-strip">
+              <ProofPill title="Evidence first" value="Traces • artifacts • lineage" />
+              <ProofPill title="Retrieval" value="FTS5 + sqlite-vec hybrid" />
+              <ProofPill title="Operator trust" value="Health, review, provenance" />
+            </div>
+          </div>
+
+          <div className="landing-hero__stage">
+            <BorderGlow className="landing-surface-card landing-surface-card--hero" active>
+              <div className="landing-console__topline">
+                <div>
+                  <div className="landing-console__eyebrow">Live retrieval choreography</div>
+                  <div className="landing-console__title">Watch the system find signal, inspect lineage, and prove freshness</div>
+                </div>
+                <div className="landing-console__live">
+                  <span className="landing-console__dot" />
+                  Active memory substrate
+                </div>
+              </div>
+              <div className="landing-console__query">“Why did the deployment regress after the queue change?”</div>
+              <CodeBlock
+                language="bash"
+                filename="memory.runtime"
+                code={HERO_CODE}
+                showLineNumbers={false}
+                highlights={heroHighlights}
+              />
+              <div className="landing-console__signals">
+                <SignalChip tone="search" label="Hybrid retrieval" value="semantic + lexical" />
+                <SignalChip tone="inspect" label="Evidence graph" value="trace → workflow → artifact" />
+                <SignalChip tone="promote" label="Writeback" value="review + retention" />
+                <SignalChip tone="health" label="Health" value="fresh pipelines" />
+              </div>
+            </BorderGlow>
+
+            <div className="landing-stage-grid">
+              <BorderGlow className="landing-surface-card landing-surface-card--compact" active>
+                <div className="landing-surface-card__eyebrow">Why it feels trustworthy</div>
+                <ul className="landing-trust-list">
+                  <li><span /> Answers link back to source evidence</li>
+                  <li><span /> Retrieval explains why results surfaced</li>
+                  <li><span /> Memory promotion stays reviewable</li>
+                </ul>
+              </BorderGlow>
+              <BorderGlow className="landing-surface-card landing-surface-card--compact" active>
+                <div className="landing-surface-card__eyebrow">Why it feels native</div>
+                <ul className="landing-trust-list landing-trust-list--warm">
+                  <li><span /> Plugin-ready route and tool contracts</li>
+                  <li><span /> Operator-grade health and lineage UX</li>
+                  <li><span /> Built for OpenClaw, not bolted onto it</li>
+                </ul>
+              </BorderGlow>
+            </div>
+          </div>
         </div>
       </section>
 
       <hr className="landing-divider" />
 
-      {/* ── Value propositions ── */}
       <section className="landing-section">
         <div className="landing-section__label">
           <Sparkles size={12} />
@@ -124,7 +300,6 @@ export default function LandingPage() {
 
       <hr className="landing-divider" />
 
-      {/* ── Architecture ── */}
       <section id="architecture" className="landing-section">
         <div className="landing-section__label">
           <Database size={12} />
@@ -188,7 +363,6 @@ export default function LandingPage() {
 
       <hr className="landing-divider" />
 
-      {/* ── Features ── */}
       <section id="features" className="landing-section">
         <div className="landing-section__label">
           <Layers3 size={12} />
@@ -247,7 +421,6 @@ export default function LandingPage() {
 
       <hr className="landing-divider" />
 
-      {/* ── Memory API ── */}
       <section id="api" className="landing-section landing-section--wide">
         <div className="landing-section__label">
           <Zap size={12} />
@@ -258,90 +431,55 @@ export default function LandingPage() {
         </h2>
         <p className="landing-section__desc">
           The Memory API contract provides evidence-backed retrieval, inspectable
-          lineage, explicit writeback, and operational health -- all with stable
+          lineage, explicit writeback, and operational health — all with stable
           envelopes safe for agent consumption.
         </p>
         <div className="landing-api-grid">
-          <div className="landing-api-card">
-            <div className="landing-api-card__header">
-              <span className="landing-api-card__method landing-api-card__method--post">POST</span>
-              <span className="landing-api-card__name">memory_search</span>
-              <span className="landing-api-card__desc">Query with scope and confidence</span>
-            </div>
-            <div className="landing-api-card__body">
-              <CodeBlock language="json" showLineNumbers={false} code={`{
-  "query": "deployment regression",
-  "scope": {
-    "sources": ["sessions", "memoryEntries"],
-    "timeRange": { "from": "2026-03-01" }
-  },
-  "mode": "hybrid",
-  "limit": 10,
-  "minConfidence": 0.5
-}`} />
-            </div>
-          </div>
-          <div className="landing-api-card">
-            <div className="landing-api-card__header">
-              <span className="landing-api-card__method landing-api-card__method--post">POST</span>
-              <span className="landing-api-card__name">memory_inspect</span>
-              <span className="landing-api-card__desc">Traverse lineage and raw evidence</span>
-            </div>
-            <div className="landing-api-card__body">
-              <CodeBlock language="json" showLineNumbers={false} code={`{
-  "ref": {
-    "type": "memoryEntry",
-    "id": "mem_abc123"
-  },
-  "includeLineage": true,
-  "includeRelated": true,
-  "includeRaw": true
-}`} />
-            </div>
-          </div>
-          <div className="landing-api-card">
-            <div className="landing-api-card__header">
-              <span className="landing-api-card__method landing-api-card__method--post">POST</span>
-              <span className="landing-api-card__name">memory_promote</span>
-              <span className="landing-api-card__desc">Writeback with review and retention</span>
-            </div>
-            <div className="landing-api-card__body">
-              <CodeBlock language="json" showLineNumbers={false} code={`{
-  "title": "Queue backlog regression",
-  "body": "Consumer timing shifted ...",
-  "originRefs": [
-    { "type": "trace", "id": "trace_abc" }
-  ],
-  "retentionClass": "longTerm",
-  "review": { "status": "draft" }
-}`} />
-            </div>
-          </div>
-          <div className="landing-api-card">
-            <div className="landing-api-card__header">
-              <span className="landing-api-card__method landing-api-card__method--get">GET</span>
-              <span className="landing-api-card__name">memory_health</span>
-              <span className="landing-api-card__desc">Freshness and pipeline status</span>
-            </div>
-            <div className="landing-api-card__body">
-              <CodeBlock language="json" showLineNumbers={false} code={`{
-  "scope": "global",
-  "status": "healthy",
-  "signals": [{
-    "kind": "ingestion_freshness",
-    "status": "fresh",
-    "metric": { "hours_since_ingest": 1 }
-  }],
-  "stats": { "stalePipelines": 0 }
-}`} />
-            </div>
-          </div>
+          <ApiCard
+            method="POST"
+            methodTone="post"
+            name="memory_search"
+            desc="Query with scope and confidence"
+            code={SEARCH_CODE}
+            language="json"
+            highlights={searchHighlights}
+            variant="search"
+          />
+          <ApiCard
+            method="POST"
+            methodTone="post"
+            name="memory_inspect"
+            desc="Traverse lineage and raw evidence"
+            code={INSPECT_CODE}
+            language="json"
+            highlights={inspectHighlights}
+            variant="inspect"
+          />
+          <ApiCard
+            method="POST"
+            methodTone="post"
+            name="memory_promote"
+            desc="Writeback with review and retention"
+            code={PROMOTE_CODE}
+            language="json"
+            highlights={promoteHighlights}
+            variant="promote"
+          />
+          <ApiCard
+            method="GET"
+            methodTone="get"
+            name="memory_health"
+            desc="Freshness and pipeline status"
+            code={HEALTH_CODE}
+            language="json"
+            highlights={healthHighlights}
+            variant="health"
+          />
         </div>
       </section>
 
       <hr className="landing-divider" />
 
-      {/* ── Plugin ── */}
       <section id="plugin" className="landing-section landing-section--wide">
         <div className="landing-section__label">
           <Package size={12} />
@@ -351,8 +489,8 @@ export default function LandingPage() {
           Native OpenClaw plugin integration
         </h2>
         <p className="landing-section__desc">
-          OpenTrust packages as a first-class native OpenClaw plugin using
-          {" "}<code>definePluginEntry</code>, conforming to the official plugin manifest,
+          OpenTrust packages as a first-class native OpenClaw plugin using{" "}
+          <code>definePluginEntry</code>, conforming to the official plugin manifest,
           tool registration, and HTTP route conventions.
         </p>
         <div className="landing-plugin-grid">
@@ -375,7 +513,7 @@ export default function LandingPage() {
               </div>
               <div className="landing-plugin-item__desc">
                 Registers <code>memory_search</code>, <code>memory_inspect</code>,
-                {" "}<code>memory_promote</code>, and <code>memory_health</code> as
+                <code> memory_promote</code>, and <code>memory_health</code> as
                 typed tools callable by the LLM agent via <code>api.registerTool()</code>.
               </div>
             </div>
@@ -385,10 +523,9 @@ export default function LandingPage() {
                 HTTP Routes
               </div>
               <div className="landing-plugin-item__desc">
-                Exposes <code>/plugins/opentrust/search</code>,
-                {" "}<code>/inspect</code>, <code>/promote</code>,
-                and <code>/health</code> via <code>api.registerHttpRoute()</code> with
-                prefix matching.
+                Exposes <code>/plugins/opentrust/search</code>, <code>/inspect</code>,
+                <code>/promote</code>, and <code>/health</code> via <code>api.registerHttpRoute()</code>
+                with prefix matching.
               </div>
             </div>
             <div className="landing-plugin-item">
@@ -403,7 +540,7 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-          <div className="landing-plugin-code">
+          <BorderGlow className="landing-plugin-code" active>
             <div className="landing-plugin-code__tab">
               <span className="landing-plugin-code__tab-item landing-plugin-code__tab-item--active">
                 index.ts
@@ -416,50 +553,14 @@ export default function LandingPage() {
               </span>
             </div>
             <div className="landing-plugin-code__body">
-              <CodeBlock language="typescript" code={`import { definePluginEntry } from
-  "openclaw/plugin-sdk/plugin-entry";
-
-export default definePluginEntry({
-  id: "opentrust",
-  name: "OpenTrust",
-  description:
-    "Official OpenClaw memory layer plugin.",
-
-  register(api) {
-    api.registerTool({
-      name: "memory_search",
-      description: "Search curated memory",
-      parameters: Type.Object({
-        query: Type.String(),
-        scope: Type.Optional(ScopeSchema),
-      }),
-      execute: (_id, params) =>
-        memorySearch(params),
-    });
-
-    api.registerTool({
-      name: "memory_inspect", /* ... */ });
-    api.registerTool({
-      name: "memory_promote", /* ... */ });
-    api.registerTool({
-      name: "memory_health",  /* ... */ });
-
-    api.registerHttpRoute({
-      path: "/plugins/opentrust",
-      auth: "plugin",
-      match: "prefix",
-      handler: createMemoryHttpHandler(),
-    });
-  },
-});`} />
+              <CodeBlock language="typescript" code={PLUGIN_CODE} highlights={pluginHighlights} />
             </div>
-          </div>
+          </BorderGlow>
         </div>
       </section>
 
       <hr className="landing-divider" />
 
-      {/* ── Data flow ── */}
       <section className="landing-section landing-section--wide">
         <div className="landing-section__label">
           <Workflow size={12} />
@@ -490,7 +591,6 @@ export default definePluginEntry({
 
       <hr className="landing-divider" />
 
-      {/* ── Getting started ── */}
       <section id="start" className="landing-section">
         <div className="landing-section__label">
           <Zap size={12} />
@@ -568,7 +668,6 @@ pnpm dev`} />
         </div>
       </section>
 
-      {/* ── Footer ── */}
       <footer className="landing-footer">
         <div className="landing-footer__brand">
           OpenTrust by OpenKnots
@@ -596,6 +695,57 @@ pnpm dev`} />
         </div>
       </footer>
     </div>
+  );
+}
+
+function ProofPill({ title, value }: { title: string; value: string }) {
+  return (
+    <div className="landing-proof-pill">
+      <span className="landing-proof-pill__title">{title}</span>
+      <span className="landing-proof-pill__value">{value}</span>
+    </div>
+  );
+}
+
+function SignalChip({ label, value, tone }: { label: string; value: string; tone: "search" | "inspect" | "promote" | "health" }) {
+  return (
+    <div className={`landing-signal-chip landing-signal-chip--${tone}`}>
+      <span className="landing-signal-chip__label">{label}</span>
+      <span className="landing-signal-chip__value">{value}</span>
+    </div>
+  );
+}
+
+function ApiCard({
+  method,
+  methodTone,
+  name,
+  desc,
+  code,
+  language,
+  highlights,
+  variant,
+}: {
+  method: string;
+  methodTone: "post" | "get";
+  name: string;
+  desc: string;
+  code: string;
+  language: "json" | "typescript" | "bash";
+  highlights: CodeHighlight[];
+  variant: "search" | "inspect" | "promote" | "health";
+}) {
+  return (
+    <BorderGlow className={`landing-api-card landing-api-card--${variant}`} active>
+      <div className="landing-api-card__header">
+        <span className={`landing-api-card__method landing-api-card__method--${methodTone}`}>{method}</span>
+        <span className="landing-api-card__name">{name}</span>
+        <span className="landing-api-card__desc">{desc}</span>
+      </div>
+      <div className="landing-api-card__body">
+        <CodeBlock language={language} showLineNumbers={false} code={code} highlights={highlights} />
+      </div>
+    </BorderGlow>
   );
 }
 

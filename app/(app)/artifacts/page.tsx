@@ -61,20 +61,57 @@ export default async function ArtifactsPage({
       </div>
 
       {artifacts.length > 0 ? (
-        <div className="card-grid">
-          {artifacts.map((artifact) => (
-            <div key={artifact.id} className="artifact-card">
-              <div className="artifact-card__kind">
-                <Pill label={artifact.kind} tone="neutral" />
-                <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)", marginLeft: 8 }}>
-                  {formatRelativeTime(artifact.created_at)}
-                </span>
+        sort === "kind" ? (
+          (() => {
+            const grouped = new Map<string, typeof artifacts>();
+            for (const a of artifacts) {
+              const list = grouped.get(a.kind);
+              if (list) list.push(a);
+              else grouped.set(a.kind, [a]);
+            }
+            return Array.from(grouped.entries()).map(([kindKey, items]) => (
+              <details key={kindKey} className="expandable" style={{ marginBottom: 12 }}>
+                <summary>
+                  {kindKey}
+                  <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)", fontWeight: 400, marginLeft: "auto" }}>
+                    {items.length} artifact{items.length !== 1 ? "s" : ""}
+                  </span>
+                </summary>
+                <div className="expandable__content">
+                  <div className="card-grid">
+                    {items.map((artifact) => (
+                      <div key={artifact.id} className="artifact-card">
+                        <div className="artifact-card__kind">
+                          <Pill label={artifact.kind} tone="neutral" />
+                          <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)", marginLeft: 8 }}>
+                            {formatRelativeTime(artifact.created_at)}
+                          </span>
+                        </div>
+                        <div className="artifact-card__title">{artifact.title ?? artifact.id}</div>
+                        <div className="artifact-card__uri">{artifact.uri}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </details>
+            ));
+          })()
+        ) : (
+          <div className="card-grid">
+            {artifacts.map((artifact) => (
+              <div key={artifact.id} className="artifact-card">
+                <div className="artifact-card__kind">
+                  <Pill label={artifact.kind} tone="neutral" />
+                  <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)", marginLeft: 8 }}>
+                    {formatRelativeTime(artifact.created_at)}
+                  </span>
+                </div>
+                <div className="artifact-card__title">{artifact.title ?? artifact.id}</div>
+                <div className="artifact-card__uri">{artifact.uri}</div>
               </div>
-              <div className="artifact-card__title">{artifact.title ?? artifact.id}</div>
-              <div className="artifact-card__uri">{artifact.uri}</div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )
       ) : (
         <EmptyState message="No artifacts match the current filter." />
       )}

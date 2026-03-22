@@ -304,6 +304,9 @@ UI promote action on one surface first
 ## Step 8
 overview/health integration
 
+## Step 9
+memory-entry inspect/provenance UI depth
+
 ---
 
 # Recommended first PR scope

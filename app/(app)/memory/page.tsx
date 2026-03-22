@@ -66,7 +66,7 @@ export default async function MemoryPage({
       {entries.length > 0 ? (
         <div className="card-grid">
           {entries.map((entry) => (
-            <div key={entry.id} className="artifact-card">
+            <Link key={entry.id} href={`/memory/${encodeURIComponent(entry.id)}`} className="artifact-card" style={{ textDecoration: "none" }}>
               <div className="artifact-card__kind" style={{ flexWrap: "wrap", gap: 8 }}>
                 <Pill label={entry.kind} tone="neutral" />
                 <Pill label={entry.retention_class} tone={retentionTone(entry.retention_class)} />
@@ -89,7 +89,7 @@ export default async function MemoryPage({
                 <div>{entry.tags.length > 0 ? `tags: ${entry.tags.map((tag) => tag.tag).join(", ")}` : "no tags"}</div>
                 <div>{entry.confidence_reason ?? "No confidence note recorded."}</div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       ) : (

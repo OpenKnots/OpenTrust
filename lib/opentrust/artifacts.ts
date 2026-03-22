@@ -1,5 +1,5 @@
 import { ensureBootstrapped } from "@/lib/opentrust/bootstrap";
-import { queryJson } from "@/lib/opentrust/db";
+import { queryJson, queryOne } from "@/lib/opentrust/db";
 
 export interface ArtifactRow {
   id: string;
@@ -7,6 +7,16 @@ export interface ArtifactRow {
   uri: string;
   title: string | null;
   created_at: string;
+}
+
+export function getArtifactById(id: string): ArtifactRow | null {
+  ensureBootstrapped();
+  return queryOne<ArtifactRow>(`
+    SELECT id, kind, uri, title, created_at
+    FROM artifacts
+    WHERE id = :id
+    LIMIT 1;
+  `, { id });
 }
 
 export function getRecentArtifacts(limit = 12, options?: { kind?: string; sort?: "newest" | "kind" }) {

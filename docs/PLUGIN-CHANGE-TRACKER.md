@@ -22,6 +22,8 @@ Update this whenever plugin-draft-related changes land in the OpenTrust repo.
 - [x] draft config/client/tools/http bridge files added
 - [x] plugin draft mapped back to canonical runtime via `docs/PLUGIN-DRAFT-RUNTIME-MAP.md`
 - [x] plugin promotion gate checklist added
+- [x] memory entry inspect/provenance route added (`/memory/[id]`)
+- [x] provenance depth improved with resolved origin summaries for traces/workflows/artifacts/memory entries
 
 ### Next recommended tasks
 - [ ] review whether draft config defaults still match current runtime assumptions
