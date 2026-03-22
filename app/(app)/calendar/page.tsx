@@ -64,7 +64,7 @@ function eventLabel(kind: CalendarEventKind, time?: string) {
   switch (kind) {
     case "schedule": return time ?? "Scheduled";
     case "memory": return "Promoted memory";
-    case "workflow": return "Scheduled workflow";
+    case "workflow": return "Workflow run";
   }
 }
 
@@ -124,7 +124,7 @@ export default async function CalendarPage({
             <div>
               <CardTitle>{safeAnchor.toLocaleDateString(undefined, { month: "long", year: "numeric" })}</CardTitle>
               <CardDescription>
-                Schedule events are recurring reference items; memory events are promoted entries; workflow events are scheduled (cron) runs.
+                Schedule events are recurring reference items; memory events are promoted entries; workflow events are real workflow runs placed on their actual run days.
               </CardDescription>
             </div>
             <div className="flex gap-2">

@@ -9,6 +9,7 @@ import { ChartAreaInteractive } from "@/components/chart-area-interactive";
 import { DataTable } from "@/components/data-table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { HeroHighlight, Highlight } from "@/components/ui/hero-highlight";
 
 export const dynamic = "force-dynamic";
 
@@ -78,29 +79,27 @@ export default async function DashboardPage() {
 
   return (
     <>
-      <div className="brand-shimmer relative overflow-hidden rounded-xl border border-border/50 px-5 py-4 mx-4 lg:mx-0">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[var(--brand)] to-[#FF6F61]">
-              <IconSparkles className="size-4 text-white" />
-            </div>
-            <div className="min-w-0">
-              <h2 className="text-sm font-semibold tracking-tight text-foreground">
-                Mission Control
-              </h2>
-              <p className="truncate text-xs text-muted-foreground">
-                {overview.counts.traces} traces &middot; {overview.counts.workflows} workflows &middot; {overview.counts.memoryEntries} memories tracked
-              </p>
-            </div>
+      <HeroHighlight
+        containerClassName="mx-4 overflow-hidden rounded-2xl border border-border/50 py-16 lg:mx-0 lg:py-20"
+        className="max-w-4xl"
+      >
+        <div className="flex flex-col items-center text-center">
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/80 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.24em] text-muted-foreground backdrop-blur-sm">
+            <IconSparkles className="size-3.5 text-primary" />
+            OpenClaw remembers.
           </div>
-          <div className="hidden items-center gap-2 sm:flex">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-background/80 px-2.5 py-1 text-[11px] font-medium text-muted-foreground backdrop-blur-sm">
-              <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Operational
-            </span>
-          </div>
+
+          <h1 className="text-balance px-4 text-4xl font-semibold tracking-tight text-foreground sm:text-5xl md:text-6xl">
+            <Highlight className="px-3 py-1.5 text-foreground dark:text-white">
+              OpenTrust Clarifies.
+            </Highlight>
+          </h1>
+
+          <p className="mt-6 max-w-2xl px-4 text-sm leading-6 text-muted-foreground sm:text-base">
+            {overview.counts.memoryEntries} memories shaped into a clearer operational layer across {overview.counts.traces} traces and {overview.counts.workflows} workflows.
+          </p>
         </div>
-      </div>
+      </HeroHighlight>
 
       <SectionCards
         sessions={overview.counts.sessions}
@@ -150,7 +149,7 @@ export default async function DashboardPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2"><IconCalendarMonth className="size-4 text-primary" /> Calendar view</CardTitle>
             <CardDescription>
-              A claw-dash-inspired operational calendar that combines recurring schedule context with real memory activity.
+              Operational calendar that combines recurring schedule context with real memory activity.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">

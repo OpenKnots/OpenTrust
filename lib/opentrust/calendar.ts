@@ -90,21 +90,21 @@ export function getCalendarEvents(anchor = new Date(), view: CalendarView = "wee
 
   try {
     ensureBootstrapped();
-    const cronRuns = queryJson<{
+    const workflowRuns = queryJson<{
       id: string;
       name: string;
       status: string;
       summary: string | null;
+      source_kind: string | null;
       started_at: string;
     }>(`
-      SELECT id, name, status, summary, started_at
+      SELECT id, name, status, summary, source_kind, started_at
       FROM workflow_runs
-      WHERE source_kind = 'cron'
       ORDER BY started_at DESC
-      LIMIT 200;
+      LIMIT 300;
     `);
 
-    for (const run of cronRuns) {
+    for (const run of workflowRuns) {
       const started = new Date(run.started_at);
       const key = dateKey(started);
       if (!keys.has(key)) continue;
@@ -115,7 +115,7 @@ export function getCalendarEvents(anchor = new Date(), view: CalendarView = "wee
         title: run.name,
         kind: "workflow",
         href: `/workflows/${encodeURIComponent(run.id)}`,
-        detail: `${run.status} · ${run.summary ?? "Scheduled workflow"}`,
+        detail: `${run.status} · ${run.source_kind ?? "workflow"}${run.summary ? ` · ${run.summary}` : ""}`,
       });
     }
   } catch {

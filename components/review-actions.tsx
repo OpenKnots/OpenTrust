@@ -28,7 +28,7 @@ export function ReviewActions({ entryId, formAction }: ReviewActionsProps) {
         <input type="hidden" name="action" value="rejected" />
       </form>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "stretch" }}>
+      <div className="flex flex-col gap-2 md:flex-row xl:flex-col xl:items-stretch">
         <ConfirmDialog
           trigger={
             <button className="btn btn--ghost" type="button">

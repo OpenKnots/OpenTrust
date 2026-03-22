@@ -56,8 +56,8 @@ export default function LandingPage() {
 
       <section className="landing-hero-minimal">
         <MeshGradientBg
-          colors={["#0b0b0f", "#19090d", "#0b1020", "#111214"]}
-          speed={0.22}
+          colors={["#050506", "#150305", "#0a0b0f", "#120608"]}
+          speed={0.2}
           className="landing-shader landing-shader--hero"
         />
 
@@ -71,11 +71,12 @@ export default function LandingPage() {
           </div>
 
           <h1 className="landing-hero-minimal__title">
-            OpenTrust turns it into a true memory layer.
+            <span>OpenTrust</span>
+            <span>has Clarity</span>
           </h1>
 
           <p className="landing-hero-minimal__subtitle">
-            It starts from the memory OpenClaw already stores today in <code>MEMORY.md</code> and <code>memory/YYYY-MM-DD.md</code>, then adds structure, provenance, review, timelines, backups, and operator-grade recall.
+            OpenClaw already saves memory in files like <code>MEMORY.md</code> and <code>memory/YYYY-MM-DD.md</code>. OpenTrust takes that memory and makes it easier to review, search, track, and keep safe.
           </p>
 
           <div className="landing-hero-minimal__actions">
@@ -168,20 +169,76 @@ export default function LandingPage() {
           The honest comparison is not “memory vs no memory.” OpenClaw already has real memory today. OpenTrust should extend it by ingesting the current source of truth and making it operational.
         </p>
 
-        <div className="landing-comparison">
-          <div className="landing-comparison__header">
-            <div className="landing-comparison__col"></div>
-            <div className="landing-comparison__col">OpenClaw today</div>
-            <div className="landing-comparison__col landing-comparison__col--highlight">OpenTrust plugin layer</div>
+        <div className="landing-comparison-wrap">
+          <div className="landing-comparison-topcards">
+            <div className="landing-comparison-topcard">
+              <div className="landing-comparison-topcard__eyebrow">OpenClaw today</div>
+              <div className="landing-comparison-topcard__title">Real memory already exists</div>
+              <div className="landing-comparison-topcard__desc">
+                Markdown files in the workspace already act as the canonical authored memory source.
+              </div>
+            </div>
+            <div className="landing-comparison-topcard landing-comparison-topcard--highlight">
+              <div className="landing-comparison-topcard__eyebrow">OpenTrust plugin</div>
+              <div className="landing-comparison-topcard__title">Operational memory on top</div>
+              <div className="landing-comparison-topcard__desc">
+                The plugin adds structure, review, timelines, backups, and operator surfaces around that same memory truth.
+              </div>
+            </div>
           </div>
-          <ComparisonRow label="Canonical memory source is workspace Markdown" us={true} them={true} reverse />
-          <ComparisonRow label="MEMORY.md + daily notes already work today" us={true} them={true} reverse />
-          <ComparisonRow label="Structured review queue and retention entities" us={false} them={true} reverse />
-          <ComparisonRow label="Timeline and calendar memory surfaces" us={false} them={true} reverse />
-          <ComparisonRow label="Backup/export recommendations and flows" us={false} them={true} reverse />
-          <ComparisonRow label="Operator health and provenance views" us={false} them={true} reverse />
-          <ComparisonRow label="Daily summary recommendations" us={false} them={true} reverse />
-          <ComparisonRow label="CRM / relationship memory scaffolding" us={false} them={true} reverse />
+
+          <div className="landing-comparison-narrative">
+            <ComparisonSection
+              icon={<ShieldCheck size={18} />}
+              title="Current memory truth"
+              items={[
+                {
+                  title: "Workspace Markdown is already the memory source",
+                  current: "OpenClaw stores authored memory in files like MEMORY.md and memory/YYYY-MM-DD.md.",
+                  plugin: "OpenTrust preserves that truth instead of replacing it with a fake abstraction.",
+                },
+                {
+                  title: "Daily notes already work today",
+                  current: "Agents can already capture short-term and long-term continuity using the workspace memory files.",
+                  plugin: "The plugin ingests those same notes into a richer operational layer with review and visibility.",
+                },
+              ]}
+            />
+
+            <ComparisonSection
+              icon={<Layers3 size={18} />}
+              title="Operational enhancements"
+              items={[
+                {
+                  title: "Review and retention become first-class",
+                  current: "OpenClaw has memory capture, but not a dedicated structured review queue or retention UI.",
+                  plugin: "OpenTrust adds review status, retention classes, provenance, and operator workflows around each memory candidate.",
+                },
+                {
+                  title: "Timelines and backups become visible",
+                  current: "The memory truth exists, but backup strategy, timeline surfaces, and operational health are mostly implied rather than surfaced.",
+                  plugin: "OpenTrust adds calendar views, health monitoring, export flows, and backup-aware storage recommendations.",
+                },
+              ]}
+            />
+
+            <ComparisonSection
+              icon={<Sparkles size={18} />}
+              title="Future-facing memory UX"
+              items={[
+                {
+                  title: "Daily summary recommendations",
+                  current: "Users can write summaries manually, but there is little built-in guidance about what deserves durable capture.",
+                  plugin: "OpenTrust can recommend daily summaries, meaningful moments, and promotion opportunities based on actual activity.",
+                },
+                {
+                  title: "Relationship memory scaffolding",
+                  current: "There is no dedicated CRM-style memory workflow in the current baseline model.",
+                  plugin: "OpenTrust is preparing docs-first scaffolding for contacts, interactions, follow-ups, and relationship memory with privacy guardrails.",
+                },
+              ]}
+            />
+          </div>
         </div>
       </section>
 
@@ -353,18 +410,41 @@ function Feature({ icon, title, desc }: { icon: React.ReactNode; title: string; 
   );
 }
 
-function ComparisonRow({ label, us, them, reverse = false }: { label: string; us: boolean; them: boolean; reverse?: boolean }) {
-  const left = reverse ? us : them;
-  const right = reverse ? them : us;
-
+function ComparisonSection({
+  icon,
+  title,
+  items,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  items: { title: string; current: string; plugin: string }[];
+}) {
   return (
-    <div className="landing-comparison__row">
-      <div className="landing-comparison__cell">{label}</div>
-      <div className="landing-comparison__cell">
-        {left ? <Check size={18} className="landing-comparison__check-muted" /> : <X size={18} className="landing-comparison__x" />}
+    <div className="landing-comparison-section">
+      <div className="landing-comparison-section__header">
+        <div className="landing-comparison-section__icon">{icon}</div>
+        <div>
+          <div className="landing-comparison-section__title">{title}</div>
+          <div className="landing-comparison-section__subtitle">A clearer before / after view of what already exists and what the plugin layer adds.</div>
+        </div>
       </div>
-      <div className="landing-comparison__cell landing-comparison__cell--us">
-        {right ? <Check size={18} className="landing-comparison__check" /> : <X size={18} className="landing-comparison__x" />}
+
+      <div className="landing-comparison-section__list">
+        {items.map((item) => (
+          <div key={item.title} className="landing-comparison-section__item">
+            <div className="landing-comparison-section__item-title">{item.title}</div>
+            <div className="landing-comparison-section__columns">
+              <div className="landing-comparison-section__column">
+                <div className="landing-comparison-section__label">OpenClaw today</div>
+                <p>{item.current}</p>
+              </div>
+              <div className="landing-comparison-section__column landing-comparison-section__column--highlight">
+                <div className="landing-comparison-section__label">OpenTrust plugin</div>
+                <p>{item.plugin}</p>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
