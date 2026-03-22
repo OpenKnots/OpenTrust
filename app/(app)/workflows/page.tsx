@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Workflow } from "lucide-react";
+import { ArrowRight, Clock, Workflow } from "lucide-react";
 import { isDemoMode } from "@/lib/opentrust/demo";
 import { getDemoGroupedWorkflows } from "@/lib/opentrust/demo-data";
 import { formatRelativeTime } from "@/lib/opentrust/format";
@@ -16,6 +16,19 @@ import {
   PreviewCardTrigger,
   PreviewCardPanel,
 } from "@/components/animate-ui/components/base/preview-card";
+
+function SourceKindPill({ sourceKind }: { sourceKind: string | null }) {
+  if (!sourceKind) return null;
+  if (sourceKind === "cron") {
+    return (
+      <span className="pill pill--info" style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+        <Clock size={10} />
+        Scheduled
+      </span>
+    );
+  }
+  return <Pill label={sourceKind} tone="neutral" />;
+}
 
 export const dynamic = "force-dynamic";
 
@@ -102,9 +115,7 @@ export default async function WorkflowsPage() {
                                         : "healthy"
                                   }
                                 />
-                                {run.source_kind && (
-                                  <Pill label={run.source_kind} tone="neutral" />
-                                )}
+                                <SourceKindPill sourceKind={run.source_kind} />
                                 <span>{formatRelativeTime(run.updated_at)}</span>
                               </div>
                               <ArrowRight size={14} className="list-item__arrow" />
@@ -127,9 +138,7 @@ export default async function WorkflowsPage() {
                                     : "healthy"
                               }
                             />
-                            {run.source_kind && (
-                              <Pill label={run.source_kind} tone="neutral" />
-                            )}
+                            <SourceKindPill sourceKind={run.source_kind} />
                             <span>{formatRelativeTime(run.updated_at)}</span>
                           </div>
                         </PreviewCardPanel>

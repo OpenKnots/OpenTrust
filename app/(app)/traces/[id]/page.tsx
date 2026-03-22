@@ -8,7 +8,9 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { CodeBlock } from "@/components/code-block";
 import { PiiSafe } from "@/components/pii-safe";
 import { MarkdownPreview } from "@/components/markdown-preview";
-import { Wrench, Package, Clock, FileJson } from "lucide-react";
+import { Wrench, Package, Clock, FileJson, ArrowUpCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { ArtifactLink } from "@/components/artifact-link";
 
 function prettyJson(raw: string): string {
@@ -38,9 +40,12 @@ export default async function TraceDetailPage({ params }: { params: Promise<{ id
           { label: <PiiSafe>{trace.title ?? trace.id}</PiiSafe> },
         ]}
         actions={
-          <a className="btn btn--primary" href={`/traces/${encodeURIComponent(trace.id)}/promote`}>
-            Promote to memory
-          </a>
+          <Button asChild>
+            <Link href={`/traces/${encodeURIComponent(trace.id)}/promote`}>
+              <ArrowUpCircle size={14} />
+              Promote to memory
+            </Link>
+          </Button>
         }
       />
 

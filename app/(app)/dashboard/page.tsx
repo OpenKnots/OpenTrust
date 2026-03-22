@@ -42,7 +42,7 @@ function buildTableData(overview: ReturnType<typeof getOverview>) {
       header: wf.name,
       type: "Workflow",
       status: wf.status === "completed" || wf.status === "done" ? "Done" : "In Process",
-      target: wf.source_kind ?? "-",
+      target: wf.source_kind === "cron" ? "Scheduled" : (wf.source_kind ?? "-"),
       limit: "-",
       reviewer: "Assign reviewer",
     });
@@ -129,6 +129,20 @@ export default async function DashboardPage() {
               <Button asChild size="sm" variant="outline"><Link href="/artifacts/promote">Promote artifacts</Link></Button>
               <Button asChild size="sm" variant="outline"><Link href="/investigations/promote">Promote investigations</Link></Button>
             </div>
+            <div className="grid gap-2 sm:grid-cols-3">
+              <Link href="/traces" className="rounded-xl border bg-muted/30 px-3 py-3 text-sm transition-colors hover:bg-muted/50">
+                <div className="font-medium text-foreground">Trace details</div>
+                <div className="mt-1 text-muted-foreground">Open sessions and promote notable trace outcomes into memory.</div>
+              </Link>
+              <Link href="/artifacts/promote" className="rounded-xl border bg-muted/30 px-3 py-3 text-sm transition-colors hover:bg-muted/50">
+                <div className="font-medium text-foreground">Artifact promotion</div>
+                <div className="mt-1 text-muted-foreground">Turn docs, repos, and links into reviewable memory entries.</div>
+              </Link>
+              <Link href="/investigations/promote" className="rounded-xl border bg-muted/30 px-3 py-3 text-sm transition-colors hover:bg-muted/50">
+                <div className="font-medium text-foreground">Investigation promotion</div>
+                <div className="mt-1 text-muted-foreground">Promote saved SQL findings directly into the memory layer.</div>
+              </Link>
+            </div>
           </CardContent>
         </Card>
 
@@ -146,6 +160,16 @@ export default async function DashboardPage() {
             <div className="flex flex-wrap gap-2">
               <Button asChild size="sm"><Link href="/calendar">Open calendar <IconArrowRight /></Link></Button>
               <Button asChild size="sm" variant="outline"><Link href="/memory">View memories</Link></Button>
+            </div>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <Link href="/calendar?view=week&mode=grid" className="rounded-xl border bg-muted/30 px-3 py-3 text-sm transition-colors hover:bg-muted/50">
+                <div className="font-medium text-foreground">Week grid</div>
+                <div className="mt-1 text-muted-foreground">See recurring schedule context and memory activity by day.</div>
+              </Link>
+              <Link href="/calendar?view=week&mode=agenda" className="rounded-xl border bg-muted/30 px-3 py-3 text-sm transition-colors hover:bg-muted/50">
+                <div className="font-medium text-foreground">Agenda mode</div>
+                <div className="mt-1 text-muted-foreground">Use a claw-dash-style list view for a denser operational timeline.</div>
+              </Link>
             </div>
           </CardContent>
         </Card>

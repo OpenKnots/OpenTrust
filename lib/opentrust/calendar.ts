@@ -1,13 +1,17 @@
+import { ensureBootstrapped } from "@/lib/opentrust/bootstrap";
+import { queryJson } from "@/lib/opentrust/db";
 import { listMemoryEntries } from "@/lib/opentrust/memory-entries";
 
 export type CalendarView = "week" | "month";
+
+export type CalendarEventKind = "schedule" | "memory" | "workflow";
 
 export interface CalendarEvent {
   id: string;
   date: string;
   title: string;
   time?: string;
-  kind: "schedule" | "memory";
+  kind: CalendarEventKind;
   href?: string;
   detail?: string;
 }
@@ -84,7 +88,65 @@ export function getCalendarEvents(anchor = new Date(), view: CalendarView = "wee
     });
   }
 
+  try {
+    ensureBootstrapped();
+    const cronRuns = queryJson<{
+      id: string;
+      name: string;
+      status: string;
+      summary: string | null;
+      started_at: string;
+    }>(`
+      SELECT id, name, status, summary, started_at
+      FROM workflow_runs
+      WHERE source_kind = 'cron'
+      ORDER BY started_at DESC
+      LIMIT 200;
+    `);
+
+    for (const run of cronRuns) {
+      const started = new Date(run.started_at);
+      const key = dateKey(started);
+      if (!keys.has(key)) continue;
+
+      events.push({
+        id: `wf-${run.id}`,
+        date: key,
+        title: run.name,
+        kind: "workflow",
+        href: `/workflows/${encodeURIComponent(run.id)}`,
+        detail: `${run.status} · ${run.summary ?? "Scheduled workflow"}`,
+      });
+    }
+  } catch {
+    // DB may not be available (e.g. during build)
+  }
+
   return events.sort((a, b) => {
+    if (a.date !== b.date) return a.date.localeCompare(b.date);
+    return (a.time ?? "23:59").localeCompare(b.time ?? "23:59");
+  });
+}
+
+export function appendWorkflowEvents(
+  events: CalendarEvent[],
+  runs: { id: string; name: string; status: string; summary: string | null; started_at: string }[],
+  visibleKeys: Set<string>,
+): CalendarEvent[] {
+  const added: CalendarEvent[] = [];
+  for (const run of runs) {
+    const key = dateKey(new Date(run.started_at));
+    if (!visibleKeys.has(key)) continue;
+    added.push({
+      id: `wf-${run.id}`,
+      date: key,
+      title: run.name,
+      kind: "workflow",
+      href: `/workflows/${encodeURIComponent(run.id)}`,
+      detail: `${run.status} · ${run.summary ?? "Scheduled workflow"}`,
+    });
+  }
+  return [...events, ...added].sort((a, b) => {
     if (a.date !== b.date) return a.date.localeCompare(b.date);
     return (a.time ?? "23:59").localeCompare(b.time ?? "23:59");
   });

@@ -33,7 +33,7 @@ export default async function WorkflowDetailPage({ params }: { params: Promise<{
 
       <div className="metadata-bar">
         <MetricInline label="Status" value={workflow.status} />
-        <MetricInline label="Source" value={workflow.source_kind ?? "unknown"} />
+        <MetricInline label="Source" value={workflow.source_kind === "cron" ? "Scheduled" : (workflow.source_kind ?? "unknown")} />
         <MetricInline label="Steps" value={String(workflow.steps.length)} />
         <MetricInline label="Artifacts" value={String(workflow.artifacts.length)} />
         <MetricInline label="Updated" value={workflow.updated_at} mono />

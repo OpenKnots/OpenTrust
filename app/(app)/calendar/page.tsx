@@ -5,13 +5,23 @@ import {
   IconChevronRight,
   IconClock,
   IconList,
+  IconPlayerPlay,
   IconSparkles,
 } from "@tabler/icons-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { calendarDays, dateKey, getCalendarEvents, type CalendarView } from "@/lib/opentrust/calendar";
+import { isDemoMode } from "@/lib/opentrust/demo";
+import { getDemoCronCalendarEvents } from "@/lib/opentrust/demo-data";
+import {
+  appendWorkflowEvents,
+  calendarDays,
+  dateKey,
+  getCalendarEvents,
+  type CalendarEventKind,
+  type CalendarView,
+} from "@/lib/opentrust/calendar";
 
 export const dynamic = "force-dynamic";
 
@@ -23,16 +33,39 @@ function addDays(date: Date, days: number) {
   return next;
 }
 
-function eventClasses(kind: "schedule" | "memory") {
-  return kind === "schedule"
-    ? "border-sky-500/20 bg-sky-500/10"
-    : "border-violet-500/20 bg-violet-500/10";
+function eventClasses(kind: CalendarEventKind) {
+  switch (kind) {
+    case "schedule": return "border-sky-500/20 bg-sky-500/10";
+    case "memory": return "border-violet-500/20 bg-violet-500/10";
+    case "workflow": return "border-amber-500/20 bg-amber-500/10";
+  }
 }
 
-function eventBadge(kind: "schedule" | "memory") {
-  return kind === "schedule"
-    ? <Badge variant="outline" className="border-sky-500/30 bg-sky-500/10 text-sky-200">Schedule</Badge>
-    : <Badge variant="outline" className="border-violet-500/30 bg-violet-500/10 text-violet-200">Memory</Badge>;
+function eventBadge(kind: CalendarEventKind) {
+  switch (kind) {
+    case "schedule":
+      return <Badge variant="outline" className="border-sky-500/30 bg-sky-500/10 text-sky-200">Schedule</Badge>;
+    case "memory":
+      return <Badge variant="outline" className="border-violet-500/30 bg-violet-500/10 text-violet-200">Memory</Badge>;
+    case "workflow":
+      return <Badge variant="outline" className="border-amber-500/30 bg-amber-500/10 text-amber-200">Scheduled</Badge>;
+  }
+}
+
+function eventIcon(kind: CalendarEventKind) {
+  switch (kind) {
+    case "schedule": return <IconClock className="size-3 text-sky-300" />;
+    case "memory": return <IconSparkles className="size-3 text-violet-300" />;
+    case "workflow": return <IconPlayerPlay className="size-3 text-amber-300" />;
+  }
+}
+
+function eventLabel(kind: CalendarEventKind, time?: string) {
+  switch (kind) {
+    case "schedule": return time ?? "Scheduled";
+    case "memory": return "Promoted memory";
+    case "workflow": return "Scheduled workflow";
+  }
 }
 
 export default async function CalendarPage({
@@ -45,8 +78,13 @@ export default async function CalendarPage({
   const mode: DisplayMode = params.mode === "agenda" ? "agenda" : "grid";
   const anchor = params.anchor ? new Date(params.anchor) : new Date();
   const safeAnchor = Number.isNaN(anchor.getTime()) ? new Date() : anchor;
+  const demo = await isDemoMode();
   const days = calendarDays(safeAnchor, view);
-  const events = getCalendarEvents(safeAnchor, view);
+  const keys = new Set(days.map(dateKey));
+  let events = getCalendarEvents(safeAnchor, view);
+  if (demo) {
+    events = appendWorkflowEvents(events, getDemoCronCalendarEvents(), keys);
+  }
   const grouped = new Map<string, typeof events>();
   for (const event of events) {
     const list = grouped.get(event.date);
@@ -86,7 +124,7 @@ export default async function CalendarPage({
             <div>
               <CardTitle>{safeAnchor.toLocaleDateString(undefined, { month: "long", year: "numeric" })}</CardTitle>
               <CardDescription>
-                Schedule events are recurring reference items; memory events are real promoted entries.
+                Schedule events are recurring reference items; memory events are promoted entries; workflow events are scheduled (cron) runs.
               </CardDescription>
             </div>
             <div className="flex gap-2">
@@ -124,8 +162,8 @@ export default async function CalendarPage({
                       {dayEvents.length > 0 ? dayEvents.map((event) => (
                         <div key={event.id} className={`rounded-lg border px-2.5 py-2 text-xs ${eventClasses(event.kind)}`}>
                           <div className="mb-1 flex items-center gap-1.5 text-muted-foreground">
-                            {event.kind === "schedule" ? <IconClock className="size-3 text-sky-300" /> : <IconSparkles className="size-3 text-violet-300" />}
-                            <span>{event.kind === "schedule" ? (event.time ?? "Scheduled") : "Promoted memory"}</span>
+                            {eventIcon(event.kind)}
+                            <span>{eventLabel(event.kind, event.time)}</span>
                           </div>
                           <div className="font-medium text-foreground">
                             {event.href ? <Link href={event.href} className="hover:underline">{event.title}</Link> : event.title}
@@ -162,7 +200,7 @@ export default async function CalendarPage({
                           <div className="min-w-0 flex-1">
                             <div className="mb-1 flex items-center gap-2">
                               {eventBadge(event.kind)}
-                              <span className="text-xs text-muted-foreground">{event.kind === "schedule" ? (event.time ?? "Scheduled") : "Promoted memory"}</span>
+                              <span className="text-xs text-muted-foreground">{eventLabel(event.kind, event.time)}</span>
                             </div>
                             <div className="font-medium text-foreground">
                               {event.href ? <Link href={event.href} className="hover:underline">{event.title}</Link> : event.title}
@@ -198,6 +236,7 @@ export default async function CalendarPage({
         </CardHeader>
         <CardContent className="flex flex-wrap gap-2">
           <Button asChild size="sm" variant="outline"><Link href="/traces">Open traces</Link></Button>
+          <Button asChild size="sm" variant="outline"><Link href="/workflows">Open workflows</Link></Button>
           <Button asChild size="sm" variant="outline"><Link href="/artifacts/promote">Promote artifacts</Link></Button>
           <Button asChild size="sm" variant="outline"><Link href="/investigations/promote">Promote investigations</Link></Button>
           <Button asChild size="sm" variant="outline"><Link href="/memory">View memory</Link></Button>

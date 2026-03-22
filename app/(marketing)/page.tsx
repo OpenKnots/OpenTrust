@@ -30,7 +30,7 @@ pnpm install
 # Initialize database
 pnpm run db:init
 
-# Ingest OpenClaw sessions
+# Ingest OpenClaw evidence + memory files
 pnpm run ingest:openclaw
 
 # Launch dashboard
@@ -64,16 +64,16 @@ export default function LandingPage() {
         />
         <div className="landing-hero-split__left">
           <div className="landing-hero-split__badge">
-            The Memory Layer
+            OpenClaw Memory, Truthfully Extended
           </div>
 
           <h1 className="landing-hero-split__title">
-            Build trust into every answer
+            OpenClaw already has memory. OpenTrust turns it into a true memory layer.
           </h1>
 
           <p className="landing-hero-split__subtitle">
-            Evidence-backed retrieval, inspectable lineage, and operator-grade memory.
-            Built for agents, designed for trust.
+            Today, OpenClaw memory lives in workspace Markdown like <code>MEMORY.md</code> and <code>memory/YYYY-MM-DD.md</code>.
+            OpenTrust ingests that real source of truth, then adds structure, lineage, health, timelines, backups, and operator review.
           </p>
 
           <div className="landing-hero-split__actions">
@@ -87,9 +87,9 @@ export default function LandingPage() {
           </div>
 
           <div className="landing-hero-split__logos">
-            <span className="landing-hero-split__logo">4 API endpoints</span>
-            <span className="landing-hero-split__logo">Evidence-backed retrieval</span>
-            <span className="landing-hero-split__logo">Plugin-ready</span>
+            <span className="landing-hero-split__logo">Current source: workspace Markdown</span>
+            <span className="landing-hero-split__logo">Future shape: plugin-backed memory ops</span>
+            <span className="landing-hero-split__logo">Backups, summaries, and historical recall</span>
           </div>
         </div>
 
@@ -109,27 +109,27 @@ export default function LandingPage() {
         />
         <div className="landing-showcase">
           <FeatureShowcase
-            label="Traces"
-            title="Evidence-Backed Memory"
-            description="Every answer traces back to source sessions, artifacts, and tool calls. No hallucinations, just provable lineage."
+            label="OpenClaw today"
+            title="Markdown Is The Real Memory Source"
+            description="OpenClaw memory already lives in workspace files like MEMORY.md and memory/YYYY-MM-DD.md. OpenTrust starts from that authored truth instead of inventing a fake replacement story."
             visual={<TraceVisual />}
           />
           <FeatureShowcase
-            label="Memory"
-            title="Curated Long-Term Storage"
-            description="Promote evidence to persistent memory with retention classes, review workflows, and explicit operator approval."
+            label="Plugin layer"
+            title="Structured, Reviewable, Backup-Aware Memory"
+            description="Ingest the existing memory files, then add retention classes, provenance, review workflows, historical timelines, and exportable backup paths."
             visual={<MemoryVisual />}
           />
           <FeatureShowcase
-            label="Retrieval"
-            title="Hybrid Search Engine"
-            description="Semantic vectors + lexical FTS5 with confidence scoring. Find what matters, ranked by trust."
+            label="Recommendations"
+            title="Daily Summaries + Meaningful Moments"
+            description="Guide users toward daily summaries, long-term profile memory, project memory, and meaningful life moments that deserve durable storage beyond chat history."
             visual={<RetrievalVisual />}
           />
           <FeatureShowcase
-            label="Health"
-            title="Pipeline Monitoring"
-            description="Track freshness, coverage gaps, and stale pipelines. Know when your memory layer needs attention."
+            label="Operations"
+            title="Health, Storage, and Future Plugin UX"
+            description="Track freshness, search quality, and coverage while preparing a first-class OpenClaw plugin with operator surfaces, backups, and future CRM-style relationship memory."
             visual={<HealthVisual />}
           />
         </div>
@@ -141,43 +141,42 @@ export default function LandingPage() {
       <section id="features" className="landing-section">
         <div className="landing-section__eyebrow">Features</div>
         <h2 className="landing-section__title">
-          Everything an operator needs
+          What OpenTrust adds on top of OpenClaw’s memory model
         </h2>
         <p className="landing-section__desc">
-          From raw event capture to curated memory, OpenTrust provides
-          a complete pipeline for agent traceability and memory management.
+          OpenClaw already captures memory in workspace Markdown. OpenTrust should ingest that source first, then add structure, provenance, recommendations, backups, and operator tooling around it.
         </p>
 
         <div className="landing-features">
           <Feature
-            icon={<Telescope size={18} />}
-            title="Session Ingestion"
-            desc="Imports OpenClaw session transcripts from JSONL with incremental cursor tracking."
+            icon={<Database size={18} />}
+            title="Truthful Source Import"
+            desc="Import the real OpenClaw memory source today: MEMORY.md, memory/YYYY-MM-DD.md, and related workspace Markdown files."
           />
           <Feature
             icon={<Workflow size={18} />}
-            title="Workflow Tracking"
-            desc="Ingests cron jobs and workflow runs with step-level attribution and status tracking."
+            title="Daily Summary Recommendations"
+            desc="Generate intelligent prompts and drafts for daily summaries, unresolved threads, and meaningful moments worth preserving."
           />
           <Feature
             icon={<Search size={18} />}
-            title="Semantic Search"
-            desc="64-dimensional sqlite-vec embeddings with FTS5 fallback for hybrid lexical + semantic search."
+            title="Semantic + Exact Recall"
+            desc="Keep OpenClaw’s searchable memory feel while adding stronger structure, indexing, and operator review."
           />
           <Feature
             icon={<FileSearch size={18} />}
             title="Lineage Tracking"
-            desc="Parent-child trace edges, tool-call/tool-result pairing, and artifact provenance."
+            desc="Connect long-term memory back to workspace files, traces, artifacts, workflows, and future writeback sources."
+          />
+          <Feature
+            icon={<Layers3 size={18} />}
+            title="Backup-Aware Storage"
+            desc="Recommend git-backed history, encrypted cloud backups, export bundles, and dual-store strategies for durable memory archives."
           />
           <Feature
             icon={<GitBranch size={18} />}
-            title="Memory Curation"
-            desc="Promote evidence to curated memory with retention classes, tags, and review workflows."
-          />
-          <Feature
-            icon={<HeartPulse size={18} />}
-            title="Health Monitoring"
-            desc="Pipeline freshness, ingestion health, coverage gaps, and operator attention signals."
+            title="CRM-Ready Scaffolding"
+            desc="Plan for relationship memory, contacts, interactions, and follow-up queues in docs first before runtime implementation."
           />
         </div>
       </section>
@@ -188,27 +187,26 @@ export default function LandingPage() {
       <section id="comparison" className="landing-section">
         <div className="landing-section__eyebrow">Comparison</div>
         <h2 className="landing-section__title">
-          OpenTrust vs other tools
+          OpenClaw today vs OpenTrust plugin model
         </h2>
         <p className="landing-section__desc">
-          Most memory systems rely on vibes and embeddings.
-          OpenTrust provides evidence, lineage, and trust.
+          The honest comparison is not “memory vs no memory.” OpenClaw already has real memory today. OpenTrust should extend it by ingesting the current source of truth and making it operational.
         </p>
 
         <div className="landing-comparison">
           <div className="landing-comparison__header">
             <div className="landing-comparison__col"></div>
-            <div className="landing-comparison__col landing-comparison__col--highlight">OpenTrust</div>
-            <div className="landing-comparison__col">Other Tools</div>
+            <div className="landing-comparison__col">OpenClaw today</div>
+            <div className="landing-comparison__col landing-comparison__col--highlight">OpenTrust plugin layer</div>
           </div>
-          <ComparisonRow label="Evidence-backed answers" us={true} them={false} />
-          <ComparisonRow label="Full lineage tracking" us={true} them={false} />
-          <ComparisonRow label="Operator inspection UI" us={true} them={false} />
-          <ComparisonRow label="Health monitoring" us={true} them={false} />
-          <ComparisonRow label="Retention control" us={true} them={false} />
-          <ComparisonRow label="Hybrid search" us={true} them={true} />
-          <ComparisonRow label="Vector embeddings" us={true} them={true} />
-          <ComparisonRow label="Local-first storage" us={true} them={false} />
+          <ComparisonRow label="Canonical memory source is workspace Markdown" us={true} them={true} reverse />
+          <ComparisonRow label="MEMORY.md + daily notes already work today" us={true} them={true} reverse />
+          <ComparisonRow label="Structured review queue and retention entities" us={false} them={true} reverse />
+          <ComparisonRow label="Timeline and calendar memory surfaces" us={false} them={true} reverse />
+          <ComparisonRow label="Backup/export recommendations and flows" us={false} them={true} reverse />
+          <ComparisonRow label="Operator health and provenance views" us={false} them={true} reverse />
+          <ComparisonRow label="Daily summary recommendations" us={false} them={true} reverse />
+          <ComparisonRow label="CRM / relationship memory scaffolding" us={false} them={true} reverse />
         </div>
       </section>
 
@@ -218,33 +216,32 @@ export default function LandingPage() {
       <section id="how-it-works" className="landing-section">
         <div className="landing-section__eyebrow">How it Works</div>
         <h2 className="landing-section__title">
-          Four-step memory pipeline
+          Four-step upgrade path from current OpenClaw memory to plugin memory ops
         </h2>
         <p className="landing-section__desc">
-          Data flows through a well-defined pipeline from OpenClaw sources
-          into durable storage, indexed for retrieval, and served to agents.
+          Start from the memory system OpenClaw already has today, then layer in ingestion, structure, retrieval, and user-facing recommendations for summaries, backups, and durable recall.
         </p>
 
         <div className="landing-steps">
           <Step
             num={1}
-            title="Ingest"
-            desc="Import OpenClaw sessions, workflows, and artifacts from JSONL with cursor tracking."
+            title="Read current memory"
+            desc="Import MEMORY.md, memory/YYYY-MM-DD.md, and optional session-memory snapshots from the OpenClaw workspace."
           />
           <Step
             num={2}
-            title="Store"
-            desc="Persist to append-safe SQLite with stable IDs, schema migrations, and audit trails."
+            title="Structure it"
+            desc="Persist those authored notes into a richer store with review state, provenance, retention, and timeline semantics."
           />
           <Step
             num={3}
-            title="Retrieve"
-            desc="Query via FTS5 lexical + sqlite-vec semantic search with lineage-aware ranking."
+            title="Recommend better capture"
+            desc="Suggest daily summaries, project memory, meaningful moments, backup flows, and long-term promotion opportunities."
           />
           <Step
             num={4}
-            title="Trust"
-            desc="Inspect evidence, traverse lineage, promote to memory, and monitor health."
+            title="Operate it"
+            desc="Expose plugin-grade search, calendar/timeline, health, exports, and future relationship-memory scaffolding."
           />
         </div>
       </section>
@@ -271,7 +268,7 @@ export default function LandingPage() {
             Ready to build trust into your agent?
           </h2>
           <p className="landing-cta-final__desc">
-            Get started in minutes with the OpenClaw plugin or standalone dashboard.
+            Start from the memory OpenClaw already stores today, then layer in review, provenance, backups, summaries, and future plugin-grade memory operations.
           </p>
           <div className="landing-cta-final__actions">
             <Link href="/dashboard" className="landing-btn landing-btn--primary landing-btn--lg">
@@ -385,15 +382,18 @@ function Feature({ icon, title, desc }: { icon: React.ReactNode; title: string; 
   );
 }
 
-function ComparisonRow({ label, us, them }: { label: string; us: boolean; them: boolean }) {
+function ComparisonRow({ label, us, them, reverse = false }: { label: string; us: boolean; them: boolean; reverse?: boolean }) {
+  const left = reverse ? us : them;
+  const right = reverse ? them : us;
+
   return (
     <div className="landing-comparison__row">
       <div className="landing-comparison__cell">{label}</div>
-      <div className="landing-comparison__cell landing-comparison__cell--us">
-        {us ? <Check size={18} className="landing-comparison__check" /> : <X size={18} className="landing-comparison__x" />}
-      </div>
       <div className="landing-comparison__cell">
-        {them ? <Check size={18} className="landing-comparison__check-muted" /> : <X size={18} className="landing-comparison__x" />}
+        {left ? <Check size={18} className="landing-comparison__check-muted" /> : <X size={18} className="landing-comparison__x" />}
+      </div>
+      <div className="landing-comparison__cell landing-comparison__cell--us">
+        {right ? <Check size={18} className="landing-comparison__check" /> : <X size={18} className="landing-comparison__x" />}
       </div>
     </div>
   );
@@ -575,33 +575,33 @@ function FAQSection() {
       <div className="faq-accordion">
         <FAQItem
           number="01"
-          question="What is OpenTrust?"
-          answer="OpenTrust is a memory layer for OpenClaw that provides evidence-backed retrieval, inspectable lineage, and operator-grade memory management. It ensures every answer can be traced back to its source."
+          question="Where is memory stored in OpenClaw today?"
+          answer="Today, OpenClaw memory is primarily stored as Markdown in the workspace: MEMORY.md for curated long-term memory and memory/YYYY-MM-DD.md for daily notes. Optional hook-generated memory snapshots also land under memory/. That workspace content is the right initial source for OpenTrust ingestion."
         />
         <FAQItem
           number="02"
-          question="How does evidence-backed memory work?"
-          answer="Every memory entry in OpenTrust includes full lineage tracking back to the original source sessions, artifacts, and tool calls. This means you can always verify where information came from and how it was derived."
+          question="Does OpenClaw already have memory without OpenTrust?"
+          answer="Yes. OpenClaw already has a real memory model today. Agents read and write workspace memory files, and memory_search indexes those Markdown files for semantic recall. OpenTrust should extend that system, not pretend it doesn’t exist."
         />
         <FAQItem
           number="03"
-          question="Can I use OpenTrust with existing agents?"
-          answer="Yes! OpenTrust integrates seamlessly with OpenClaw and provides a plugin architecture. You can also use the standalone dashboard to inspect and manage memory independently."
+          question="What does the OpenTrust plugin add?"
+          answer="OpenTrust adds structured storage, provenance, review workflows, timeline/calendar views, health surfaces, export and backup strategy, and richer operator tooling on top of the existing authored memory source."
         />
         <FAQItem
           number="04"
-          question="What's the difference between traces and memory?"
-          answer="Traces are raw session records imported from OpenClaw. Memory entries are curated, operator-approved knowledge promoted from traces with explicit retention policies and review workflows."
+          question="What should users store besides daily notes?"
+          answer="The strongest recommendations are daily summaries, long-term profile memory, project memory, meaningful life moments, and relationship/contact memory. These categories help preserve both operational continuity and personal continuity."
         />
         <FAQItem
           number="05"
-          question="Is my data stored locally?"
-          answer="Yes. OpenTrust uses local SQLite storage with append-safe guarantees. All data stays on your machine unless you explicitly configure remote backups."
+          question="How should users back up their memory?"
+          answer="Recommended options include a private git-backed archive, encrypted cloud folder sync, periodic export bundles, or a dual-store strategy where Markdown remains human-readable truth and OpenTrust SQLite provides structured operational views."
         />
         <FAQItem
           number="06"
-          question="How do I get started?"
-          answer="Clone the repository, run pnpm install, initialize the database with pnpm run db:init, and start ingesting OpenClaw sessions with pnpm run ingest:openclaw. The dashboard launches with pnpm dev."
+          question="Is CRM support built yet?"
+          answer="Not in runtime yet. For now, CRM-style relationship memory is docs-only scaffolding so the product can define people, interactions, follow-ups, and guardrails before implementing anything sensitive."
         />
       </div>
     </div>

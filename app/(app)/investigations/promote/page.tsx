@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { ArrowUpCircle, Database } from "lucide-react";
+import { Database } from "lucide-react";
 import { isDemoMode } from "@/lib/opentrust/demo";
 import { getSavedInvestigations, type SavedInvestigationRow } from "@/lib/opentrust/investigations";
 import { memoryPromote } from "@/lib/opentrust/memory-api";
@@ -81,12 +81,8 @@ export default async function PromoteInvestigationPage({
                 <PromoteButton
                   href={`/investigations/promote?id=${encodeURIComponent(investigation.id)}&create=1`}
                   itemTitle={investigation.title}
-                >
-                  <button className="btn btn--primary" type="button">
-                    <ArrowUpCircle size={14} />
-                    Promote to memory
-                  </button>
-                </PromoteButton>
+                  label="Promote to memory"
+                />
               </div>
             </div>
           ))}

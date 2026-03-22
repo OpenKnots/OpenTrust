@@ -183,6 +183,22 @@ export function getDemoGroupedWorkflows(): WorkflowKeyGroup[] {
 }
 
 // ---------------------------------------------------------------------------
+// Calendar workflow events (for demo mode)
+// ---------------------------------------------------------------------------
+
+export function getDemoCronCalendarEvents(): { id: string; name: string; status: string; summary: string | null; started_at: string }[] {
+  return [
+    { id: "demo_wf_001", name: "daily-review", status: "completed", summary: "Reviewed 6 PRs, approved 4, requested changes on 2.", started_at: ago(15) },
+    { id: "demo_wf_002", name: "semantic-index", status: "completed", summary: "Indexed 142 new chunks across 8 source files.", started_at: ago(18) },
+    { id: "demo_wf_003", name: "daily-review", status: "error", summary: "GitHub API rate limit exceeded during review batch.", started_at: ago(1455) },
+    { id: "demo_wf_004", name: "semantic-index", status: "completed", summary: "Re-indexed 23 updated chunks after schema change.", started_at: ago(1458) },
+    { id: "demo_wf_005", name: "nightly-backup", status: "completed", summary: "SQLite WAL checkpoint and backup completed in 2.1s.", started_at: ago(480) },
+    { id: "demo_wf_006", name: "daily-review", status: "completed", summary: "Reviewed 3 PRs, all approved.", started_at: ago(2895) },
+    { id: "demo_wf_007", name: "nightly-backup", status: "completed", summary: "Backup completed, 4.2MB written.", started_at: ago(1920) },
+  ];
+}
+
+// ---------------------------------------------------------------------------
 // Artifacts
 // ---------------------------------------------------------------------------
 

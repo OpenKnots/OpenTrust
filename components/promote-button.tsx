@@ -1,6 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { ArrowUpCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 
 type PromoteButtonProps = {
@@ -22,12 +24,13 @@ export function PromoteButton({
     <ConfirmDialog
       trigger={
         children ?? (
-          <button className="btn btn--primary" type="button">
+          <Button type="button">
+            <ArrowUpCircle size={14} />
             {label}
-          </button>
+          </Button>
         )
       }
-      title={`Promote to memory`}
+      title="Promote to memory"
       description={`This will create a draft memory entry for "${itemTitle}" and send it to the review queue.`}
       confirmLabel="Promote"
       from="bottom"

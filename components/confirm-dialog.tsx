@@ -14,6 +14,7 @@ import {
   DialogClose,
   type DialogFlipDirection,
 } from "@/components/animate-ui/primitives/radix/dialog";
+import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
 type ConfirmDialogProps = {
@@ -50,6 +51,8 @@ export function ConfirmDialog({
     }
   }, [onConfirm]);
 
+  const confirmButtonVariant = confirmVariant === "danger" ? "destructive" : "default";
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
@@ -62,18 +65,19 @@ export function ConfirmDialog({
           </DialogHeader>
           <DialogFooter>
             <DialogClose asChild>
-              <button className="btn btn--ghost" type="button">
+              <Button variant="ghost" type="button">
                 {cancelLabel}
-              </button>
+              </Button>
             </DialogClose>
-            <button
-              className={`btn btn--${confirmVariant}${pending ? " btn--loading" : ""}`}
+            <Button
+              variant={confirmButtonVariant}
               type="button"
               disabled={pending}
               onClick={handleConfirm}
             >
+              {pending && <span className="btn--loading" />}
               {confirmLabel}
-            </button>
+            </Button>
           </DialogFooter>
           <DialogClose className="dialog-close">
             <X size={14} />
