@@ -7,7 +7,9 @@ import { MetricInline } from "@/components/ui/metric";
 import { EmptyState } from "@/components/ui/empty-state";
 import { CodeBlock } from "@/components/code-block";
 import { PiiSafe } from "@/components/pii-safe";
+import { MarkdownPreview } from "@/components/markdown-preview";
 import { Wrench, Package, Clock, FileJson } from "lucide-react";
+import { ArtifactLink } from "@/components/artifact-link";
 
 function prettyJson(raw: string): string {
   try {
@@ -29,7 +31,7 @@ export default async function TraceDetailPage({ params }: { params: Promise<{ id
     <>
       <PageHeader
         title={<PiiSafe>{trace.title ?? trace.id}</PiiSafe>}
-        subtitle={<PiiSafe>{trace.summary ?? "No summary available for this trace."}</PiiSafe>}
+        subtitle={<MarkdownPreview content={trace.summary ?? "No summary available for this trace."} />}
         breadcrumbs={[
           { label: "Overview", href: "/" },
           { label: "Traces", href: "/traces" },
@@ -124,7 +126,9 @@ export default async function TraceDetailPage({ params }: { params: Promise<{ id
               <div key={artifact.id} className="list-item" style={{ cursor: "default" }}>
                 <div className="list-item__content">
                   <span className="list-item__title">{artifact.title ?? artifact.id}</span>
-                  <span className="list-item__subtitle">{truncatePath(artifact.uri)}</span>
+                  <ArtifactLink href={artifact.uri} className="list-item__subtitle">
+                    {truncatePath(artifact.uri)}
+                  </ArtifactLink>
                 </div>
                 <div className="list-item__meta">
                   <Pill label={artifact.kind} tone="neutral" />

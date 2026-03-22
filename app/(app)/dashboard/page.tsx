@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { IconArrowRight, IconCalendarMonth, IconSparkles } from "@tabler/icons-react";
 import { isDemoMode } from "@/lib/opentrust/demo";
 import { getDemoOverview, getDemoHealthSummary } from "@/lib/opentrust/demo-data";
 import { summarizeHealth } from "@/lib/opentrust/health";
@@ -5,6 +7,8 @@ import { getOverview } from "@/lib/opentrust/overview";
 import { SectionCards } from "@/components/section-cards";
 import { ChartAreaInteractive } from "@/components/chart-area-interactive";
 import { DataTable } from "@/components/data-table";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export const dynamic = "force-dynamic";
 
@@ -82,6 +86,47 @@ export default async function DashboardPage() {
         attentionTraces={health.attentionTraces}
         riskyWorkflows={health.riskyWorkflows}
       />
+
+      <div className="grid gap-4 px-4 lg:px-0 xl:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2"><IconSparkles className="size-4 text-primary" /> Memory activation</CardTitle>
+            <CardDescription>
+              Memories appear when you use the existing promote flows from traces, artifacts, investigations, and workflows.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="text-sm text-muted-foreground">
+              Current memory entries: <span className="font-medium text-foreground">{overview.counts.memoryEntries}</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button asChild size="sm"><Link href="/memory">Open memory <IconArrowRight /></Link></Button>
+              <Button asChild size="sm" variant="outline"><Link href="/traces">Promote from traces</Link></Button>
+              <Button asChild size="sm" variant="outline"><Link href="/artifacts/promote">Promote artifacts</Link></Button>
+              <Button asChild size="sm" variant="outline"><Link href="/investigations/promote">Promote investigations</Link></Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2"><IconCalendarMonth className="size-4 text-primary" /> Calendar view</CardTitle>
+            <CardDescription>
+              A claw-dash-inspired operational calendar that combines recurring schedule context with real memory activity.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="text-sm text-muted-foreground">
+              Use it to see recurring schedule context next to promoted memory entries by day.
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button asChild size="sm"><Link href="/calendar">Open calendar <IconArrowRight /></Link></Button>
+              <Button asChild size="sm" variant="outline"><Link href="/memory">View memories</Link></Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       <div className="px-4 lg:px-0">
         <ChartAreaInteractive />
       </div>

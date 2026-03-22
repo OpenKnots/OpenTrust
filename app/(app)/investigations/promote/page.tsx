@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PromoteButton } from "@/components/promote-button";
 import { PiiSafe } from "@/components/pii-safe";
+import { MarkdownPreview } from "@/components/markdown-preview";
 
 export const dynamic = "force-dynamic";
 
@@ -74,7 +75,7 @@ export default async function PromoteInvestigationPage({
             <div key={investigation.id} className="list-item" style={{ cursor: "default" }}>
               <div className="list-item__content">
                 <span className="list-item__title"><PiiSafe>{investigation.title}</PiiSafe></span>
-                <span className="list-item__subtitle"><PiiSafe>{investigation.description ?? investigation.sql_text.slice(0, 180)}</PiiSafe></span>
+                <span className="list-item__subtitle"><MarkdownPreview content={investigation.description ?? investigation.sql_text.slice(0, 180)} /></span>
               </div>
               <div className="list-item__meta">
                 <PromoteButton

@@ -4,6 +4,26 @@ export function truncatePath(uri: string, levels = 4): string {
   return `…/${segments.slice(-levels).join("/")}`;
 }
 
+export function formatDuration(
+  start: string | null | undefined,
+  end: string | null | undefined,
+): string | null {
+  if (!start) return null;
+  const s = new Date(start).getTime();
+  const e = end ? new Date(end).getTime() : Date.now();
+  if (Number.isNaN(s) || Number.isNaN(e)) return null;
+  const ms = Math.max(0, e - s);
+  if (ms < 1000) return `${ms}ms`;
+  const sec = Math.floor(ms / 1000);
+  if (sec < 60) return `${sec}s`;
+  const min = Math.floor(sec / 60);
+  const remSec = sec % 60;
+  if (min < 60) return remSec ? `${min}m ${remSec}s` : `${min}m`;
+  const hr = Math.floor(min / 60);
+  const remMin = min % 60;
+  return remMin ? `${hr}h ${remMin}m` : `${hr}h`;
+}
+
 export function formatRelativeTime(input: string | null | undefined) {
   if (!input) return "unknown";
   const value = new Date(input).getTime();

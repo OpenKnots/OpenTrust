@@ -15,7 +15,7 @@ export function SiteHeader({
 }) {
   return (
     <header className="flex h-12 shrink-0 items-center transition-[width,height] ease-linear">
-      <div className="flex w-full items-center gap-3 px-4">
+      <div className="flex w-full min-w-0 items-center gap-3 px-4">
         <SidebarTrigger className="-ml-1" />
         <span className="text-sm font-medium text-muted-foreground">
           {title ?? "Dashboard"}

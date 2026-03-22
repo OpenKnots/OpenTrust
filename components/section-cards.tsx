@@ -28,7 +28,7 @@ export function SectionCards({
   riskyWorkflows,
 }: SectionCardsProps) {
   return (
-    <div className="*:data-[slot=card]:shadow-xs grid auto-rows-min gap-4 px-4 sm:grid-cols-2 lg:px-0 xl:grid-cols-4">
+    <div className="*:data-[slot=card]:shadow-xs grid min-w-0 auto-rows-min gap-4 px-4 sm:grid-cols-2 lg:px-0 xl:grid-cols-4">
       <Card className="@container/card">
         <CardHeader>
           <CardDescription>Total Sessions</CardDescription>

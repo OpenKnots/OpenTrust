@@ -313,8 +313,8 @@ export function DataTable({
   }
 
   return (
-    <Tabs defaultValue="all" className="flex w-full flex-col gap-4">
-      <div className="flex items-center justify-between px-4 lg:px-0">
+    <Tabs defaultValue="all" className="flex min-w-0 w-full flex-col gap-4">
+      <div className="flex min-w-0 items-center justify-between px-4 lg:px-0">
         <Label htmlFor="view-selector" className="sr-only">
           View
         </Label>
@@ -371,7 +371,7 @@ export function DataTable({
         </div>
       </div>
       <TabsContent value="all" className="relative flex flex-col gap-4">
-        <div className="overflow-hidden rounded-lg border">
+        <div className="overflow-x-auto rounded-lg border">
           <DndContext
             collisionDetection={closestCenter}
             modifiers={[restrictToVerticalAxis]}

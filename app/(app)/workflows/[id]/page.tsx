@@ -1,12 +1,13 @@
 import { notFound } from "next/navigation";
 import { getWorkflowDetail } from "@/lib/opentrust/workflow-details";
 import { PageHeader } from "@/components/ui/page-header";
-import { truncatePath } from "@/lib/opentrust/format";
+import { truncatePath, formatDuration, formatRelativeTime } from "@/lib/opentrust/format";
 import { Pill } from "@/components/ui/pill";
 import { MetricInline } from "@/components/ui/metric";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PiiSafe } from "@/components/pii-safe";
 import { MarkdownPreview } from "@/components/markdown-preview";
+import { ArtifactLink } from "@/components/artifact-link";
 
 export const dynamic = "force-dynamic";
 
@@ -48,33 +49,26 @@ export default async function WorkflowDetailPage({ params }: { params: Promise<{
 
         {workflow.steps.length > 0 ? (
           <div className="list-group">
-            {workflow.steps.map((step) => (
-              <div key={step.id} className="list-item detail-stack">
-                <div className="detail-stack__header">
-                  <Pill
-                    label={step.status}
-                    tone={step.status === "error" || step.status === "attention" ? "danger" : step.status === "active" ? "info" : "neutral"}
-                  />
-                  <span className="list-item__title detail-stack__title"><PiiSafe>{step.label ?? step.step_key}</PiiSafe></span>
-                  <span className="detail-stack__timestamp">
-                    {step.updated_at ?? step.started_at ?? step.id}
-                  </span>
-                </div>
-                <div className="detail-stack__subtle">
-                  Step key: {step.step_key}
-                </div>
-                <details className="expandable" style={{ marginTop: 8 }}>
-                  <summary>Timing</summary>
-                  <div className="expandable__content">
-                    <div className="detail-timing">
-                      <span>Started: {step.started_at ?? "—"}</span>
-                      <span>Updated: {step.updated_at ?? "—"}</span>
-                      <span>Ended: {step.ended_at ?? "—"}</span>
+            {workflow.steps.map((step) => {
+              const duration = formatDuration(step.started_at, step.ended_at ?? step.updated_at);
+              return (
+                <div key={step.id} className="list-item detail-stack">
+                  <div className="detail-stack__header">
+                    <Pill
+                      label={step.status}
+                      tone={step.status === "error" || step.status === "attention" ? "danger" : step.status === "active" ? "info" : "neutral"}
+                    />
+                    <span className="list-item__title detail-stack__title"><PiiSafe>{step.label ?? step.step_key}</PiiSafe></span>
+                    <div className="detail-stack__meta">
+                      {duration && <span className="detail-stack__duration">{duration}</span>}
+                      <span className="detail-stack__timestamp">
+                        {formatRelativeTime(step.updated_at ?? step.started_at)}
+                      </span>
                     </div>
                   </div>
-                </details>
-              </div>
-            ))}
+                </div>
+              );
+            })}
           </div>
         ) : (
           <EmptyState message="No workflow steps recorded yet." />
@@ -94,7 +88,9 @@ export default async function WorkflowDetailPage({ params }: { params: Promise<{
               <div key={artifact.id} className="list-item" style={{ cursor: "default" }}>
                 <div className="list-item__content">
                   <span className="list-item__title">{artifact.title ?? artifact.id}</span>
-                  <span className="list-item__subtitle">{truncatePath(artifact.uri)}</span>
+                  <ArtifactLink href={artifact.uri} className="list-item__subtitle">
+                    {truncatePath(artifact.uri)}
+                  </ArtifactLink>
                 </div>
                 <div className="list-item__meta">
                   <Pill label={artifact.kind} tone="neutral" />

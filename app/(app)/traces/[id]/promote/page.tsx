@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PromoteButton } from "@/components/promote-button";
 import { PiiSafe } from "@/components/pii-safe";
+import { MarkdownPreview } from "@/components/markdown-preview";
 
 export const dynamic = "force-dynamic";
 
@@ -74,7 +75,7 @@ export default async function PromoteTraceMemoryPage({
         </div>
         <div className="artifact-card">
           <div className="artifact-card__title"><PiiSafe>{detail.title ?? detail.id}</PiiSafe></div>
-          <div className="list-item__subtitle"><PiiSafe>{detail.summary ?? "No summary available."}</PiiSafe></div>
+          <div className="list-item__subtitle"><MarkdownPreview content={detail.summary ?? "No summary available."} /></div>
           <div style={{ marginTop: 16 }}>
             <PromoteButton
               href={`/traces/${encodeURIComponent(detail.id)}/promote?create=1`}

@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useCallback } from "react";
 import { CodeBlock } from "@/components/code-block";
+import { JsonEditor } from "@/components/json-editor";
 import type {
   MemorySearchRequest,
   MemorySearchResponse,
@@ -355,12 +356,20 @@ export default function ApiPlaygroundPage() {
           <div className="api-playground__editor">
             <div className="api-playground__editor-header">
               <span className="api-playground__editor-label">Request Body</span>
+              {requestBody !== currentEndpoint.examplePayload && (
+                <button
+                  type="button"
+                  className="api-playground__reset-btn"
+                  onClick={() => setRequestBody(currentEndpoint.examplePayload)}
+                >
+                  Reset
+                </button>
+              )}
             </div>
-            <textarea
-              className="api-playground__textarea"
+            <JsonEditor
               value={requestBody}
-              onChange={(e) => setRequestBody(e.target.value)}
-              spellCheck={false}
+              onChange={setRequestBody}
+              minHeight={180}
             />
           </div>
 

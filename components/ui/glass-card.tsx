@@ -17,7 +17,7 @@ export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
       <div
         ref={ref}
         className={cn(
-          "glass-card",
+          "glass-card min-w-0 max-w-full overflow-hidden",
           variant !== "default" && `glass-card--${variant}`,
           glow && "glass-card--glow",
           hoverable && "glass-card--hoverable",

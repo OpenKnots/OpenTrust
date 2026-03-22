@@ -163,7 +163,7 @@ export function ChartAreaInteractive() {
   });
 
   return (
-    <Card className="@container/card">
+    <Card className="@container/card min-w-0">
       <CardHeader>
         <CardTitle>Trace &amp; Workflow Activity</CardTitle>
         <CardAction>

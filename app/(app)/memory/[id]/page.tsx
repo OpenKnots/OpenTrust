@@ -144,7 +144,7 @@ export default async function MemoryDetailPage({ params }: { params: Promise<{ i
     <>
       <PageHeader
         title={<PiiSafe>{entry.title}</PiiSafe>}
-        subtitle={<PiiSafe>{entry.summary ?? "Curated memory entry with provenance and review metadata."}</PiiSafe>}
+        subtitle={<MarkdownPreview content={entry.summary ?? "Curated memory entry with provenance and review metadata."} />}
         breadcrumbs={[
           { label: "Overview", href: "/" },
           { label: "Memory", href: "/memory" },
@@ -185,7 +185,7 @@ export default async function MemoryDetailPage({ params }: { params: Promise<{ i
           <div className="artifact-card">
             <div className="artifact-card__kind"><Pill label={entry.confidence_score != null ? `${entry.confidence_score}` : "unknown"} tone="neutral" /></div>
             <div className="artifact-card__title">Confidence</div>
-            <div className="list-item__subtitle"><PiiSafe>{entry.confidence_reason ?? "No confidence note recorded."}</PiiSafe></div>
+            <div className="list-item__subtitle"><MarkdownPreview content={entry.confidence_reason ?? "No confidence note recorded."} /></div>
           </div>
         </CardGrid>
       </div>
@@ -208,7 +208,7 @@ export default async function MemoryDetailPage({ params }: { params: Promise<{ i
         <CardGrid tone="warning" storageKey="memory-uncertainty">
           <div className="artifact-card">
             <div className="artifact-card__title">Uncertainty summary</div>
-            <div className="list-item__subtitle"><PiiSafe>{entry.uncertainty_summary ?? "No uncertainty summary recorded."}</PiiSafe></div>
+            <div className="list-item__subtitle"><MarkdownPreview content={entry.uncertainty_summary ?? "No uncertainty summary recorded."} /></div>
           </div>
           <div className="artifact-card">
             <div className="artifact-card__title">Author</div>
@@ -216,7 +216,7 @@ export default async function MemoryDetailPage({ params }: { params: Promise<{ i
           </div>
           <div className="artifact-card">
             <div className="artifact-card__title">Review notes</div>
-            <div className="list-item__subtitle"><PiiSafe>{entry.review_notes ?? "No review notes recorded."}</PiiSafe></div>
+            <div className="list-item__subtitle"><MarkdownPreview content={entry.review_notes ?? "No review notes recorded."} /></div>
           </div>
         </CardGrid>
       </div>

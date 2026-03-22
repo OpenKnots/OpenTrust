@@ -34,7 +34,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
       <AppSidebar latestIngest={latestIngest} authLabel={auth.mode === "none" ? "unprotected" : `${auth.mode}${auth.allowLocalhostBypass ? " · localhost bypass" : ""}`} />
       <SidebarInset>
         <SiteHeader demo={demo} authMode={auth.mode} allowLocalhostBypass={auth.allowLocalhostBypass} />
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        <div className="flex min-w-0 max-w-full flex-1 flex-col gap-4 p-4 pt-0">
           {children}
         </div>
       </SidebarInset>

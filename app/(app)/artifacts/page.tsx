@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Pill } from "@/components/ui/pill";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PiiSafe } from "@/components/pii-safe";
+import { ArtifactLink } from "@/components/artifact-link";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +25,9 @@ function ArtifactCard({
         </span>
       </div>
       <div className="artifact-card__title"><PiiSafe>{artifact.title ?? artifact.id}</PiiSafe></div>
-      <div className="artifact-card__uri">{truncatePath(artifact.uri)}</div>
+      <ArtifactLink href={artifact.uri} className="artifact-card__uri">
+        {truncatePath(artifact.uri)}
+      </ArtifactLink>
     </div>
   );
 }

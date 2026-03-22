@@ -4,6 +4,7 @@ import * as React from "react";
 import {
   IconChartBar,
   IconBook,
+  IconCalendarMonth,
   IconFileSearch,
   IconApi,
   IconHelp,
@@ -61,6 +62,11 @@ const memoryToolItems = [
     name: "Memory",
     url: "/memory",
     icon: IconBook,
+  },
+  {
+    name: "Calendar",
+    url: "/calendar",
+    icon: IconCalendarMonth,
   },
   {
     name: "Investigations",

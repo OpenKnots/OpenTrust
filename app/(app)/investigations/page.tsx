@@ -24,6 +24,7 @@ import { RunnableSqlBlock } from "@/components/runnable-sql";
 import { GlassCard } from "@/components/ui/glass-card";
 import { MetricCard } from "@/components/ui/metric-card";
 import { PiiSafe } from "@/components/pii-safe";
+import { MarkdownPreview } from "@/components/markdown-preview";
 
 export const dynamic = "force-dynamic";
 
@@ -197,9 +198,9 @@ function InvestigationCard({
               <span className="text-xs text-muted-foreground">{metaText}</span>
             </div>
             <h3 className="text-lg font-semibold text-foreground"><PiiSafe>{investigation.title}</PiiSafe></h3>
-            <p className="mt-1 text-sm leading-6 text-muted-foreground">
-              <PiiSafe>{investigation.description ?? "No description."}</PiiSafe>
-            </p>
+            <div className="mt-1 text-sm leading-6 text-muted-foreground">
+              <MarkdownPreview content={investigation.description ?? "No description."} />
+            </div>
           </div>
           <div className="rounded-xl border border-white/10 bg-background/60 px-3 py-2 text-right backdrop-blur">
             <div className="text-xs uppercase tracking-[0.14em] text-muted-foreground">Preview rows</div>

@@ -9,12 +9,24 @@ import { Pill, StatusDot } from "@/components/ui/pill";
 import { EmptyState } from "@/components/ui/empty-state";
 import { GlassCard } from "@/components/ui/glass-card";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { MarkdownPreview } from "@/components/markdown-preview";
 import { PiiSafe } from "@/components/pii-safe";
 import {
   PreviewCard,
   PreviewCardTrigger,
   PreviewCardPanel,
 } from "@/components/animate-ui/components/base/preview-card";
+
+function stripMarkdown(text: string): string {
+  return text
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/\*\*(.+?)\*\*/g, "$1")
+    .replace(/\*(.+?)\*/g, "$1")
+    .replace(/`(.+?)`/g, "$1")
+    .replace(/^\s*[-*+]\s+/gm, "")
+    .replace(/\n+/g, " ")
+    .trim();
+}
 
 export const dynamic = "force-dynamic";
 
@@ -41,7 +53,7 @@ function TraceList({ traces }: { traces: SessionTraceGroup["traces"] }) {
                 <div className="list-item__content">
                   <span className="list-item__title"><PiiSafe>{trace.title ?? trace.id}</PiiSafe></span>
                   {trace.summary && (
-                    <span className="list-item__subtitle"><PiiSafe>{trace.summary}</PiiSafe></span>
+                    <span className="list-item__subtitle"><PiiSafe>{stripMarkdown(trace.summary)}</PiiSafe></span>
                   )}
                 </div>
                 <div className="list-item__meta">
@@ -63,7 +75,13 @@ function TraceList({ traces }: { traces: SessionTraceGroup["traces"] }) {
           />
           <PreviewCardPanel side="right" sideOffset={12} align="start">
             <div className="preview-card__title"><PiiSafe>{trace.title ?? trace.id}</PiiSafe></div>
-            <div className="preview-card__text"><PiiSafe>{trace.summary ?? "No summary available."}</PiiSafe></div>
+            <div className="preview-card__text">
+              {trace.summary ? (
+                <MarkdownPreview content={trace.summary} className="markdown-preview--compact" />
+              ) : (
+                <span style={{ color: "var(--text-muted)" }}>No summary available.</span>
+              )}
+            </div>
             <div className="preview-card__meta">
               <StatusBadge
                 label={trace.status}

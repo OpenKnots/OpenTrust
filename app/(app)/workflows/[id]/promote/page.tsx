@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PromoteButton } from "@/components/promote-button";
 import { PiiSafe } from "@/components/pii-safe";
+import { MarkdownPreview } from "@/components/markdown-preview";
 
 export const dynamic = "force-dynamic";
 
@@ -68,7 +69,7 @@ export default async function PromoteWorkflowPage({
         </div>
         <div className="artifact-card">
           <div className="artifact-card__title"><PiiSafe>{workflow.name}</PiiSafe></div>
-          <div className="list-item__subtitle"><PiiSafe>{workflow.summary ?? `${workflow.status} workflow run`}</PiiSafe></div>
+          <div className="list-item__subtitle"><MarkdownPreview content={workflow.summary ?? `${workflow.status} workflow run`} /></div>
           <div style={{ marginTop: 16 }}>
             <PromoteButton
               href="?create=1"
