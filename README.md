@@ -214,6 +214,19 @@ Auth endpoints also enforce same-origin checks for POST requests, and the auth c
 | `pnpm run typecheck`       | Run `tsc --noEmit`                     |
 | `pnpm run secrets:check`   | Scan the repo for leaked secrets       |
 
+### Operator scripts
+
+Interactive shell scripts for common operations. Each one explains what it does step-by-step and asks before making changes.
+
+| Script                  | Description                                              |
+| ----------------------- | -------------------------------------------------------- |
+| `./scripts/setup.sh`   | First-time setup (deps, env, DB, ingestion, dev server)  |
+| `./scripts/update.sh`  | Day-2 refresh after `git pull` (deps, migrations, data)  |
+| `./scripts/harden.sh`  | Audit and tighten security configuration                 |
+| `./scripts/review.sh`  | Operational snapshot (row counts, ingestion, audit log)   |
+| `./scripts/doctor.sh`  | Diagnose environment issues (versions, DB, ports)        |
+| `./scripts/reset.sh`   | Clean-slate wipe of local data (requires explicit "yes") |
+
 
 ## Safety
 

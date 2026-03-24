@@ -5042,7 +5042,15 @@ mark {
   color: rgba(255,255,255,0.38);
 }
 
+.landing-hero-minimal__title-wrap {
+  position: relative;
+  width: 100%;
+  padding: 2.5rem 0;
+}
+
 .landing-hero-minimal__title {
+  position: relative;
+  z-index: 1;
   font-size: clamp(3.4rem, 7.5vw, 6.2rem);
   font-weight: 700;
   letter-spacing: -0.055em;

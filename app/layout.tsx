@@ -21,14 +21,26 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: "OpenTrust",
-  description: "Local-first OpenClaw traceability, workflows, skills, plugins, and investigations.",
+  description: "Review, trace, and trust every piece of agent memory. Local-first. Open source.",
   manifest: "/manifest.json",
+  openGraph: {
+    title: "OpenTrust — Memory, made visible.",
+    description: "Review, trace, and trust every piece of agent memory. Local-first. Open source.",
+    siteName: "OpenTrust",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "OpenTrust — Memory, made visible.",
+    description: "Review, trace, and trust every piece of agent memory. Local-first. Open source.",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
     title: "OpenTrust",
   },
   icons: {
+    icon: "/favicon.ico",
     apple: "/icons/apple-touch-icon.png",
   },
 };

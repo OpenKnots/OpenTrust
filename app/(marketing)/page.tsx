@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { CodeBlock } from "@/components/code-block";
 import { MeshGradientBg, NeuroNoiseBg } from "@/components/shader-background";
+import { TitleParticles } from "@/components/title-particles";
 
 const MOLTY_ICON = "https://openclaw.ai/favicon.svg";
 
@@ -73,9 +74,12 @@ export default function LandingPage() {
             OpenClaw remembers.
           </div>
 
-          <h1 className="landing-hero-minimal__title">
-            <span className="landing-hero-minimal__title-gradient">OpenTrust Clarifies.</span>
-          </h1>
+          <div className="landing-hero-minimal__title-wrap">
+            <TitleParticles />
+            <h1 className="landing-hero-minimal__title">
+              <span className="landing-hero-minimal__title-gradient">OpenTrust Clarifies.</span>
+            </h1>
+          </div>
 
           <p className="landing-hero-minimal__subtitle">
             Memories stored in operational layers across traces and workflows.
