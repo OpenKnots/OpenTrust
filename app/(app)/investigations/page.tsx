@@ -8,6 +8,11 @@ import {
   IconWaveSine,
 } from "@tabler/icons-react";
 import { ensureBootstrapped } from "@/lib/opentrust/bootstrap";
+import { isDemoMode } from "@/lib/opentrust/demo";
+import {
+  getDemoSavedInvestigations,
+  getDemoInvestigationTemplates,
+} from "@/lib/opentrust/demo-data";
 import { formatRelativeTime } from "@/lib/opentrust/format";
 import {
   getInvestigationTemplates,
@@ -28,10 +33,10 @@ import { MarkdownPreview } from "@/components/markdown-preview";
 
 export const dynamic = "force-dynamic";
 
-export default function InvestigationsPage() {
-  ensureBootstrapped();
-  const investigations = getSavedInvestigations();
-  const templates = getInvestigationTemplates();
+export default async function InvestigationsPage() {
+  const demo = await isDemoMode();
+  const investigations = demo ? getDemoSavedInvestigations() : (ensureBootstrapped(), getSavedInvestigations());
+  const templates = demo ? getDemoInvestigationTemplates() : getInvestigationTemplates();
   const totalQueries = investigations.length + templates.length;
 
   return (
