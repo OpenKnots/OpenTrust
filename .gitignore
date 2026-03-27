@@ -13,3 +13,5 @@ coverage
 *.tsbuildinfo
 storage/*.sqlite*
 storage/prompt-bank/*
+storage
+!storage/README.md
