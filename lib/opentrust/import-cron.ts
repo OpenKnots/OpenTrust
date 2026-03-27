@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { upsertArtifactsForWorkflow } from "@/lib/opentrust/artifact-extract";
-import { escapeSqlString, runSql } from "@/lib/opentrust/db";
+import { escapeSqlString, runSql, withTransaction } from "@/lib/opentrust/db";
 import { getIngestionState, recordIngestionState } from "@/lib/opentrust/ingestion-state";
 
 interface CronJobEntry {
@@ -77,6 +77,7 @@ function inferStatus(job: CronJobEntry, records: CronRunRecord[]) {
 }
 
 function upsertWorkflow(job: CronJobEntry, records: CronRunRecord[]) {
+  withTransaction(() => {
   const workflowId = `workflow:cron:${job.id}`;
   const startedAt = msToIso(job.state?.lastRunAtMs ?? records[0]?.runAtMs ?? Date.now());
   const updatedAt = msToIso(job.state?.lastRunAtMs ?? records.at(-1)?.ts ?? Date.now());
@@ -145,8 +146,14 @@ function upsertWorkflow(job: CronJobEntry, records: CronRunRecord[]) {
     importedCount: records.length,
     metadata: { workflowId, latestStatus: status },
   });
+  });
 }
 
+/**
+ * Import cron job definitions and their run history as workflow records.
+ * Skips jobs that have not changed since the last import.
+ * @returns The number of workflows imported.
+ */
 export function importCronWorkflows(limit = 24) {
   const jobs = loadJobs().slice(0, limit);
   let imported = 0;

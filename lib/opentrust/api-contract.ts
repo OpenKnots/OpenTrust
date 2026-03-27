@@ -8,6 +8,9 @@ import type {
   MemorySearchRequest,
   MemorySourceType,
 } from "@/lib/types";
+import { createLogger } from "@/lib/opentrust/logger";
+
+const log = createLogger("api-contract");
 
 const MEMORY_SOURCE_TYPES: MemorySourceType[] = [
   "trace",
@@ -39,10 +42,12 @@ export class ApiValidationError extends Error {
   }
 }
 
+/** Wrap a successful result in the standard API envelope. */
 export function ok<T>(data: T) {
   return { ok: true as const, data };
 }
 
+/** Wrap an error in the standard API envelope, mapping known errors to their status codes. */
 export function fail(error: unknown) {
   if (error instanceof ApiValidationError) {
     return {
@@ -56,7 +61,7 @@ export function fail(error: unknown) {
     };
   }
 
-  console.error("Unhandled API error", error);
+  log.error("Unhandled API error", { error: error instanceof Error ? error.message : String(error) });
 
   return {
     ok: false as const,
@@ -69,6 +74,7 @@ export function fail(error: unknown) {
   };
 }
 
+/** Parse a JSON request body, throwing an ApiValidationError on bad content-type or malformed JSON. */
 export async function readJson(request: Request) {
   const contentType = request.headers.get("content-type") ?? "";
   if (!contentType.toLowerCase().includes("application/json")) {
@@ -124,6 +130,7 @@ function asEnum<T extends string>(
   return value as T;
 }
 
+/** Validate and parse a memory search request from a JSON body. */
 export function parseSearchRequest(input: unknown): MemorySearchRequest {
   const body = (input ?? {}) as Record<string, unknown>;
   const query = asString(body.query, "query", { required: true })!;
@@ -152,6 +159,7 @@ export function parseSearchRequest(input: unknown): MemorySearchRequest {
   };
 }
 
+/** Validate and parse a memory inspect request from a JSON body. */
 export function parseInspectRequest(input: unknown): MemoryInspectRequest {
   const body = (input ?? {}) as Record<string, unknown>;
   const ref = (body.ref ?? {}) as Record<string, unknown>;
@@ -167,6 +175,7 @@ export function parseInspectRequest(input: unknown): MemoryInspectRequest {
   };
 }
 
+/** Validate and parse a memory health request from a JSON body. */
 export function parseHealthRequest(input: unknown): MemoryHealthRequest {
   const body = (input ?? {}) as Record<string, unknown>;
   return {
@@ -175,6 +184,7 @@ export function parseHealthRequest(input: unknown): MemoryHealthRequest {
   };
 }
 
+/** Validate and parse a memory promote request from a JSON body. */
 export function parsePromoteRequest(input: unknown): MemoryPromoteRequest {
   const body = (input ?? {}) as Record<string, unknown>;
   const originRefs = body.originRefs;
@@ -223,6 +233,7 @@ export function parsePromoteRequest(input: unknown): MemoryPromoteRequest {
   };
 }
 
+/** Parse a memory search request from URL query parameters. */
 export function parseSearchQuery(url: URL): MemorySearchRequest {
   return parseSearchRequest({
     query: url.searchParams.get("q"),
@@ -233,6 +244,7 @@ export function parseSearchQuery(url: URL): MemorySearchRequest {
   });
 }
 
+/** Parse a memory inspect request from URL query parameters. */
 export function parseInspectQuery(url: URL): MemoryInspectRequest {
   return parseInspectRequest({
     ref: {
@@ -245,6 +257,7 @@ export function parseInspectQuery(url: URL): MemoryInspectRequest {
   });
 }
 
+/** Parse a memory health request from URL query parameters. */
 export function parseHealthQuery(url: URL): MemoryHealthRequest {
   return parseHealthRequest({
     scope: url.searchParams.get("scope") ?? "global",
@@ -252,6 +265,7 @@ export function parseHealthQuery(url: URL): MemoryHealthRequest {
   });
 }
 
+/** Filter search results to only include entries matching a specific review status. */
 export function filterSearchResultsByReview<T extends { whyMatched: { rankingSignals: string[] } }>(
   results: T[],
   review?: string,

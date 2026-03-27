@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { ApiValidationError, fail, ok } from "@/lib/opentrust/api-contract";
 import { writeAuthAudit } from "@/lib/opentrust/auth-audit";
 import { verifySameOriginRequest } from "@/lib/opentrust/csrf";
 import { getRequestMeta, OPENTRUST_AUTH_COOKIE } from "@/lib/opentrust/auth";
@@ -15,7 +16,7 @@ export async function POST() {
       userAgent: meta.userAgent,
       detail: `csrf_${csrf.reason}`,
     });
-    return NextResponse.json({ ok: false, error: "Invalid request origin" }, { status: 403 });
+    return NextResponse.json(fail(new ApiValidationError("Invalid request origin", { status: 403, code: "csrf_failed" })), { status: 403 });
   }
 
   writeAuthAudit({
@@ -25,7 +26,7 @@ export async function POST() {
     detail: null,
   });
 
-  const response = NextResponse.json({ ok: true });
+  const response = NextResponse.json(ok(null));
   response.cookies.set(OPENTRUST_AUTH_COOKIE, "", {
     httpOnly: true,
     sameSite: "strict",

@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { escapeSqlString, runSql } from "@/lib/opentrust/db";
+import { escapeSqlString, runSql, withTransaction } from "@/lib/opentrust/db";
 
 export interface ExtractedArtifact {
   kind: "url" | "doc" | "repo" | "note";
@@ -15,6 +15,7 @@ function normalize(value: string) {
   return value.trim();
 }
 
+/** Extract URLs, repo references, and doc paths from free-form text. */
 export function extractArtifactsFromText(text: string): ExtractedArtifact[] {
   const artifacts = new Map<string, ExtractedArtifact>();
 
@@ -40,8 +41,10 @@ export function extractArtifactsFromText(text: string): ExtractedArtifact[] {
   return [...artifacts.values()].slice(0, 24);
 }
 
+/** Extract artifacts from text and link them to a trace via trace_edges. */
 export function upsertArtifactsForTrace(traceId: string, text: string, createdAt: string) {
   const artifacts = extractArtifactsFromText(text);
+  return withTransaction(() => {
   runSql(`DELETE FROM trace_edges WHERE from_kind = 'trace' AND from_id = ${escapeSqlString(traceId)} AND edge_type = 'references' AND to_kind = 'artifact';`);
 
   for (const artifact of artifacts) {
@@ -75,10 +78,13 @@ export function upsertArtifactsForTrace(traceId: string, text: string, createdAt
   }
 
   return artifacts.length;
+  });
 }
 
+/** Extract artifacts from text and link them to a workflow via run_artifacts. */
 export function upsertArtifactsForWorkflow(workflowId: string, text: string, createdAt: string) {
   const artifacts = extractArtifactsFromText(text);
+  return withTransaction(() => {
   runSql(`DELETE FROM run_artifacts WHERE run_id = ${escapeSqlString(workflowId)} AND relation = 'references';`);
 
   for (const artifact of artifacts) {
@@ -107,4 +113,5 @@ export function upsertArtifactsForWorkflow(workflowId: string, text: string, cre
   }
 
   return artifacts.length;
+  });
 }

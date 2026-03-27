@@ -6,10 +6,12 @@ function now() {
   return Date.now();
 }
 
+/** Normalize an IP address into a rate-limit key, defaulting to "unknown". */
 export function getRateLimitKey(ip: string | null | undefined) {
   return ip?.trim() || "unknown";
 }
 
+/** Return the current rate-limit state for an IP, creating a fresh window if expired. */
 export function getLoginRateLimit(ip: string | null | undefined) {
   const key = getRateLimitKey(ip);
   const current = entries.get(key);
@@ -28,6 +30,7 @@ export function getLoginRateLimit(ip: string | null | undefined) {
   };
 }
 
+/** Increment the failure count for an IP and return whether the limit has been reached. */
 export function recordLoginFailure(ip: string | null | undefined) {
   const state = getLoginRateLimit(ip);
   const next = { count: state.count + 1, resetAt: state.resetAt };
@@ -39,6 +42,7 @@ export function recordLoginFailure(ip: string | null | undefined) {
   };
 }
 
+/** Reset the failure counter for an IP after a successful login. */
 export function clearLoginFailures(ip: string | null | undefined) {
   entries.delete(getRateLimitKey(ip));
 }

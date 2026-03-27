@@ -1,6 +1,9 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { ensureMigrated, escapeSqlString, runSql } from "@/lib/opentrust/db";
+import { createLogger } from "@/lib/opentrust/logger";
+
+const log = createLogger("bootstrap");
 
 function sqlJson(value: unknown) {
   return escapeSqlString(JSON.stringify(value));
@@ -77,6 +80,10 @@ function getBuiltinSkillsDirectory() {
   return null;
 }
 
+/**
+ * Run migrations and sync capabilities (skills, plugins, soul, bundle)
+ * from the local filesystem. Safe to call on every request.
+ */
 export function ensureBootstrapped() {
   ensureMigrated();
   syncSkillsFromDirectory(path.join(process.env.HOME ?? "", ".openclaw", "workspace", "skills"), "workspace-skills");
@@ -85,7 +92,7 @@ export function ensureBootstrapped() {
     syncSkillsFromDirectory(builtinSkillsDirectory, "builtin-skills");
   } else if (process.env.NODE_ENV !== "production" && !warnedAboutMissingBuiltinSkills) {
     warnedAboutMissingBuiltinSkills = true;
-    console.warn("OpenTrust could not locate builtin OpenClaw skills; skipping builtin skill sync.");
+    log.warn("Could not locate builtin OpenClaw skills, skipping builtin skill sync");
   }
   syncPluginsFromConfig();
   syncSoulFromIdentity();
