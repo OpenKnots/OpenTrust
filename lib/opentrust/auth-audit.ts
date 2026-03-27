@@ -10,6 +10,7 @@ function auditPath() {
   return path.join(dir, "auth.log");
 }
 
+/** Append a JSON-line auth event to the audit log file (best-effort, swallows FS errors). */
 export function writeAuthAudit(event: {
   action: "login_success" | "login_failure" | "logout";
   ip?: string | null;

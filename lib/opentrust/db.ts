@@ -17,11 +17,13 @@ function ensureStorageDir() {
   }
 }
 
+/** Return the absolute path to the SQLite database file. */
 export function getDatabasePath() {
   ensureStorageDir();
   return dbPath;
 }
 
+/** Return the shared SQLite database instance, creating it on first access. */
 export function getDb() {
   if (globalForDb.__opentrustDb) return globalForDb.__opentrustDb;
 
@@ -33,30 +35,49 @@ export function getDb() {
   return db;
 }
 
+/** Execute a raw SQL string (no parameter binding). */
 export function runSql(sql: string) {
   getDb().exec(sql);
 }
 
+/** Execute a SQL query and return all matching rows as typed objects. */
 export function queryJson<T>(sql: string, params?: Record<string, unknown>) {
   const statement = getDb().prepare(sql);
   return (params ? statement.all(params as never) : statement.all()) as T[];
 }
 
+/** Execute a SQL query and return the first row, or null if none match. */
 export function queryOne<T>(sql: string, params?: Record<string, unknown>) {
   const statement = getDb().prepare(sql);
   const row = (params ? statement.get(params as never) : statement.get()) as T | undefined;
   return row ?? null;
 }
 
+/** Execute a SQL statement with optional named parameters and return the run result. */
 export function execute(sql: string, params?: Record<string, unknown>) {
   const statement = getDb().prepare(sql);
   return params ? statement.run(params as never) : statement.run();
 }
 
+/**
+ * Execute a callback inside a SQLite transaction. If the callback throws,
+ * the transaction is rolled back automatically. Returns the callback's result.
+ */
+export function withTransaction<T>(fn: () => T): T {
+  const db = getDb();
+  const wrapped = db.transaction(fn);
+  return wrapped();
+}
+
+/** Escape a string for safe inclusion in a raw SQL literal (single-quote wrapping). */
 export function escapeSqlString(value: string) {
   return `'${value.replaceAll("'", "''")}'`;
 }
 
+/**
+ * Run all database migrations to bring the schema up to date.
+ * Safe to call repeatedly; uses IF NOT EXISTS and column checks.
+ */
 export function ensureMigrated() {
   const migrationSql = readFileSync(migrationPath, "utf8");
   runSql(migrationSql);

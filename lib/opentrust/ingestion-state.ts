@@ -11,6 +11,7 @@ export interface IngestionStateRow {
   metadata_json: string;
 }
 
+/** Upsert the ingestion cursor and status for a given source. */
 export function recordIngestionState(input: {
   sourceKey: string;
   sourceKind: string;
@@ -64,6 +65,7 @@ export function recordIngestionState(input: {
   );
 }
 
+/** List all ingestion source states, ordered by most recent run. */
 export function getIngestionStates(limit = 12): IngestionStateRow[] {
   return queryJson<IngestionStateRow>(
     `
@@ -76,6 +78,7 @@ export function getIngestionStates(limit = 12): IngestionStateRow[] {
   );
 }
 
+/** Fetch the ingestion state for a specific source key, or null if not yet tracked. */
 export function getIngestionState(sourceKey: string): IngestionStateRow | null {
   return queryOne<IngestionStateRow>(
     `

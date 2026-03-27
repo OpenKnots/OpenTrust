@@ -24,6 +24,7 @@ function safeEqual(a: string, b: string) {
   return timingSafeEqual(left, right);
 }
 
+/** Read auth configuration from environment variables. */
 export function getOpenTrustAuthConfig(): OpenTrustAuthConfig {
   const mode = (process.env.OPENTRUST_AUTH_MODE ?? "token") as OpenTrustAuthMode;
   const allowLocalhostBypass = process.env.OPENTRUST_ALLOW_LOCALHOST_BYPASS !== "false";
@@ -36,18 +37,21 @@ export function getOpenTrustAuthConfig(): OpenTrustAuthConfig {
   };
 }
 
+/** Check whether a hostname resolves to a loopback address (localhost/127.0.0.1/::1). */
 export function isLoopbackHost(hostname: string | null | undefined) {
   if (!hostname) return false;
   const value = hostname.split(":")[0]?.toLowerCase() ?? "";
   return value === "localhost" || value === "127.0.0.1" || value === "::1";
 }
 
+/** Derive a session cookie value by hashing the configured secret. */
 export function createSessionValue(config: OpenTrustAuthConfig) {
   const secret = config.mode === "password" ? config.password : config.token;
   if (!secret) return null;
   return sha256(`opentrust:${config.mode}:${secret}`);
 }
 
+/** Verify a credential (token or password) against the auth config using timing-safe comparison. */
 export function verifyCredential(input: string, config: OpenTrustAuthConfig) {
   if (config.mode === "none") return true;
   const expected = config.mode === "password" ? config.password : config.token;
@@ -55,6 +59,7 @@ export function verifyCredential(input: string, config: OpenTrustAuthConfig) {
   return safeEqual(input, expected);
 }
 
+/** Extract host, IP, and user-agent from the incoming request headers. */
 export async function getRequestMeta() {
   const store = await headers();
   const forwardedHost = store.get("x-forwarded-host");
@@ -70,10 +75,12 @@ export async function getRequestMeta() {
   };
 }
 
+/** Return the hostname from the current request (respects x-forwarded-host). */
 export async function getRequestHostname() {
   return (await getRequestMeta()).host;
 }
 
+/** Check whether the current request is authenticated via cookie or localhost bypass. */
 export async function isAuthenticatedRequest() {
   const config = getOpenTrustAuthConfig();
   if (config.mode === "none") return true;
@@ -91,6 +98,7 @@ export async function isAuthenticatedRequest() {
   return !!existing && safeEqual(existing, sessionValue);
 }
 
+/** Guard for API routes. Returns a 401 response if unauthenticated, or null if OK. */
 export async function requireApiAuth() {
   const ok = await isAuthenticatedRequest();
   return ok ? null : NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
