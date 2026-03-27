@@ -1,15 +1,3 @@
-/** Strip common Markdown syntax for plain-text list previews. */
-export function stripMarkdown(text: string): string {
-  return text
-    .replace(/^#{1,6}\s+/gm, "")
-    .replace(/\*\*(.+?)\*\*/g, "$1")
-    .replace(/\*(.+?)\*/g, "$1")
-    .replace(/`(.+?)`/g, "$1")
-    .replace(/^\s*[-*+]\s+/gm, "")
-    .replace(/\n+/g, " ")
-    .trim();
-}
-
 export function truncatePath(uri: string, levels = 4): string {
   const segments = uri.split("/").filter(Boolean);
   if (segments.length <= levels) return uri;

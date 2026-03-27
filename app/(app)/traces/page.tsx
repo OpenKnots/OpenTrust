@@ -2,14 +2,14 @@ import Link from "next/link";
 import { ArrowRight, Bot, Telescope } from "lucide-react";
 import { isDemoMode } from "@/lib/opentrust/demo";
 import { getDemoGroupedTraces } from "@/lib/opentrust/demo-data";
-import { formatRelativeTime, stripMarkdown } from "@/lib/opentrust/format";
+import { formatRelativeTime } from "@/lib/opentrust/format";
 import { getGroupedTraces, type SessionTraceGroup } from "@/lib/opentrust/trace-list";
 import { PageHeader } from "@/components/ui/page-header";
 import { Pill, StatusDot } from "@/components/ui/pill";
 import { EmptyState } from "@/components/ui/empty-state";
 import { GlassCard } from "@/components/ui/glass-card";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { MarkdownPreviewWithModal } from "@/components/markdown-preview-with-modal";
+import { MarkdownPreview } from "@/components/markdown-preview";
 import { PiiSafe } from "@/components/pii-safe";
 import {
   PreviewCard,
@@ -42,7 +42,7 @@ function TraceList({ traces }: { traces: SessionTraceGroup["traces"] }) {
                 <div className="list-item__content">
                   <span className="list-item__title"><PiiSafe>{trace.title ?? trace.id}</PiiSafe></span>
                   {trace.summary && (
-                    <span className="list-item__subtitle"><PiiSafe>{stripMarkdown(trace.summary)}</PiiSafe></span>
+                    <span className="list-item__subtitle"><PiiSafe>{trace.summary}</PiiSafe></span>
                   )}
                 </div>
                 <div className="list-item__meta">
@@ -65,11 +65,7 @@ function TraceList({ traces }: { traces: SessionTraceGroup["traces"] }) {
           <PreviewCardPanel side="right" sideOffset={12} align="start">
             <div className="preview-card__title"><PiiSafe>{trace.title ?? trace.id}</PiiSafe></div>
             <div className="preview-card__text">
-              <MarkdownPreviewWithModal
-                content={trace.summary}
-                modalTitle={<PiiSafe>{trace.title ?? trace.id}</PiiSafe>}
-                className="markdown-preview--compact"
-              />
+              <MarkdownPreview content={trace.summary ?? "No summary available."} />
             </div>
             <div className="preview-card__meta">
               <StatusBadge

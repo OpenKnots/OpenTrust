@@ -238,17 +238,6 @@ body {
   line-height: 1.6;
 }
 
-.page-header__subtitle .markdown-preview--compact {
-  display: -webkit-box;
-  -webkit-line-clamp: 8;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.markdown-preview-modal-trigger {
-  cursor: zoom-in;
-}
-
 .page-header__actions {
   display: flex;
   align-items: center;
