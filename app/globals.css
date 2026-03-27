@@ -238,6 +238,17 @@ body {
   line-height: 1.6;
 }
 
+.page-header__subtitle .markdown-preview--compact {
+  display: -webkit-box;
+  -webkit-line-clamp: 8;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.markdown-preview-modal-trigger {
+  cursor: zoom-in;
+}
+
 .page-header__actions {
   display: flex;
   align-items: center;
@@ -6505,6 +6516,7 @@ select:focus {
   --info-border: rgba(0, 229, 255, 0.25);
   --surface-overlay: rgba(255, 255, 255, 0.02);
   --surface-overlay-hover: rgba(255, 255, 255, 0.04);
+  --codeblock-bg: #0d0d14;
   --brand: #E53935;
   color-scheme: dark;
 }

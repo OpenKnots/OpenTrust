@@ -7,7 +7,7 @@ import { MetricInline } from "@/components/ui/metric";
 import { EmptyState } from "@/components/ui/empty-state";
 import { CodeBlock } from "@/components/code-block";
 import { PiiSafe } from "@/components/pii-safe";
-import { MarkdownPreview } from "@/components/markdown-preview";
+import { MarkdownPreviewWithModal } from "@/components/markdown-preview-with-modal";
 import { Wrench, Package, Clock, FileJson, ArrowUpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -33,7 +33,14 @@ export default async function TraceDetailPage({ params }: { params: Promise<{ id
     <>
       <PageHeader
         title={<PiiSafe>{trace.title ?? trace.id}</PiiSafe>}
-        subtitle={<MarkdownPreview content={trace.summary ?? "No summary available for this trace."} />}
+        subtitle={
+          <MarkdownPreviewWithModal
+            content={trace.summary}
+            modalTitle={<PiiSafe>{trace.title ?? trace.id}</PiiSafe>}
+            className="markdown-preview--compact"
+            emptyText="No summary available for this trace."
+          />
+        }
         breadcrumbs={[
           { label: "Overview", href: "/" },
           { label: "Traces", href: "/traces" },

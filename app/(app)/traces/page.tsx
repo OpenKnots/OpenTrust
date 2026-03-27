@@ -2,31 +2,20 @@ import Link from "next/link";
 import { ArrowRight, Bot, Telescope } from "lucide-react";
 import { isDemoMode } from "@/lib/opentrust/demo";
 import { getDemoGroupedTraces } from "@/lib/opentrust/demo-data";
-import { formatRelativeTime } from "@/lib/opentrust/format";
+import { formatRelativeTime, stripMarkdown } from "@/lib/opentrust/format";
 import { getGroupedTraces, type SessionTraceGroup } from "@/lib/opentrust/trace-list";
 import { PageHeader } from "@/components/ui/page-header";
 import { Pill, StatusDot } from "@/components/ui/pill";
 import { EmptyState } from "@/components/ui/empty-state";
 import { GlassCard } from "@/components/ui/glass-card";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { MarkdownPreview } from "@/components/markdown-preview";
+import { MarkdownPreviewWithModal } from "@/components/markdown-preview-with-modal";
 import { PiiSafe } from "@/components/pii-safe";
 import {
   PreviewCard,
   PreviewCardTrigger,
   PreviewCardPanel,
 } from "@/components/animate-ui/components/base/preview-card";
-
-function stripMarkdown(text: string): string {
-  return text
-    .replace(/^#{1,6}\s+/gm, "")
-    .replace(/\*\*(.+?)\*\*/g, "$1")
-    .replace(/\*(.+?)\*/g, "$1")
-    .replace(/`(.+?)`/g, "$1")
-    .replace(/^\s*[-*+]\s+/gm, "")
-    .replace(/\n+/g, " ")
-    .trim();
-}
 
 export const dynamic = "force-dynamic";
 
@@ -76,11 +65,11 @@ function TraceList({ traces }: { traces: SessionTraceGroup["traces"] }) {
           <PreviewCardPanel side="right" sideOffset={12} align="start">
             <div className="preview-card__title"><PiiSafe>{trace.title ?? trace.id}</PiiSafe></div>
             <div className="preview-card__text">
-              {trace.summary ? (
-                <MarkdownPreview content={trace.summary} className="markdown-preview--compact" />
-              ) : (
-                <span style={{ color: "var(--text-muted)" }}>No summary available.</span>
-              )}
+              <MarkdownPreviewWithModal
+                content={trace.summary}
+                modalTitle={<PiiSafe>{trace.title ?? trace.id}</PiiSafe>}
+                className="markdown-preview--compact"
+              />
             </div>
             <div className="preview-card__meta">
               <StatusBadge
