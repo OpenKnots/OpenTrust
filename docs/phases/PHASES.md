@@ -259,7 +259,7 @@ App Shell, App Sidebar, Artifact Link, Auth Controls, Border Glow, Chart Area In
 - Comprehensive demo mode
 
 **What is notably absent:**
-- Desktop application (Tauri) — zero implementation
+- Desktop application (Tauri) — scaffold complete, distributable builds not yet produced
 - Test coverage — 1 test file with 23 assertions out of 34 modules
 - Real embedding models — current vectors are deterministic char-code-based
 - Structured logging / observability
@@ -438,31 +438,36 @@ Current state: basic health signals exist (stale pipelines, review debt, weak pr
 
 ---
 
-## Phase 16 — Desktop application `NOT STARTED`
+## Phase 16 — Desktop application `SUBSTANTIALLY COMPLETE`
 
 **Goal:** Wrap OpenTrust in a native desktop application using Tauri v2.
 
-**Note:** This was originally Phase 8.5 (parallel with memory work). It has been renumbered to reflect that it has zero implementation and is no longer an upstream prerequisite — the memory layer was built without it.
+**Note:** This was originally Phase 8.5 (parallel with memory work). Renumbered to reflect actual priority. The Tier 1 scaffold and Tier 2 native integrations are now implemented.
 
 Primary design doc: `docs/DESKTOP-APPLICATION-PLAN.md`
 
 ### Tier 1 — Minimal desktop app `[required]`
-- [ ] `[required]` Tauri v2 project scaffold (`src-tauri/`)
-- [ ] `[required]` Next.js static export configuration (`output: 'export'`)
-- [ ] `[required]` Tauri window configuration (title, size, platform targets)
-- [ ] `[required]` Sidecar Node process for the memory runtime
-- [ ] `[required]` Desktop-appropriate database path resolution (`$APPDATA` / `~/Library/Application Support`)
+- [x] `[required]` Tauri v2 project scaffold (`src-tauri/`) — Cargo.toml, build.rs, tauri.conf.json, capabilities, icons
+- [x] `[required]` Next.js standalone output configuration (`output: 'standalone'` for sidecar-compatible server.js)
+- [x] `[required]` Tauri window configuration (1280×860 default, 900×600 min, centered, resizable)
+- [x] `[required]` Sidecar Node process for the memory runtime (port auto-selection, readiness polling, env-based config)
+- [x] `[required]` Desktop-appropriate database path resolution via `OPENTRUST_DB_PATH` env + Tauri `app_data_dir()`
 - [ ] `[required]` Basic macOS `.dmg` build
 - [ ] `[required]` Basic Windows `.msi` / `.exe` build
 - [ ] `[required]` Basic Linux `.AppImage` / `.deb` build
 
 ### Tier 2 — Native integrations `[optional]`
-- [ ] `[optional]` System tray icon with health status indicator
-- [ ] `[optional]` Tray menu: open dashboard, run ingestion, check health, quit
+- [x] `[optional]` System tray icon with health status indicator
+- [x] `[optional]` Tray menu: open dashboard, memory health, quit
 - [ ] `[optional]` Native file dialog for database selection / backup export
-- [ ] `[optional]` OS notifications for ingestion completion and health alerts
+- [x] `[optional]` OS notifications plugin wired (tauri-plugin-notification on Rust + JS)
 - [ ] `[optional]` Global keyboard shortcut to open OpenTrust
 - [ ] `[optional]` Deep link support (`opentrust://` protocol)
+
+### Cross-cutting desktop support
+- [x] Desktop detection utility (`lib/opentrust/desktop.ts` — `isDesktop()` / `isWeb()`)
+- [x] Secretlint ignore for Rust build artifacts (`src-tauri/target/**`)
+- [x] Gitignore for Tauri build artifacts (target, gen, Cargo.lock)
 
 ### Tier 3 — Distribution `[stretch]`
 - [ ] `[stretch]` Auto-update via `tauri-plugin-updater`
@@ -534,7 +539,7 @@ The core local-first evidence platform is complete end-to-end: ingest, normalize
 
 1. **Phase 9 was built before prerequisites were met.** The execution pipeline recommended deferring memory-layer expansion until Tauri, persistence, and reliable run completion were stable. Phase 9 was implemented anyway. The result is solid, and the gating advice should be considered superseded.
 
-2. **Desktop application (originally Phase 8.5) has zero implementation.** It was framed as a parallel workstream that "can proceed now" but no work was done. Renumbered to Phase 16 to reflect its actual priority position.
+2. **Desktop application (originally Phase 8.5) now has a working scaffold.** The Tauri v2 project, sidecar architecture, system tray, desktop DB path resolution, and notification plugin are implemented. Distributable builds remain. Renumbered to Phase 16.
 
 3. **Memory table migrations are runtime-based, not file-based.** The Phase 9 implementation plan specified `db/` migration files. The actual implementation uses `ensureMigrated()` in `db.ts`. This works but diverges from the documented approach.
 

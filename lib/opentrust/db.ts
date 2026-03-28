@@ -3,8 +3,27 @@ import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 const repoRoot = process.cwd();
-const storageDir = path.join(repoRoot, "storage");
-const dbPath = path.join(storageDir, "opentrust.sqlite");
+
+/**
+ * Resolve the database path.
+ *
+ * When running as a Tauri desktop app (OPENTRUST_DB_PATH is set by the
+ * Rust sidecar launcher), use the platform-appropriate Application Support
+ * / AppData path.  Otherwise fall back to the local `storage/` directory
+ * for development and CLI usage.
+ */
+function resolveDbPath(): string {
+  const envPath = process.env.OPENTRUST_DB_PATH;
+  if (envPath) return envPath;
+  return path.join(repoRoot, "storage", "opentrust.sqlite");
+}
+
+function resolveStorageDir(): string {
+  return path.dirname(resolveDbPath());
+}
+
+const storageDir = resolveStorageDir();
+const dbPath = resolveDbPath();
 const migrationPath = path.join(repoRoot, "db", "0001_init.sql");
 
 const globalForDb = globalThis as unknown as {
