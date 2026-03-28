@@ -77,14 +77,14 @@ Primary design doc:
 - `docs/DESKTOP-APPLICATION-PLAN.md`
 
 Includes:
-- [ ] Tauri v2 project scaffold (`src-tauri/`)
-- [ ] Next.js static export configuration
-- [ ] Tauri window and platform configuration
-- [ ] sidecar Node process for the memory runtime
-- [ ] desktop-appropriate database path resolution (`$APPDATA` / `~/Library/Application Support`)
+- [x] Tauri v2 project scaffold (`src-tauri/`)
+- [x] Next.js standalone output configuration (sidecar-compatible)
+- [x] Tauri window and platform configuration
+- [x] sidecar Node process for the memory runtime
+- [x] desktop-appropriate database path resolution (`$APPDATA` / `~/Library/Application Support`)
+- [x] system tray integration with health status
+- [x] native OS notifications for ingestion and health events
 - [ ] basic macOS / Windows / Linux distributable builds
-- [ ] system tray integration with health status
-- [ ] native OS notifications for ingestion and health events
 
 This phase can proceed in parallel with Phases 9–14 since the Tauri scaffold is independent of memory-layer hardening.
 
@@ -112,11 +112,11 @@ Primary design docs:
 - `docs/PHASE-9-IMPLEMENTATION-PLAN.md`
 
 Includes:
-- [ ] curated memory entities and retention labels
-- [ ] promotion flows from traces/artifacts to long-term memory
-- [ ] review metadata for promoted memory
-- [ ] write contracts suitable for future OpenClaw memory APIs
-- [ ] distinction between transient evidence and curated memory
+- [x] curated memory entities and retention labels
+- [x] promotion flows from traces/artifacts to long-term memory
+- [x] review metadata for promoted memory
+- [x] write contracts suitable for future OpenClaw memory APIs
+- [x] distinction between transient evidence and curated memory
 
 ### Phase 10 — Retrieval quality and ranking
 Goal: make storage useful by improving answer quality.
