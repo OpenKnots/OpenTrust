@@ -81,6 +81,7 @@ function tryLoadSqliteVec() {
   }
 }
 
+/** Create the semantic_chunks and semantic_index_state tables if they do not exist. */
 export function ensureSemanticTables() {
   runSql(`
     CREATE TABLE IF NOT EXISTS semantic_chunks (
@@ -104,6 +105,11 @@ export function ensureSemanticTables() {
   `);
 }
 
+/**
+ * Rebuild the semantic chunk index from scratch by re-chunking all traces
+ * and artifacts. Loads sqlite-vec for vector search when available.
+ * @returns The number of chunks inserted.
+ */
 export function rebuildSemanticChunks() {
   ensureSemanticTables();
   const vec = tryLoadSqliteVec();
@@ -215,6 +221,7 @@ export function rebuildSemanticChunks() {
   return inserted;
 }
 
+/** Return the current semantic index health: chunk count, vector readiness, and last run time. */
 export function getSemanticStatus(): SemanticStatus {
   ensureSemanticTables();
 
@@ -236,6 +243,10 @@ export function getSemanticStatus(): SemanticStatus {
   };
 }
 
+/**
+ * Search semantic chunks using vector similarity when available,
+ * falling back to a LIKE query on chunk body/title.
+ */
 export function searchSemanticFallback(query: string) {
   ensureSemanticTables();
   const state = getSemanticStatus();

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { ApiValidationError, fail, ok } from "@/lib/opentrust/api-contract";
 import { writeAuthAudit } from "@/lib/opentrust/auth-audit";
 import { clearLoginFailures, getLoginRateLimit, recordLoginFailure } from "@/lib/opentrust/auth-rate-limit";
 import { verifySameOriginRequest } from "@/lib/opentrust/csrf";
@@ -26,11 +27,11 @@ export async function POST(request: Request) {
       userAgent: meta.userAgent,
       detail: `csrf_${csrf.reason}`,
     });
-    return NextResponse.json({ ok: false, error: "Invalid request origin" }, { status: 403 });
+    return NextResponse.json(fail(new ApiValidationError("Invalid request origin", { status: 403, code: "csrf_failed" })), { status: 403 });
   }
 
   if (config.mode === "none") {
-    return NextResponse.json({ ok: true, mode: config.mode, bypass: true });
+    return NextResponse.json(ok({ mode: config.mode, bypass: true }));
   }
 
   if (config.allowLocalhostBypass && isLoopbackHost(await getRequestHostname())) {
@@ -38,7 +39,7 @@ export async function POST(request: Request) {
     if (sessionValue) {
       clearLoginFailures(meta.ip);
       writeAuthAudit({ action: "login_success", ip: meta.ip, userAgent: meta.userAgent, detail: "localhost_bypass" });
-      const response = NextResponse.json({ ok: true, mode: config.mode, bypass: true });
+      const response = NextResponse.json(ok({ mode: config.mode, bypass: true }));
       response.cookies.set(OPENTRUST_AUTH_COOKIE, sessionValue, {
         httpOnly: true,
         sameSite: "strict",
@@ -58,13 +59,11 @@ export async function POST(request: Request) {
       userAgent: meta.userAgent,
       detail: "rate_limited",
     });
-    return NextResponse.json(
-      { ok: false, error: "Too many failed attempts. Try again later." },
-      {
-        status: 429,
-        headers: { "retry-after": String(Math.ceil((rate.resetAt - Date.now()) / 1000)) },
-      }
-    );
+    const result = fail(new ApiValidationError("Too many failed attempts. Try again later.", { status: 429, code: "rate_limited" }));
+    return NextResponse.json(result, {
+      status: 429,
+      headers: { "retry-after": String(Math.ceil((rate.resetAt - Date.now()) / 1000)) },
+    });
   }
 
   let body: unknown;
@@ -78,7 +77,7 @@ export async function POST(request: Request) {
       userAgent: meta.userAgent,
       detail: "invalid_json",
     });
-    return NextResponse.json({ ok: false, error: "Malformed JSON body" }, { status: 400 });
+    return NextResponse.json(fail(new ApiValidationError("Malformed JSON body", { status: 400, code: "invalid_json" })), { status: 400 });
   }
 
   const credential = typeof (body as { credential?: unknown })?.credential === "string"
@@ -94,7 +93,7 @@ export async function POST(request: Request) {
       userAgent: meta.userAgent,
       detail: failure.limited ? "invalid_credentials_limit_reached" : "invalid_credentials",
     });
-    return NextResponse.json({ ok: false, error: "Invalid credentials" }, { status: 401 });
+    return NextResponse.json(fail(new ApiValidationError("Invalid credentials", { status: 401, code: "invalid_credentials" })), { status: 401 });
   }
 
   const sessionValue = createSessionValue(config);
@@ -105,7 +104,7 @@ export async function POST(request: Request) {
       userAgent: meta.userAgent,
       detail: "misconfigured_auth",
     });
-    return NextResponse.json({ ok: false, error: "Auth is configured incorrectly" }, { status: 500 });
+    return NextResponse.json(fail(new ApiValidationError("Auth is configured incorrectly", { status: 500, code: "misconfigured_auth" })), { status: 500 });
   }
 
   clearLoginFailures(meta.ip);
@@ -118,7 +117,7 @@ export async function POST(request: Request) {
 
   const maxAge = rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 12;
 
-  const response = NextResponse.json({ ok: true, mode: config.mode });
+  const response = NextResponse.json(ok({ mode: config.mode }));
   response.cookies.set(OPENTRUST_AUTH_COOKIE, sessionValue, {
     httpOnly: true,
     sameSite: "strict",

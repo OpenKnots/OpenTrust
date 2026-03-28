@@ -2,6 +2,10 @@ import { getDb } from "@/lib/opentrust/db";
 
 const READ_ONLY_PREFIXES = ["select", "with", "pragma table_info", "pragma database_list"];
 
+/**
+ * Execute a read-only SQL statement for investigation previews.
+ * Rejects anything that is not a SELECT, WITH, or PRAGMA query.
+ */
 export function runReadOnlySql(sql: string) {
   const normalized = sql.trim().toLowerCase();
   if (!READ_ONLY_PREFIXES.some((prefix) => normalized.startsWith(prefix))) {

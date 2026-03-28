@@ -1,6 +1,5 @@
 import { ensureBootstrapped } from "@/lib/opentrust/bootstrap";
 import { queryJson } from "@/lib/opentrust/db";
-import { listMemoryEntries } from "@/lib/opentrust/memory-entries";
 import { searchSemanticFallback } from "@/lib/opentrust/semantic";
 
 export interface InvestigationResult {
@@ -17,27 +16,41 @@ function fts5Escape(raw: string): string {
   return tokens.map((t) => `"${t.replace(/"/g, '""')}"`).join(" ");
 }
 
+/**
+ * Search across memory entries and evidence (traces/artifacts) using a
+ * layered strategy: memory SQL search → FTS5 → semantic fallback.
+ */
 export function searchInvestigations(query: string): InvestigationResult[] {
   ensureBootstrapped();
 
   const q = query.trim();
   if (!q) return [];
 
-  const normalized = q.toLowerCase();
-  const memoryResults = listMemoryEntries({ limit: 50 })
-    .filter((entry) => {
-      const haystack = [entry.title, entry.body, entry.summary ?? "", ...entry.tags.map((tag) => tag.tag)]
-        .join(" ")
-        .toLowerCase();
-      return haystack.includes(normalized);
-    })
-    .map((entry) => ({
-      source_id: entry.id,
-      title: entry.title,
-      snippet: entry.summary ?? entry.body.slice(0, 280),
-      mode: "memory-entry" as const,
-      sourceType: "memory" as const,
-    }));
+  // Search memory entries at the SQL level instead of loading all into memory.
+  // Uses LIKE for broad matching across title, body, and summary.
+  const likePattern = `%${q.replace(/%/g, "\\%").replace(/_/g, "\\_")}%`;
+  const memoryResults = queryJson<{ id: string; title: string; summary: string | null; body: string }>(
+    `
+      SELECT id, title, summary, body
+      FROM memory_entries
+      WHERE archived_at IS NULL
+        AND review_status != 'rejected'
+        AND (
+          title LIKE :pattern ESCAPE '\\'
+          OR body LIKE :pattern ESCAPE '\\'
+          OR summary LIKE :pattern ESCAPE '\\'
+        )
+      ORDER BY updated_at DESC
+      LIMIT 8;
+    `,
+    { pattern: likePattern },
+  ).map((entry) => ({
+    source_id: entry.id,
+    title: entry.title,
+    snippet: entry.summary ?? entry.body.slice(0, 280),
+    mode: "memory-entry" as const,
+    sourceType: "memory" as const,
+  }));
 
   const ftsQuery = fts5Escape(q);
   const ftsResults = queryJson<InvestigationResult>(

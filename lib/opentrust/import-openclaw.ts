@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { upsertArtifactsForTrace } from "@/lib/opentrust/artifact-extract";
-import { execute, escapeSqlString, runSql } from "@/lib/opentrust/db";
+import { execute, escapeSqlString, runSql, withTransaction } from "@/lib/opentrust/db";
 import { getIngestionState, recordIngestionState } from "@/lib/opentrust/ingestion-state";
 import { makeToolCallDraft, maybeBuildToolResultUpdate } from "@/lib/opentrust/tool-results";
 
@@ -78,6 +78,7 @@ function loadJsonlRecords(file: string): JsonlRecord[] {
 }
 
 function upsertSessionAndTrace(sessionKey: string, entry: SessionIndexEntry, records: JsonlRecord[]) {
+  withTransaction(() => {
   const sessionId = entry.sessionId as string;
   const traceId = `trace:session:${sessionId}`;
   const startedAt = records.find((record) => record.type === "session")?.timestamp ?? new Date(entry.updatedAt ?? Date.now()).toISOString();
@@ -269,8 +270,14 @@ function upsertSessionAndTrace(sessionKey: string, entry: SessionIndexEntry, rec
     importedCount: records.length,
     metadata: { traceId, sessionFile: entry.sessionFile ?? null },
   });
+  });
 }
 
+/**
+ * Import the most recent OpenClaw sessions into the database.
+ * Skips sessions that have not changed since the last import.
+ * @returns The number of sessions imported.
+ */
 export function importRecentOpenClawSessions(limit = 24) {
   const items = loadSessionIndex().slice(0, limit);
   let imported = 0;

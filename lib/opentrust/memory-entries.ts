@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { ensureBootstrapped } from "@/lib/opentrust/bootstrap";
-import { execute, queryJson, queryOne } from "@/lib/opentrust/db";
+import { execute, queryJson, queryOne, withTransaction } from "@/lib/opentrust/db";
 import { getMemoryConfig } from "@/lib/opentrust/memory-config";
 import type {
   MemoryEntry,
@@ -57,9 +57,10 @@ function loadTags(memoryEntryId: string) {
   );
 }
 
+/** Create a new memory entry with origins, tags, and optional review metadata. */
 export function createMemoryEntry(input: MemoryPromoteRequest): MemoryPromoteResponse {
   ensureBootstrapped();
-
+  return withTransaction(() => {
   const id = `mem_${randomUUID()}`;
   const now = nowIso();
   const reviewStatus = input.review?.status ?? "draft";
@@ -170,12 +171,15 @@ export function createMemoryEntry(input: MemoryPromoteRequest): MemoryPromoteRes
       updatedAt: now,
     },
   };
+  });
 }
 
+/** Alias for {@link createMemoryEntry}. Promotes source material into a memory entry. */
 export function promoteToMemory(input: MemoryPromoteRequest) {
   return createMemoryEntry(input);
 }
 
+/** Fetch a single memory entry by ID, including its origins and tags. */
 export function getMemoryEntry(id: string): MemoryEntryWithOrigins | null {
   ensureBootstrapped();
 
@@ -216,6 +220,7 @@ export function getMemoryEntry(id: string): MemoryEntryWithOrigins | null {
   };
 }
 
+/** List memory entries with optional filters for review status and retention class. */
 export function listMemoryEntries(filters?: {
   reviewStatus?: MemoryReviewStatus;
   retentionClass?: MemoryEntry["retention_class"];
@@ -272,6 +277,7 @@ export function listMemoryEntries(filters?: {
   }));
 }
 
+/** Return memory entries in "draft" status that are awaiting human review. */
 export function listMemoryReviewQueue(limit = 50): MemoryReviewQueueItem[] {
   return listMemoryEntries({ reviewStatus: "draft", limit });
 }
@@ -338,6 +344,7 @@ function snapshotVersion(
   return version;
 }
 
+/** List all version snapshots for a memory entry, newest first. */
 export function listMemoryEntryVersions(entryId: string): MemoryEntryVersion[] {
   ensureBootstrapped();
   return queryJson<MemoryEntryVersion>(
@@ -353,6 +360,7 @@ export function listMemoryEntryVersions(entryId: string): MemoryEntryVersion[] {
   );
 }
 
+/** Fetch a specific version snapshot of a memory entry. */
 export function getMemoryEntryVersion(entryId: string, version: number): MemoryEntryVersion | null {
   ensureBootstrapped();
   return queryOne<MemoryEntryVersion>(
@@ -373,7 +381,7 @@ export function getMemoryEntryVersion(entryId: string, version: number): MemoryE
  */
 export function rollbackMemoryEntry(entryId: string, toVersion: number): MemoryEntryWithOrigins | null {
   ensureBootstrapped();
-
+  return withTransaction(() => {
   const target = getMemoryEntryVersion(entryId, toVersion);
   if (!target) return null;
 
@@ -405,12 +413,14 @@ export function rollbackMemoryEntry(entryId: string, toVersion: number): MemoryE
   );
 
   return getMemoryEntry(entryId);
+  });
 }
 
 // ---------------------------------------------------------------------------
 // Update Operations (with version tracking)
 // ---------------------------------------------------------------------------
 
+/** Update the review status of a memory entry, snapshotting the previous state. */
 export function updateMemoryEntryReview(input: {
   id: string;
   reviewStatus: MemoryReviewStatus;
@@ -418,7 +428,7 @@ export function updateMemoryEntryReview(input: {
   reviewNotes?: string | null;
 }) {
   ensureBootstrapped();
-
+  return withTransaction(() => {
   const existing = getMemoryEntry(input.id);
   if (existing) {
     snapshotVersion(
@@ -452,8 +462,10 @@ export function updateMemoryEntryReview(input: {
   );
 
   return getMemoryEntry(input.id);
+  });
 }
 
+/** Update a memory entry's content or metadata, creating a version snapshot first. */
 export function updateMemoryEntry(input: {
   id: string;
   title?: string;
@@ -467,7 +479,7 @@ export function updateMemoryEntry(input: {
   changeReason?: string;
 }) {
   ensureBootstrapped();
-
+  return withTransaction(() => {
   const existing = getMemoryEntry(input.id);
   if (!existing) return null;
 
@@ -508,6 +520,7 @@ export function updateMemoryEntry(input: {
   );
 
   return getMemoryEntry(input.id);
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -630,12 +643,13 @@ function purgeOverflowEntries(): number {
  */
 export function archiveMemory(): ArchiveResult {
   ensureBootstrapped();
-
+  return withTransaction(() => {
   const agedOut = ageOutEntries();
   const archived = archiveStaleEntries();
   const overflowPurged = purgeOverflowEntries();
 
   return { agedOut, archived, overflowPurged };
+  });
 }
 
 /**
